@@ -73,19 +73,19 @@ Integration and encapsulation of utilities (sharp, imagemin, htmlhint, ImageMagi
 
 ### Images
 
-![After img:build](docs/minify.PNG)
-![After img:build](docs/towebp.PNG)
-![After img:build](docs/resize.PNG)
+![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/minify.PNG)
+![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/towebp.PNG)
+![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/resize.PNG)
 
 Result after run `dvx img:build`
 
-![After img:build](docs/after-build.PNG)
+![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/after-build.PNG)
 
 ### HTML
 
-![HTML validation without errors](docs/validate.PNG)
+![HTML validation without errors](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/validate.PNG)
 
-![HTML validation with errors](docs/validate-error.PNG)
+![HTML validation with errors](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/validate-error.PNG)
 
 <h2 id="" align="center">Sponsoring</h2>
 

@@ -1,11 +1,11 @@
 {
   "name": "@devexteam/dvx-cli",
   "version": "1.0.30",
-  "description": "Demo",
+  "description": "CLI that encapsulates utilities for image processing and assets in frontend development.",
   "license": "MIT",
-  "main": "./bin/dvx.js",
+  "main": "bin/dvx.js",
   "bin": {
-    "dvx": "./bin/dvx.js"
+    "dvx": "bin/dvx.js"
   },
   "scripts": {},
   "keywords": [
@@ -32,15 +32,7 @@
     "icons": "icons",
     "lib": "lib"
   },
-  "author": "Devexteam <devexteam@devexteam.com>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/samuel93/dvx-cli.git"
-  },
-  "bugs": {
-    "url": "https://gitlab.com/samuel93/dvx-cli/issues"
-  },
-  "homepage": "https://gitlab.com/samuel93/dvx-cli#README",
+  "author": "Samuel R. <samuel@devexteam.com>",
   "private": false,
   "devDependencies": {},
   "dependencies": {
@@ -63,5 +55,13 @@
   },
   "engines": {
     "node": ">=10.16.0 <=12.14.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devlegacy/dvx-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devlegacy/dvx-cli/issues"
+  },
+  "homepage": "https://github.com/devlegacy/dvx-cli#readme"
 }
