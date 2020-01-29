@@ -1,0 +1,67 @@
+{
+  "name": "@devexteam/dvx-cli",
+  "version": "1.0.30",
+  "description": "Demo",
+  "license": "MIT",
+  "main": "./bin/dvx.js",
+  "bin": {
+    "dvx": "./bin/dvx.js"
+  },
+  "scripts": {},
+  "keywords": [
+    "Devexteam",
+    "cli",
+    "minify",
+    "tools",
+    "frontend"
+  ],
+  "files": [
+    "bin",
+    "docs",
+    "global",
+    "helpers",
+    "icons",
+    "lib",
+    "README.MD"
+  ],
+  "directories": {
+    "bin": "bin",
+    "doc": "docs",
+    "global": "global",
+    "helpers": "helpers",
+    "icons": "icons",
+    "lib": "lib"
+  },
+  "author": "Devexteam <devexteam@devexteam.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/samuel93/dvx-cli.git"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/samuel93/dvx-cli/issues"
+  },
+  "homepage": "https://gitlab.com/samuel93/dvx-cli#README",
+  "private": false,
+  "devDependencies": {},
+  "dependencies": {
+    "beeper": "^2.0.0",
+    "glob": "^7.1.6",
+    "htmlhint": "^0.11.0",
+    "htmlhint-stylish": "^1.0.3",
+    "imagemin": "^7.0.1",
+    "imagemin-giflossy": "^5.1.10",
+    "imagemin-jpegtran": "^6.0.0",
+    "imagemin-mozjpeg": "^8.0.0",
+    "imagemin-pngquant": "^8.0.0",
+    "imagemin-svgo": "^7.0.0",
+    "imagemin-webp": "^5.1.0",
+    "imagemin-zopfli": "^6.0.0",
+    "node-notifier": "^6.0.0",
+    "sharp": "^0.24.0",
+    "shelljs": "^0.8.3",
+    "yargs": "^15.1.0"
+  },
+  "engines": {
+    "node": ">=10.16.0 <=12.14.1"
+  }
+}
