@@ -89,7 +89,7 @@ Result after run `dvx img:build`
 
 <h2 id="" align="center">Sponsoring</h2>
 
-Thank you for reading :heart:. The feedback is appreciated.
+Thank you for reading :heart:. The feedback is appreciated.  
 If you liked the project, it has been useful and you want to support the development or you simply want to invite me a coffee, you can do it via paypal with the following link:
 
 [![Donate](https://www.paypalobjects.com/en_US/MX/i/btn/btn_donateCC_LG.gif)](http://paypal.me/devlegacymx)
