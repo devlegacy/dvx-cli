@@ -22,6 +22,18 @@ module.exports = {
       default: 'mogrify',
       choices: ['mogrify', 'sharp'],
     },
+    width: {
+      alias: 'w',
+      type: 'number',
+      describe: 'Set the width',
+      default: 1024,
+    },
+    height: {
+      alias: 'he',
+      // TODO: Fix error with --help and -h
+      type: 'number',
+      describe: 'Set the height',
+    },
     exclude: {
       alias: 'exc',
       describe: 'Files to exclude / ignore, separated by spaces',
@@ -32,6 +44,8 @@ module.exports = {
   handler: async (argv) => {
     console.time(cmd);
     const srcDir = resolve(process.cwd(), argv.src);
+    const width = argv.width;
+    const height = argv.height;
 
     Notify.info({ title: 'Resize', message: 'Start resize images task' });
     const files = glob.sync(`${srcDir}/**/*.+(png|jpeg|jpg)`, { nodir: true });
@@ -49,9 +63,9 @@ module.exports = {
 
     for (let file of filteredFiles) {
       if (argv.use === 'mogrify') {
-        await useMogrify(file);
+        await useMogrify(file, width, height);
       } else if (argv.use === 'sharp') {
-        await useSharp(file);
+        await useSharp(file, width, height);
       }
     }
     Notify.info({ title: 'Resize', message: 'End resize images task' });
@@ -59,7 +73,7 @@ module.exports = {
   },
 };
 
-const useMogrify = async (file) => {
+const useMogrify = async (file, width = 1024, height) => {
   const mogrify = 'mogrify';
   try {
     if (!shell.which(mogrify)) {
@@ -68,24 +82,25 @@ const useMogrify = async (file) => {
 
     const ext = extname(file).toLowerCase();
     let stdOut = '';
+    const resize = height
+      ? `-resize \"${width}x${height}\" -extent \"${width}x${height}\" `
+      : `-resize \"${width}>\"`;
+    // console.log(resize); -path processed
     if (ext.includes('.jpg')) {
       stdOut = shell.exec(
-        `${mogrify} -verbose -format jpg -layers Dispose -resize \"1024>\" ${file}`,
+        `${mogrify} -verbose -format jpg -layers Dispose ${resize} ${file}`,
         { async: false, silent: true }
       ).stdout;
     } else if (ext.includes('.jpeg')) {
       stdOut = shell.exec(
-        `${mogrify} -verbose -format jpeg -layers Dispose -resize \"1024>\" ${file}`,
+        `${mogrify} -verbose -format jpeg -layers Dispose ${resize} ${file}`,
         { async: false, silent: true }
       ).stdout;
     } else if (ext.includes('.png')) {
-      stdOut = shell.exec(
-        `${mogrify} -verbose -format png -resize \"1024>\" ${file}`,
-        {
-          async: false,
-          silent: true,
-        }
-      ).stdout;
+      stdOut = shell.exec(`${mogrify} -verbose -format png ${resize} ${file}`, {
+        async: false,
+        silent: true,
+      }).stdout;
     }
     log('[Resize]:', stdOut);
   } catch (e) {
@@ -94,13 +109,25 @@ const useMogrify = async (file) => {
   }
 };
 
-const useSharp = async (file) => {
+const useSharp = async (file, width = 1024, height) => {
+  let opts = {};
+  // TODO: read what is the default height for sharp
+  if (height) {
+    opts = {
+      width,
+      height,
+    };
+  } else {
+    opts = {
+      width,
+    };
+  }
   await sharp(file)
     .resize({
-      width: 1024,
+      ...opts,
       withoutEnlargement: true,
     })
-    .toBuffer(function(err, buffer) {
+    .toBuffer(function (err, buffer) {
       fs.writeFileSync(file, buffer);
       log('[Resize]:', file);
     });
