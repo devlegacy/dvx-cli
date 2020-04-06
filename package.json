@@ -1,6 +1,6 @@
 {
   "name": "@devexteam/dvx-cli",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "CLI that encapsulates utilities for image processing and assets in frontend development.",
   "license": "MIT",
   "main": "bin/dvx.js",
