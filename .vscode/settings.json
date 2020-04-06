@@ -1,9 +1,71 @@
 {
   "files.exclude": {
-    "node_modules": true,
+    // Generics
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+
+    // Config files
+    ".vscode": false,
+    ".babelrc": true,
+    ".browserslistrc": true,
+    ".csscomb.json": true,
+    ".editorconfig": true,
+    ".php_cs": true,
+    ".prettierrc": true,
+
+    // DOC files
+    "LICENSE": true,
+    "license": true,
+
+    // Git files
+    "*git*": true, // For .gitginote, .gitattirbutes
+
+    // ?
+    "nbproject": true,
+
+    // NodeJS
+    "**/node_modules/": true,
+
+    // Angular
+    "**/e2e/": true,
+    // "**/*.js": true,
+    "**/*.map": true,
+
+    // Laravel
+    "vendor/": true,
+    "bootstrap/": true,
+    "storage/": true,
+    "tests/": true,
+    "_ide_helper.php": true,
+    ".phpstorm.meta.php": true,
+    "artisan": true,
+    "server.php": true,
+    "*.example": true,
+    "*.yml": true,
+    "*.xml": true,
+    "*lock*": true, // For package-lock.json, composer.lock
+
+    // Codeginiter 3
+    "user_guide": true,
+    "system": true,
+    // Current project
     "test": true,
     "icons": true,
     "docs": true
   },
-  "prettier.singleQuote": true
+  // To test
+  // "editor.parameterHints.enabled": false,
+  // "editor.quickSuggestionsDelay": 2000,
+  // "editor.quickSuggestions": {
+  //   "other": false,
+  //   "comments": false,
+  //   "strings": false
+  // },
+  "prettier.singleQuote": true,
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  }
 }
