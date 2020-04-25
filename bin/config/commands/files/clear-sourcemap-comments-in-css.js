@@ -2,6 +2,33 @@ const glob = require('glob');
 const fs = require('fs');
 const cmd = 'files:clear-sourcemap-comments-in-css';
 
+class CleanSourcemaps {
+  constructor() {
+    this.cmd = 'files:clean-sourcemaps';
+    this.desc =
+      'Clean sourcemaps comments (/*# sourceMappingURL=foo.css.map */) in css files that can cause conflicts in compilation or packaging';
+    this.opts = {
+      source: {
+        alias: 'src',
+        describe: 'Source path of the files',
+        type: 'string',
+        default: './',
+      },
+      packages: {
+        alias: 'pck',
+        describe: 'List of npm packages with CSS files to clean',
+        type: 'string',
+        default: 'bootstrap-datepicker,tinymce',
+      },
+    };
+  }
+  handler(argv) {
+    const pkg = getPackageJson();
+    const packagesToRemoveComments = argv.packages.split(',');
+    const regExToReplace = /\/[\*]\#\s+(sourceMappingURL\=.*\.(css)\.map)\s+[\*]\//g;
+  }
+}
+
 module.exports = {
   cmd,
   desc:

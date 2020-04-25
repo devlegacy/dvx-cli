@@ -1,13 +1,18 @@
 const yargs = require('yargs');
 const Paths = require('../../lib/paths');
-const imgCmd = [
-  'files/clear-sourcemap-comments-in-css',
-  'helpers/version',
-  'html/validate',
-  'img/build',
-  'img/minify',
-  'img/resize',
-  'img/towebp',
+const COMMAND_PATH = 'commands/';
+const FILES_PATH = 'file/';
+const HELPER_PATH = 'html/';
+const HTML_PATH = 'html/';
+const IMG_PATH = 'img/';
+const commands = [
+  `${FILES_PATH}/clear-sourcemap-comments-in-css`,
+  `${HELPER_PATH}/version`,
+  `${HTML_PATH}/validate`,
+  `${IMG_PATH}/build`,
+  `${IMG_PATH}/minify`,
+  `${IMG_PATH}/resize`,
+  `${IMG_PATH}/towebp`,
 ];
 
 /**
@@ -27,17 +32,17 @@ class DvxCLI {
     this.yargs = yargs;
     this.cmd = {};
     this.paths = new Paths();
-    this.installCommands(imgCmd);
+    this.installCommands(commands);
     this.configureYargs();
   }
 
   /**
    * Load commands
-   * @param {string} commands
+   * @param {string[]} commands
    */
   installCommands(commands) {
     commands.forEach((cmd) => {
-      this.installCommand(require(`./commands/${cmd}`));
+      this.installCommand(require(`./${COMMAND_PATH}/${cmd}`));
     });
   }
 

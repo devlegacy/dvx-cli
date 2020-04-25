@@ -48,7 +48,7 @@
     "imagemin-svgo": "^7.1.0",
     "imagemin-webp": "^5.1.0",
     "imagemin-zopfli": "^6.0.0",
-    "node-notifier": "^6.0.0",
+    "node-notifier": "^7.0.0",
     "sharp": "^0.25.2",
     "shelljs": "^0.8.3",
     "yargs": "^15.3.1"

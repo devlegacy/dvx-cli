@@ -6,66 +6,51 @@
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
-
     // Config files
     ".vscode": false,
     ".babelrc": true,
     ".browserslistrc": true,
     ".csscomb.json": true,
     ".editorconfig": true,
+    ".eslintignore": true,
+    ".eslintrc.js": true,
     ".php_cs": true,
     ".prettierrc": true,
-
+    "babel.config.js": true,
+    "postcss.config.js": true,
+    "tailwind.config.js": true,
+    "vue.config.js": true,
     // DOC files
     "LICENSE": true,
     "license": true,
-
     // Git files
     "*git*": true, // For .gitginote, .gitattirbutes
-
-    // ?
-    "nbproject": true,
-
     // NodeJS
     "**/node_modules/": true,
-
-    // Angular
-    "**/e2e/": true,
-    // "**/*.js": true,
-    "**/*.map": true,
-
-    // Laravel
-    "vendor/": true,
-    "bootstrap/": true,
-    "storage/": true,
-    "tests/": true,
-    "_ide_helper.php": true,
-    ".phpstorm.meta.php": true,
-    "artisan": true,
-    "server.php": true,
-    "*.example": true,
-    "*.yml": true,
-    "*.xml": true,
-    "*lock*": true, // For package-lock.json, composer.lock
-
-    // Codeginiter 3
-    "user_guide": true,
-    "system": true,
+    "package-lock.json": true,
     // Current project
     "test": true,
     "icons": true,
     "docs": true
   },
-  // To test
-  // "editor.parameterHints.enabled": false,
-  // "editor.quickSuggestionsDelay": 2000,
-  // "editor.quickSuggestions": {
-  //   "other": false,
-  //   "comments": false,
-  //   "strings": false
-  // },
-  "prettier.singleQuote": true,
-  "[markdown]": {
-    "files.trimTrailingWhitespace": false
+  "workbench.colorCustomizations": {
+    // "titleBar.activeBackground": "#fa707a",
+    // "titleBar.activeForeground": "#15202b",
+    // "titleBar.inactiveBackground": "#fa707a99",
+    // "titleBar.inactiveForeground": "#15202b99",
+    // "activityBar.activeBackground": "#fca1a8",
+    // "activityBar.activeBorder": "#0d7c04",
+    // "activityBar.background": "#fca1a8",
+    // "activityBar.foreground": "#15202b",
+    // "activityBar.inactiveForeground": "#15202b99",
+    // "activityBarBadge.background": "#0d7c04",
+    // "activityBarBadge.foreground": "#e7e7e7",
+    // "statusBar.background": "#fa707a",
+    // "statusBar.border": "#fa707a",
+    // "statusBar.foreground": "#15202b",
+    // "statusBarItem.hoverBackground": "#f83f4c",
+    // "titleBar.border": "#fa707a"
   }
+  // "javascript.implicitProjectConfig.checkJs": true,
+  // "peacock.color": "#fa707a"
 }
