@@ -50,7 +50,8 @@
     // "statusBar.foreground": "#15202b",
     // "statusBarItem.hoverBackground": "#f83f4c",
     // "titleBar.border": "#fa707a"
-  }
+  },
+  "deno.enable": false
   // "javascript.implicitProjectConfig.checkJs": true,
   // "peacock.color": "#fa707a"
 }
