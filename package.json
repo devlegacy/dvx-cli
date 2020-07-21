@@ -35,6 +35,8 @@
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": true,
   "devDependencies": {
+    "@types/node": "^14.0.24",
+    "@types/yargs": "^15.0.5",
     "jest": "^26.1.0",
     "typescript": "^3.9.7"
   },
