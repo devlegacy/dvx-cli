@@ -29,8 +29,8 @@
     "**/node_modules/": true,
     "package-lock.json": true,
     // Current project
-    "test": true,
-    "icons": true,
+    // "test": true,
+    // "icons": true,
     "docs": true
   },
   "workbench.colorCustomizations": {
