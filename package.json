@@ -8,6 +8,9 @@
     "dvx": "dist/bin/dvx.js"
   },
   "scripts": {
+    "jest:init": "jest --init",
+    "jest:watch": "jest --watchAll",
+    "test": "jest",
     "tsc:watch": "tsc --watch",
     "package:update": "ncu -u && npm i && npm audit fix"
   },
