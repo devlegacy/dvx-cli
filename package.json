@@ -41,6 +41,7 @@
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": true,
   "devDependencies": {
+    "@types/fs-extra": "^9.0.1",
     "@types/htmlhint": "^0.9.1",
     "@types/imagemin": "^7.0.0",
     "@types/imagemin-jpegtran": "^5.0.0",
@@ -58,6 +59,7 @@
   },
   "dependencies": {
     "beeper": "^2.0.0",
+    "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "htmlhint": "^0.14.1",
     "htmlhint-stylish": "^1.0.3",
@@ -70,7 +72,7 @@
     "imagemin-webp": "^6.0.0",
     "imagemin-zopfli": "^7.0.0",
     "node-notifier": "^8.0.0",
-    "sharp": "^0.25.4",
+    "sharp": "^0.26.0",
     "shelljs": "^0.8.4",
     "yargs": "^15.4.1"
   },
