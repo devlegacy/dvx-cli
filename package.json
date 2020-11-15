@@ -22,21 +22,10 @@
     "frontend"
   ],
   "files": [
-    "bin",
-    "docs",
-    "global",
-    "helpers",
-    "icons",
-    "lib",
     "README.MD"
   ],
   "directories": {
-    "bin": "bin",
-    "doc": "docs",
-    "global": "global",
-    "helpers": "helpers",
-    "icons": "icons",
-    "lib": "lib"
+    "bin": "bin"
   },
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": true,
