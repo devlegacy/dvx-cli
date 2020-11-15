@@ -1,56 +1,44 @@
-import { getFunctionName } from './get-function-name';
+import { ColorInterface } from '../shared/interfaces/color.interface';
 
-const FG_BLACK: string = '\x1b[30m';
-const BRIGHT: string = '\x1b[1m';
-const BG_RESET: string = '\x1b[0m';
-const BG_WHITE: string = `\x1b[47m${FG_BLACK}${BRIGHT}`;
-const BG_GREEN: string = `\x1b[42m${FG_BLACK}${BRIGHT}`;
-const BG_YELLOW: string = `\x1b[43m${FG_BLACK}${BRIGHT}`;
-const BG_RED: string = `\x1b[41m${BRIGHT}`;
-const BG_BLUE: string = '\x1b[44m';
+const FG_BLACK = '\x1b[30m';
+const BRIGHT = '\x1b[1m';
+const BG_RESET = '\x1b[0m';
+const BG_WHITE = `\x1b[47m${FG_BLACK}${BRIGHT}`;
+const BG_GREEN = `\x1b[42m${FG_BLACK}${BRIGHT}`;
+const BG_YELLOW = `\x1b[43m${FG_BLACK}${BRIGHT}`;
+const BG_RED = `\x1b[41m${BRIGHT}`;
+const BG_BLUE = '\x1b[44m';
 
-interface Color {
-  [key: string]: string;
-}
-
-// Note: alternative type definition COLOR: { [key: string]: string }
-const COLOR: Color = {
-  DEBUG: BG_WHITE,
-  LOG: BG_GREEN,
-  WARN: BG_YELLOW,
-  ERROR: BG_RED,
-  GROUP_COLLAPSED: BG_BLUE,
+const COLORS: ColorInterface = {
+  debug: BG_WHITE,
+  log: BG_GREEN,
+  warn: BG_YELLOW,
+  error: BG_RED,
+  group_collapsed: BG_BLUE,
 };
 
-function consoleTemplate(consoleType: string = 'LOG', args: any) {
-  const title: string = args.length > 1 ? args.shift() : '[dvx]:';
-  const decorator: string = `${COLOR[consoleType]}%s${BG_RESET}`;
-  return console.log(decorator, title, ...args);
+enum CONSOLE {
+  log = 'log',
+  warn = 'warn',
+  error = 'error',
 }
 
-/**
- * console.log variant
- * @param args - Arguments
- */
+function template(type: CONSOLE = CONSOLE.log, args: any) {
+  const color = COLORS[type];
+  const decorator = `${color}%s${BG_RESET}`;
+  const title = args.length > 1 ? args.shift() : '[dvx]:';
+  console[type](decorator, title, ...args);
+}
+
 export function log(...args: any) {
-  return consoleTemplate(
-    getFunctionName().replace('Object.', '').toUpperCase(),
-    args
-  );
+  // const type = getFunctionName().replace('Object.', '');
+  template(CONSOLE.log, args);
 }
 
-/**
- * console.warn variant
- * @param args - Arguments
- */
 export function warn(...args: any) {
-  return consoleTemplate('WARN', args);
+  template(CONSOLE.warn, args);
 }
 
-/**
- * console.error variant
- * @param args - Arguments
- */
 export function error(...args: any) {
-  return consoleTemplate('ERROR', args);
+  template(CONSOLE.error, args);
 }
