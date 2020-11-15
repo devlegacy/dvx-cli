@@ -1,35 +1,41 @@
 import { Notify } from '../../../../src/lib/notify';
 import Notifier from 'node-notifier';
+import NotificationCenter from 'node-notifier/notifiers/notificationcenter';
 
-const spy = jest
-  .spyOn(Notify, 'info')
-  .mockImplementation((title: string = '', message: string = '') => {
-    return Notifier.notify();
+describe('Custom Notifier', () => {
+  let notifier: jest.SpyInstance<
+    NotificationCenter,
+    [title?: string | undefined, message?: string | undefined]
+  >;
+  beforeEach(() => {
+    notifier = jest
+      .spyOn(Notify, 'info')
+      .mockImplementation((title: string = '', message: string = '') => {
+        return Notifier.notify();
+      });
   });
-afterEach(() => {
-  spy.mockClear();
-});
-test('it send a notify', () => {
-  Notify.info('Title', 'Message');
-  expect(spy).toHaveBeenCalled();
-});
+  afterEach(() => {
+    notifier.mockClear();
+  });
 
-test('it send a notify once', () => {
-  Notify.info('Title', 'Message');
-  expect(spy).toHaveBeenCalledTimes(1);
-});
+  test('it send a notify', async () => {
+    const notify = Notify.info();
+    expect(notify).toBeInstanceOf(Notifier.WindowsToaster);
+    expect(notify instanceof Notifier.WindowsToaster).toBeTruthy();
+  });
 
-test('it send a notify with two params', () => {
-  Notify.info('Title', 'Message');
-  expect(spy).toHaveBeenCalledWith('Title', 'Message');
-});
+  test('it send a notify once', () => {
+    Notify.info('Title', 'Message');
+    expect(notifier).toHaveBeenCalledTimes(1);
+  });
 
-test('it send a notify without params', () => {
-  Notify.info();
-  expect(spy).toHaveBeenCalledWith();
-});
+  test('it send a notify with two params', () => {
+    Notify.info('Title', 'Message');
+    expect(notifier).toHaveBeenCalledWith('Title', 'Message');
+  });
 
-test('it return a instance of Notifier.WindowsToaster', () => {
-  const notify = Notify.info();
-  expect(notify instanceof Notifier.WindowsToaster).toBeTruthy();
+  test('it send a notify without params', () => {
+    Notify.info();
+    expect(notifier).toHaveBeenCalledWith();
+  });
 });
