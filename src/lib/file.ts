@@ -1,19 +1,21 @@
-import { FileInfo } from '../interfaces/file-info';
+// Inspired in: https://github.com/JeffreyWay/laravel-mix/blob/master/src/File.js
+import { FileInfoInterface } from '../shared/interfaces/file-info.interface';
 import { resolve, relative, parse, ParsedPath } from 'path';
 import { statSync, existsSync, writeFileSync } from 'fs';
 import os from 'os';
+import { cwd } from 'process';
 
 export class File {
-  public absolutePath: string;
-  public filePath: string;
-  public info: FileInfo; // TODO: Make as private?
+  private absolutePath: string;
+  private filePath: string;
+  public info: FileInfoInterface;
 
   /**
    * Create a new instance of file class
    * @param {string} filePath
    */
   constructor(filePath: string) {
-    this.absolutePath = resolve(filePath);
+    this.absolutePath = resolve(cwd(), filePath);
     this.filePath = this.relativePath();
     this.info = this.parse();
   }
@@ -39,7 +41,7 @@ export class File {
   /**
    * Get info about filePath
    */
-  private parse(): FileInfo {
+  private parse(): FileInfoInterface {
     /**
      * Read more on: https://nodejs.org/dist/latest-v10.x/docs/api/path.html#path_path_parse_path
      */

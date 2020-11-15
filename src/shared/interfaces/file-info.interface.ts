@@ -1,4 +1,4 @@
-export interface FileInfo {
+export interface FileInfoInterface {
   isDir: boolean;
   isFile: boolean;
   path: string;
