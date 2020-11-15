@@ -1,12 +1,10 @@
 import Notifier from 'node-notifier';
 import { platform } from 'os';
-import { resolve } from 'path';
 import { File } from './file';
-const icon = resolve(__dirname);
+const icon = File.find('./src/icons/info.jpg').info;
 
 export class Notify {
-  private static readonly icon: string = File.find('./icons/info.jpg').info
-    .absolutePath;
+  public static readonly icon: string = icon.isFile ? icon.absolutePath : '';
   public static info(
     title: string = 'Default title',
     message: string = 'Default message'

@@ -38,4 +38,9 @@ describe('Custom Notifier', () => {
     Notify.info();
     expect(notifier).toHaveBeenCalledWith();
   });
+
+  test('it return the relative path to icon', () => {
+    expect(Notify.icon).not.toBe('');
+    expect(Notify.icon.includes('info.jpg')).toBeTruthy();
+  });
 });
