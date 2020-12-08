@@ -1,7 +1,7 @@
 // Inspired in: https://github.com/JeffreyWay/laravel-mix/blob/master/src/File.js
 import { FileInfoInterface } from '../shared/interfaces/file-info.interface';
 import { resolve, relative, parse, ParsedPath } from 'path';
-import { statSync, existsSync, writeFileSync } from 'fs';
+import { statSync, existsSync, writeFileSync, readFileSync } from 'fs-extra';
 import os from 'os';
 import { cwd } from 'process';
 
@@ -14,8 +14,8 @@ export class File {
    * Create a new instance of file class
    * @param {string} filePath
    */
-  constructor(filePath: string) {
-    this.absolutePath = resolve(cwd(), filePath);
+  constructor(filePath: string, context: string = cwd()) {
+    this.absolutePath = resolve(context, filePath);
     this.filePath = this.relativePath();
     this.info = this.parse();
   }
@@ -25,12 +25,12 @@ export class File {
    * @param {string} file
    * @return {File} File;
    */
-  public static find(filePath: string): File {
-    return new File(filePath);
+  public static find(filePath: string, context: string = cwd()): File {
+    return new File(filePath, context);
   }
 
   /**
-   * Determine if the given file exists.
+   * Determine if the given file exists.r
    *
    * @param {string} file
    */
@@ -92,7 +92,7 @@ export class File {
    * Get relative path
    */
   public relativePath(): string {
-    return relative(process.cwd(), this.path());
+    return relative(cwd(), this.path());
   }
 
   /**
@@ -138,5 +138,12 @@ export class File {
     writeFileSync(this.absolutePath, body);
 
     return this;
+  }
+
+  /**
+   * Read the file's contents.
+   */
+  read() {
+    return readFileSync(this.path(), 'utf8');
   }
 }
