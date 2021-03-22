@@ -3,57 +3,65 @@ import { sync } from 'glob';
 import { extname, resolve } from 'path';
 import sharp from 'sharp';
 import { exec, exit, which } from 'shelljs';
+import yargs from 'yargs';
 import { error, log, warn } from '../../helpers/console';
+import { File } from '../../lib/file';
 import { Notify } from '../../lib/notify';
+import ImageResizeArguments from '../../shared/interfaces/image-resize-arguments';
 
-const command = 'img:resize';
-// TODO: Validate notification handler when use mogrify
-// dvx img:resize --exc=opengraph
-module.exports = {
-  command,
-  description: 'Resize images to 1024px width',
-  options: {
-    source: {
-      alias: 'src',
-      describe: 'Source path of the images to resize',
-      type: 'string',
-      default: 'src/assets/img/dist/',
-    },
-    use: {
-      describe: 'Tool to use',
-      type: 'string',
-      default: 'mogrify',
-      choices: ['mogrify', 'sharp'],
-    },
-    width: {
-      alias: 'w',
-      type: 'number',
-      describe: 'Set the width',
-      default: 1024,
-    },
-    height: {
-      alias: 'he',
-      // TODO: Fix error with --help and -h
-      type: 'number',
-      describe: 'Set the height',
-    },
-    exclude: {
-      alias: 'exc',
-      describe: 'Files to exclude / ignore, separated by spaces',
-      type: 'array',
-      default: ['opengraph'],
-    },
-  },
+export default class ImageResize {
+  public static readonly command = 'img:resize';
+  public static readonly description = 'Resize images to 1024px width';
+  public static readonly builder = () =>
+    yargs.options({
+      source: {
+        alias: 'src',
+        describe: 'Source path of the images to resize',
+        type: 'string',
+        default: 'src/assets/img/dist',
+      },
+      width: {
+        alias: 'w',
+        type: 'number',
+        describe: 'Set the width',
+        default: 1024,
+      },
+      height: {
+        alias: 'h',
+        type: 'number',
+        describe: 'Set the height',
+      },
+      tool: {
+        describe: 'Tool to use',
+        type: 'string',
+        default: 'mogrify',
+        choices: ['mogrify', 'sharp'],
+      },
+      exclude: {
+        alias: 'exc',
+        describe: 'Files to exclude / ignore, separated by spaces',
+        type: 'array',
+        default: ['opengraph'],
+      },
+    });
 
-  handler: async (args: any) => {
-    console.time(command);
-    const srcDir = resolve(process.cwd(), args.src);
-    const width = args.width;
-    const height = args.height;
+  public static async handler(args: ImageResizeArguments) {
+    console.time(ImageResize.command);
 
-    // Notify.info(  'Resize',   'Start resize images task'  );
-    const files = sync(`${srcDir}/**/*.+(png|jpeg|jpg)`, { nodir: true });
-    const filteredFiles = files.filter((file) => {
+    const source = File.find(args.source);
+    const { height, width } = args;
+
+    if (!source.isDirectory()) {
+      error(
+        ImageResize.command,
+        `Directory ${source.info.absolutePath} not found`
+      );
+      return;
+    }
+
+    const files = sync(`${source.info.absolutePath}/**/*.+(png|jpeg|jpg)`, {
+      nodir: true,
+    }).filter((file) => {
       let include = true;
       args.exclude.forEach((exclude: any) => {
         if (file.includes(exclude)) {
@@ -65,17 +73,18 @@ module.exports = {
       return include;
     });
 
-    for (let file of filteredFiles) {
-      if (args.use === 'mogrify') {
+    for (const file of files) {
+      if (args.tool === 'mogrify') {
         await useMogrify(file, width, height);
-      } else if (args.use === 'sharp') {
+      } else if (args.tool === 'sharp') {
         await useSharp(file, width, height);
       }
     }
+
+    console.timeEnd(ImageResize.command);
     Notify.info('Resize', 'End resize images task');
-    console.timeEnd(command);
-  },
-};
+  }
+}
 
 const useMogrify = async (file: any, width: any = 1024, height: any) => {
   const mogrify = 'mogrify';

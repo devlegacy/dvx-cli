@@ -2,7 +2,7 @@ import { log, warn, error } from '../../../../src/helpers/console';
 const Logger = require('../../../../src/helpers/console');
 
 describe('Custom console logger', () => {
-  test('it return format console.log', () => {
+  test('it returns custom and format console.log', () => {
     console.log = jest.fn();
     log('log');
     expect(console.log).toHaveBeenCalled();
@@ -14,7 +14,7 @@ describe('Custom console logger', () => {
     expect((console.log as jest.Mock).mock.calls[0][2]).toBe('log');
   });
 
-  test('it returns format console.warn', () => {
+  test('it returns custom and format console.warn', () => {
     console.warn = jest.fn();
     warn('warn');
     expect(console.warn).toHaveBeenCalled();
@@ -26,7 +26,7 @@ describe('Custom console logger', () => {
     expect((console.warn as jest.Mock).mock.calls[0][2]).toBe('warn');
   });
 
-  test('it returns format console.error', () => {
+  test('it returns custom and format console.error', () => {
     console.error = jest.fn();
     error('error');
     expect(console.error).toHaveBeenCalled();
@@ -38,7 +38,7 @@ describe('Custom console logger', () => {
     expect((console.error as jest.Mock).mock.calls[0][2]).toBe('error');
   });
 
-  test('it returns log from console', () => {
+  test('it returns custom and log from console', () => {
     const spyLog = jest.spyOn(Logger, 'log').mockImplementation(() => {
       return console.log;
     });

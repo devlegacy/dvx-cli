@@ -1,11 +1,15 @@
 import { Notify } from '../../../../src/lib/notify';
-import Notifier from 'node-notifier';
+import Notifier, { NotificationCallback } from 'node-notifier';
 import NotificationCenter from 'node-notifier/notifiers/notificationcenter';
 
 describe('Custom Notifier', () => {
   let notifier: jest.SpyInstance<
     NotificationCenter,
-    [title?: string | undefined, message?: string | undefined]
+    [
+      title?: string | undefined,
+      message?: string | undefined,
+      cb?: NotificationCallback | undefined
+    ]
   >;
   beforeEach(() => {
     notifier = jest

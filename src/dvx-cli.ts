@@ -1,17 +1,15 @@
-import yargs, { Argv } from 'yargs';
+import yargs, { Argv, Arguments, Options, InferredOptionTypes } from 'yargs';
 import { Version } from './commands/helpers/version';
-import HtmlValidate from './commands/html/validate';
+import HtmlValidate from './commands/html/html-validate';
+import ImageMinify from './commands/images/image-minify';
+import ImageToWebP from './commands/images/image-to-web-p';
+import CleanSourcemap from './commands/files/clean-sourcemap';
+import ImageResize from './commands/images/image-resize';
 const version = new Version();
-const minify = require('./commands/images/minify');
-const toWebP = require('./commands/images/towebp');
-const resize = require('./commands/images/resize');
-const build = require('./commands/images/build');
-const validate = require('./commands/html/validate');
-const htmlValidate = new HtmlValidate();
 
 const epilogue = `https://devexteam.com - Copyright ${new Date().getFullYear()}`;
 export class DvxCLI {
-  private _yargs: Argv = yargs;
+  private _yargs = yargs;
 
   constructor() {
     this.installCommands();
@@ -19,37 +17,44 @@ export class DvxCLI {
   }
 
   private installCommands() {
-    this._yargs.version(version.optionKey, version.description);
-    this._yargs.command(
-      build.command,
-      build.description,
-      build.options,
-      build.handler
-    );
-    this._yargs.command(
-      minify.command,
-      minify.description,
-      minify.options,
-      minify.handler
-    );
-    this._yargs.command(
-      toWebP.command,
-      toWebP.description,
-      toWebP.options,
-      toWebP.handler
-    );
-    this._yargs.command(
-      resize.command,
-      resize.description,
-      resize.options,
-      resize.handler
-    );
-    this._yargs.command(
-      htmlValidate.command,
-      htmlValidate.description,
-      htmlValidate.options,
-      htmlValidate.handler
-    );
+    this._yargs
+      .version(version.optionKey, version.description)
+      // this._yargs.command(
+      //   build.command,
+      //   build.description,
+      //   build.builder,
+      //   build.handler
+      // );
+      .command(
+        ImageMinify.command,
+        ImageMinify.description,
+        ImageMinify.builder,
+        ImageMinify.handler
+      )
+      .command(
+        ImageToWebP.command,
+        ImageToWebP.description,
+        ImageToWebP.builder,
+        ImageToWebP.handler
+      )
+      .command(
+        ImageResize.command,
+        ImageResize.description,
+        ImageResize.builder,
+        ImageResize.handler
+      )
+      .command(
+        HtmlValidate.command,
+        HtmlValidate.description,
+        HtmlValidate.builder,
+        HtmlValidate.handler
+      )
+      .command(
+        CleanSourcemap.command,
+        CleanSourcemap.description,
+        CleanSourcemap.builder,
+        CleanSourcemap.handler
+      );
   }
 
   private configure() {

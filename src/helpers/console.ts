@@ -1,20 +1,12 @@
 import { ColorInterface } from '../shared/interfaces/color.interface';
-
-const FG_BLACK = '\x1b[30m';
-const BRIGHT = '\x1b[1m';
-const BG_RESET = '\x1b[0m';
-const BG_WHITE = `\x1b[47m${FG_BLACK}${BRIGHT}`;
-const BG_GREEN = `\x1b[42m${FG_BLACK}${BRIGHT}`;
-const BG_YELLOW = `\x1b[43m${FG_BLACK}${BRIGHT}`;
-const BG_RED = `\x1b[41m${BRIGHT}`;
-const BG_BLUE = '\x1b[44m';
+import Color from './color';
 
 const COLORS: ColorInterface = {
-  debug: BG_WHITE,
-  log: BG_GREEN,
-  warn: BG_YELLOW,
-  error: BG_RED,
-  group_collapsed: BG_BLUE,
+  debug: Color.BG_WHITE,
+  log: Color.BG_GREEN,
+  warn: Color.BG_YELLOW,
+  error: Color.BG_RED,
+  group_collapsed: Color.BG_BLUE,
 };
 
 enum CONSOLE {
@@ -25,13 +17,12 @@ enum CONSOLE {
 
 function template(type: CONSOLE = CONSOLE.log, args: any) {
   const color = COLORS[type];
-  const decorator = `${color}%s${BG_RESET}`;
+  const decorator = `${color}%s${Color.BG_RESET}`;
   const title = args.length > 1 ? args.shift() : '[dvx]:';
   console[type](decorator, title, ...args);
 }
 
 export function log(...args: any) {
-  // const type = getFunctionName().replace('Object.', '');
   template(CONSOLE.log, args);
 }
 

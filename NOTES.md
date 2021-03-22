@@ -8,7 +8,8 @@
 - Add permission: `chmod +x ./cli.js`
 - Move: `mv ./cli.js /usr/bin/`
 - where is?: `where dvx`
-- [Read more on stackoverflow:](https://stackoverflow.com/questions/20643470/execute-a-command-line-binary-with-node-js)
+- Size on end: `du -sh ./src/img/src/`
+- [Read more on stackoverflow:](https://stackoverflow.com/questions/20643470/execute-a-command-line-binary-with-node-js "stackoverflow")
 
 ## Console name
 
@@ -59,4 +60,82 @@ c(process);
 c(process.cwd());
 c(process.argv);
 c(process.argv0);
+```
+
+## Examples TS with yargs
+
+```ts
+#!/usr/bin/env node
+
+import yargs, { Argv } from 'yargs';
+
+let argv = yargs
+    .command('serve', "Start the server.", (yargs: Argv) => {
+        return yargs.option('port', {
+            describe: "Port to bind on",
+            default: "5000",
+        }).option('verbose', {
+            alias: 'v',
+            default: false,
+        })
+    }).argv;
+
+if (argv.verbose) {
+    console.info("Verbose mode on.");
+}
+
+serve(argv.port);
+
+function serve(port: string) {
+    console.info(`Serve on port ${port}.`);
+}
+```
+
+```ts
+#!/usr/bin/env node
+import yargs, { Argv } from 'yargs';
+
+const argv = yargs(process.argv.slice(2)).options({
+  a: { type: 'boolean', default: false },
+  b: { type: 'string', demandOption: true },
+  c: { type: 'number', alias: 'chill' },
+  d: { type: 'array' },
+  e: { type: 'count' },
+  f: { choices: ['1', '2', '3'] }
+}).argv;
+```
+
+```ts
+#!/usr/bin/env node
+import yargs, { Argv } from 'yargs';
+interface Arguments {
+    [x: string]: unknown;
+    a: boolean;
+    b: string;
+    c: number | undefined;
+    d: (string | number)[] | undefined;
+    e: number;
+    f: string | undefined;
+  }
+const argv:Arguments = yargs(process.argv.slice(2)).options({
+  a: { type: 'boolean', default: false },
+  b: { type: 'string', demandOption: true },
+  c: { type: 'number', alias: 'chill' },
+  d: { type: 'array' },
+  e: { type: 'count' },
+  f: { choices: ['1', '2', '3'] }
+}).argv;
+```
+
+```ts
+#!/usr/bin/env node
+import yargs, { Argv } from 'yargs';
+
+type Difficulty = 'normal' | 'nightmare' | 'hell';
+const difficulties: ReadonlyArray<Difficulty> = ['normal', 'nightmare', 'hell'];
+
+const argv = yargs.option('difficulty', {
+  choices: difficulties,
+  demandOption: true
+}).argv;
 ```

@@ -5,11 +5,11 @@ import { DvxCLI } from './dvx-cli';
 import { log } from './helpers/console';
 
 const dvxCLI = new DvxCLI();
-const yargs: Argv = dvxCLI.yargs;
+const yargs = dvxCLI.yargs;
 const argv = yargs.argv;
-const command = argv._[0];
+// const command = argv._[0];
 
 // log(argv);
-// log(command);
+// log(argv._);
 
 // yargs.showHelp();
