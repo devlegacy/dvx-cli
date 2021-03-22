@@ -8,6 +8,7 @@ import imagemin from 'imagemin';
 import imageminPngquant from 'imagemin-pngquant';
 import imageminMozjpeg from 'imagemin-mozjpeg';
 import imageminSvgo from 'imagemin-svgo';
+const { extendDefaultPlugins } = require('svgo');
 import imageminJpegtran from 'imagemin-jpegtran';
 import yargs from 'yargs';
 import ImageMinifyArguments from '../../shared/interfaces/image-minify-arguments';
@@ -87,7 +88,10 @@ export default class ImageMinify {
               lossy: 2,
             }),
             imageminSvgo({
-              plugins: [{ removeViewBox: true }, { cleanupIDs: false }],
+              plugins: extendDefaultPlugins([
+                { name: 'removeViewBox', active: true },
+                { name: 'cleanupIDs', active: false },
+              ]),
             }),
             imageminJpegtran({
               progressive: true,
