@@ -10,11 +10,11 @@
   "scripts": {
     "jest:init": "jest --init",
     "jest:watch": "jest --watchAll",
-    "test": "jest",
-    "tsc:watch": "rm -Rf ./build && tsc --incremental --watch --pretty",
-    "tsc:build": "rm -Rf ./build && tsc --build --pretty",
-    "build": "rm -Rf ./build && npx ncc build ./src/index.ts -o ./bin/ -m",
-    "webpack:build": "webpack --config webpack.config.js --mode=production",
+    "test": "jest --runInBand --detectOpenHandles",
+    "tsc:watch": "rm -Rf ./bin && tsc --incremental --watch --pretty",
+    "tsc:build": "rm -Rf ./bin && tsc --build --pretty",
+    "build:clean": "rm -Rf ./bin/* ; exit 0",
+    "webpack:build": "npm run build:clean && webpack --config webpack.config.js --mode=production && echo #!/usr/bin/env node > dist/bin/www && cat ./dist/bin/www.js >> dist/bin/www && rm ./dist/bin/www.js",
     "package:update": "ncu -u && npm i --legacy-peer-deps && npm audit fix --legacy-peer-deps"
   },
   "keywords": [
@@ -45,14 +45,17 @@
     "@types/sharp": "^0.28.5",
     "@types/shelljs": "^0.8.9",
     "@types/yargs": "^17.0.2",
-    "@vercel/ncc": "^0.29.2",
     "jest": "^27.0.6",
+    "string-replace-loader": "^3.0.3",
     "ts-jest": "^27.0.5",
     "ts-loader": "^9.2.5",
+    "tsconfig-paths": "^3.11.0",
+    "tsconfig-paths-webpack-plugin": "^3.5.1",
     "typescript": "^4.4.2",
     "webpack": "^5.51.1",
     "webpack-cli": "^4.8.0",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "^5.8.0",
+    "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
     "beeper": "^3.0.0",
