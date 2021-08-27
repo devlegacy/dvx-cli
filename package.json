@@ -14,7 +14,7 @@
     "tsc:watch": "rm -Rf ./bin && tsc --incremental --watch --pretty",
     "tsc:build": "rm -Rf ./bin && tsc --build --pretty",
     "build:clean": "rm -Rf ./bin/* ; exit 0",
-    "webpack:build": "npm run build:clean && webpack --config webpack.config.js --mode=production && echo #!/usr/bin/env node > dist/bin/www && cat ./dist/bin/www.js >> dist/bin/www && rm ./dist/bin/www.js",
+    "webpack:build": "npm run build:clean && webpack --stats-error-details=true --config webpack.config.js --mode=production && echo #!/usr/bin/env node > dist/bin/www && cat ./dist/bin/www.js >> dist/bin/www && rm ./dist/bin/www.js",
     "package:update": "ncu -u && npm i --legacy-peer-deps && npm audit fix --legacy-peer-deps"
   },
   "keywords": [
