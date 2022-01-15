@@ -62,7 +62,7 @@
     "imagemin-zopfli": "^7.0.0",
     "node-notifier": "^8.0.0",
     "sharp": "^0.26.3",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "yargs": "^16.2.0"
   },
   "engines": {
