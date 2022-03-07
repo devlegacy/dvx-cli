@@ -11,7 +11,7 @@
     "jest:init": "jest --init",
     "jest:watch": "jest --watchAll",
     "test": "jest --runInBand --detectOpenHandles",
-    "tsc:watch": "npm run build:clean && tsc --project tsconfig.json --watch --pretty",
+    "tsc:watch": "npm run build:clean && tsc --project tsconfig.build.json --watch --pretty",
     "tsc:build": "npm run build:clean && tsc -p tsconfig.build.json",
     "build:clean": "rm -Rf ./bin/* ; exit 0",
     "webpack:build": "npm run build:clean && webpack --stats-error-details=true --config webpack.config.js --mode=production && echo #!/usr/bin/env node > dist/bin/www && cat ./dist/bin/www.js >> dist/bin/www && rm ./dist/bin/www.js",

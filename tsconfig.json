@@ -3,15 +3,15 @@
     "incremental": true,
     "target": "ES2020",
     "module": "commonjs",
-    "lib": ["es2020"],
+    "lib": ["esnext"],
     "declaration": true,
     "sourceMap": true,
     "outDir": "./bin",
-    "rootDir": "./src",
+    "rootDir": ".",
     "composite": true,
     "tsBuildInfoFile": "./",
     "removeComments": true,
-    "noEmit": false,
+    "noEmit": true,
     "importHelpers": true,
     "strict": true,
     "noImplicitAny": true,
@@ -24,7 +24,7 @@
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "newLine": "lf",
     "paths": {
       "@/*": ["./src/*"]
@@ -37,6 +37,5 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
-  },
-  "exclude": [".vscode", "./bin/**/*", "coverage", "node_modules", "tests"]
+  }
 }
