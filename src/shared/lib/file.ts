@@ -1,4 +1,4 @@
-import { FileInfoInterface } from '../shared/interfaces/file-info.interface';
+import { FileInfoInterface } from '../interfaces/file-info.interface';
 import { statSync, existsSync, writeFileSync, readFileSync } from 'fs-extra';
 import { EOL } from 'os';
 import { resolve, relative, parse, ParsedPath } from 'path';
@@ -88,7 +88,7 @@ export class File {
       dir: parsed.dir,
       file: parsed.base,
       name: parsed.name,
-      ext: parsed.ext,
+      ext: parsed.ext
     };
   }
 

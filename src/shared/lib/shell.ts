@@ -13,19 +13,19 @@ const validate = (command: SpawnSyncReturns<string>, errorMessage: string) => {
 };
 
 class Magick {
-  private downloadInfo =
-    'Download on https://www.imagemagick.org/script/download.php';
+  private downloadInfo = 'Download on https://www.imagemagick.org/script/download.php';
   validate(): string {
     const magick = spawnSync('magick', ['-version']);
+    // @ts-ignore
     return validate(magick, this.downloadInfo);
   }
 }
 
 class GraphicMagick {
-  private downloadInfo =
-    'Download on http://www.graphicsmagick.org/download.html';
+  private downloadInfo = 'Download on http://www.graphicsmagick.org/download.html';
   validate(): string {
     const gm = spawnSync('gm', ['-version']);
+    // @ts-ignore
     return validate(gm, this.downloadInfo);
   }
 }

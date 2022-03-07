@@ -1,6 +1,6 @@
-import { RuleSet } from 'htmlhint';
+import { Ruleset } from 'htmlhint/types';
 export default class Config {
-  public static readonly HTML_RULE_SET: RuleSet = {
+  public static readonly HTML_RULE_SET: Ruleset = {
     'alt-require': true,
     'attr-lowercase': true,
     'attr-no-duplication': true,
@@ -10,7 +10,7 @@ export default class Config {
     'doctype-first': true,
     'doctype-html5': true,
     'head-script-disabled': true,
-    'href-abs-or-rel': false,
+    'href-abs-or-rel': 'rel',
     'id-class-ad-disabled': false,
     'id-class-value': 'dash',
     'id-unique': true,
@@ -23,7 +23,7 @@ export default class Config {
     'tag-pair': true,
     'tag-self-close': false,
     'tagname-lowercase': true,
-    'title-require': true,
+    'title-require': true
   };
 
   public static readonly CSS_SOURCEMAP_REGEX = /\/[\*]\#\s+(sourceMappingURL\=.*\.(css)\.map)\s+[\*]\//g;
