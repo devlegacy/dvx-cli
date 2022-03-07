@@ -1,4 +1,4 @@
-import { File } from '../../../../src/lib/file';
+import { File } from '@/shared/lib/file';
 import { resolve, normalize } from 'path';
 import { ensureDirSync, emptyDirSync } from 'fs-extra';
 import { cwd } from 'process';
