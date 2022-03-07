@@ -17,7 +17,9 @@ module.exports = (env, { mode } = argv) => ({
   optimization: {
     minimize: true,
   },
-  entry,
+  entry: {
+    'index': './src/index.ts'
+  },
   context: __dirname,
   mode,
   module: {
