@@ -7,9 +7,9 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "./bin",
-    "rootDir": ".",
+    // "rootDir": "./",
     "composite": true,
-    "tsBuildInfoFile": "./",
+    // "tsBuildInfoFile": ".", // Tech debt: Cause error TS5033: Could not write file EISDIR: illegal operation on a directory
     "removeComments": true,
     "noEmit": true,
     "importHelpers": true,
@@ -24,7 +24,7 @@
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "newLine": "lf",
     "paths": {
       "@/*": ["./src/*"]
