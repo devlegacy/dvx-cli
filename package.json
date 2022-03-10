@@ -12,8 +12,8 @@
     "jest:watch": "jest --watchAll",
     "test": "jest --runInBand --detectOpenHandles",
     "tsc:watch": "npm run build:clean && tsc --project tsconfig.build.json --watch --pretty",
-    "tsc:build": "npm run build:clean && tsc -p tsconfig.build.json",
-    "build:clean": "rm -Rf ./bin/* ; exit 0",
+    "tsc:build": "npm run build:clean && tsc -p tsconfig.build.json && resolve-tspaths",
+    "build:clean": "rm -Rf ./bin/* ; exit 0;",
     "webpack:build": "npm run build:clean && webpack --stats-error-details=true --config webpack.config.js --mode=production && echo #!/usr/bin/env node > dist/bin/www && cat ./dist/bin/www.js >> dist/bin/www && rm ./dist/bin/www.js",
     "package:update": "ncu -u && npm i --legacy-peer-deps && npm audit fix --legacy-peer-deps"
   },
@@ -47,6 +47,7 @@
     "@types/shelljs": "^0.8.11",
     "@types/yargs": "^17.0.9",
     "jest": "^27.5.1",
+    "resolve-tspaths": "^0.2.4",
     "string-replace-loader": "^3.1.0",
     "ts-jest": "^27.1.3",
     "ts-loader": "^9.2.7",
