@@ -1,72 +1,76 @@
-import { writeFileSync } from 'fs-extra';
-import { sync } from 'glob';
-import { extname, resolve } from 'path';
-import sharp from 'sharp';
+import { Argv, InferredOptionTypes } from 'yargs';
+import { Command } from '@/shared/interfaces/command.interface';
+import { error, log, warn } from '@/shared/helpers/console';
 import { exec, exit, which } from 'shelljs';
-import {
-  ArgumentsCamelCase,
-  Argv,
-  InferredOptionType,
-  InferredOptionTypeInner,
-  InferredOptionTypes,
-  Options,
-  RequiredOptionType
-} from 'yargs';
-import { error, log, warn } from '../../shared/helpers/console';
-import { File } from '../../shared/lib/file';
-import { Notify } from '../../shared/lib/notify';
-
-const command = 'img:resize';
-
-const options = {
-  source: {
-    alias: 'src',
-    describe: 'Source path of the images to resize',
-    type: `string` as `string`,
-    default: 'src/assets/img/dist'
-  },
-  width: {
-    alias: 'w',
-    type: `number` as `number`,
-    describe: 'Set the width',
-    default: 1024
-  },
-  height: {
-    alias: 'h',
-    type: `number` as `number`,
-    describe: 'Set the height'
-  },
-  tool: {
-    alias: 't',
-    describe: 'Tool to use',
-    type: `string` as `string`,
-    default: 'mogrify',
-    choices: ['mogrify', 'sharp']
-  },
-  exclude: {
-    alias: 'e',
-    describe: 'Files to exclude / ignore, separated by spaces',
-    type: `array` as `array`,
-    default: ['opengraph']
-  }
-};
+import { extname } from 'path';
+import { File } from '@/shared/lib/file';
+import { Notify } from '@/shared/lib/notify';
+import { sync } from 'glob';
+import { writeFileSync } from 'fs-extra';
+import sharp from 'sharp';
 
 // type InferredOptionTypes<O extends { [key: string]: any }> = { [key in keyof O]: InferredOptionType<O[key]> };
 // type Argx = Argv<typeof options>;
 // type Op = { [Property in keyof typeof options]: Type[Property]['type'] };
 // type Arg1 = { [key: string]: Options } & typeof options;
 
-export type ResizeOptions = InferredOptionTypes<typeof options>;
+class ImageResize implements Command {
+  public readonly command = 'img:resize';
 
-export async function resize({ source, exclude, tool, width, height }: ResizeOptions) {
+  public readonly options = {
+    source: {
+      alias: 'src',
+      describe: 'Source path of the images to resize',
+      type: `string` as `string`,
+      default: 'src/assets/img/dist'
+    },
+    width: {
+      alias: 'w',
+      type: `number` as `number`,
+      describe: 'Set the width',
+      default: 1024
+    },
+    height: {
+      alias: 'h',
+      type: `number` as `number`,
+      describe: 'Set the height'
+    },
+    tool: {
+      alias: 't',
+      describe: 'Tool to use',
+      type: `string` as `string`,
+      default: 'mogrify',
+      choices: ['mogrify', 'sharp']
+    },
+    exclude: {
+      alias: 'e',
+      describe: 'Files to exclude / ignore, separated by spaces',
+      type: `array` as `array`,
+      default: ['opengraph']
+    }
+  };
+
+  public readonly description = 'Resize images to 1024px width';
+
+  handler(yargs: Argv) {
+    return yargs.command(this.command, this.description, this.options, async (args) => {
+      console.time(this.command);
+      await resize(args);
+      console.timeEnd(this.command);
+      Notify.info('Resize', 'End resize images task');
+    });
+  }
+}
+
+async function resize({ source, exclude, tool, width, height }: ResizeOptions) {
   const src = File.find(source);
 
   if (!src.isDirectory()) {
-    error(command, `Directory ${src.info.absolutePath} not found`);
+    error(imageResize.command, `Directory ${src.info.absolutePath} not found`);
     return;
   }
 
-  const files = sync(`${src.info.absolutePath}/**/*.+(png|jpeg|jpg)`, {
+  const files = sync(`${src.info.absolutePath}/**/*.+(png|jpe?g)`, {
     nodir: true
   }).filter((file) => {
     let include = true;
@@ -89,16 +93,11 @@ export async function resize({ source, exclude, tool, width, height }: ResizeOpt
   }
 }
 
-export default (yargs: Argv) => {
-  const description = 'Resize images to 1024px width';
+const imageResize = new ImageResize();
 
-  return yargs.command(command, description, options, async (args) => {
-    console.time(command);
-    await resize(args);
-    console.timeEnd(command);
-    Notify.info('Resize', 'End resize images task');
-  });
-};
+type ResizeOptions = InferredOptionTypes<typeof imageResize.options>;
+
+export { imageResize, ResizeOptions, resize };
 
 const useMogrify = async (file: any, width: any = 1024, height: any) => {
   const mogrify = 'mogrify';
@@ -134,25 +133,18 @@ const useMogrify = async (file: any, width: any = 1024, height: any) => {
   }
 };
 
-const useSharp = async (file: any, width: any = 1024, height: any) => {
-  let opts = {};
-  // TODO: read what is the default height for sharp
-  if (height) {
-    opts = {
-      width,
-      height
-    };
-  } else {
-    opts = {
-      width
-    };
-  }
-  const sharpFile = await sharp(file);
-  const resizeFile = await sharpFile.resize({
+const useSharp = async (file: any, width: number | undefined = 1024, height: number | undefined) => {
+  const opts = {
+    width,
+    height
+  };
+
+  const sharpFile = sharp(file);
+  const resizeFile = sharpFile.resize({
     ...opts,
     withoutEnlargement: true
   });
-  await resizeFile.toBuffer(function (err, buffer) {
+  resizeFile.toBuffer(function (err, buffer) {
     writeFileSync(file, buffer);
     log('[Resize]:', file);
   });

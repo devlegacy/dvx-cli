@@ -1,17 +1,10 @@
-// import { File } from '../../shared/lib/file';
+import { CommandVersion } from '@/shared/interfaces/command.interface';
+import { File } from '@/shared/lib/file';
 import Color from '@/shared/helpers/color';
-import shell from '../../shared/lib/shell';
-// const pkg: Record<string, unknown> = JSON.parse(File.find('../../../package.json', __dirname).read());
+import shell from '@/shared/lib/shell';
 
-interface IVersion {
-  optionKey: string;
-  description: string;
-  version: string;
-
-  build: [string, string, string];
-}
-
-class Version implements IVersion {
+const pkg: Record<string, unknown> = JSON.parse(File.find('../../../package.json', __dirname).read());
+class Version implements CommandVersion {
   #brand = `
   ____                      _                          ____ _     ___
  |  _ \\  _____   _______  _| |_ ___  __ _ _ __ ___    \/ ___| |   |_ _|
@@ -23,9 +16,9 @@ class Version implements IVersion {
     return Color.text.yellow(this.#brand);
   }
 
-  // get pkgVersion() {
-  //   return Color.text.yellow(`v${pkg.version}`);
-  // }
+  get pkgVersion() {
+    return Color.text.yellow(`v${pkg.version}`);
+  }
 
   get nodeVersion() {
     return Color.text.green(shell.node().version());
@@ -46,10 +39,10 @@ class Version implements IVersion {
   get optionKey() {
     return 'version';
   }
-  // Devexteam CLI\t: ${this.pkgVersion}
   get version() {
     return `${this.brand}
 
+Devexteam CLI\t: ${this.pkgVersion}
 Node.js\t\t: ${this.nodeVersion}
 OS\t\t: ${this.platform}
 ImageMagick\t: ${this.imageMagick}

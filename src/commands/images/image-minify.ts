@@ -1,42 +1,54 @@
 import { join, resolve } from 'path';
 import { sync } from 'glob';
-import { error, success } from '../../shared/helpers/console';
-import { File } from '../../shared/lib/file';
-import { Notify } from '../../shared/lib/notify';
+import { error, success } from '@/shared/helpers/console';
+import { File } from '@/shared/lib/file';
+import { Notify } from '@/shared/lib/notify';
 
 import imageminPngquant from 'imagemin-pngquant';
 import imageminJpegtran from 'imagemin-jpegtran';
 import imageminZopfli from 'imagemin-zopfli';
 import { Argv, InferredOptionTypes } from 'yargs';
+import { Command } from '@/shared/interfaces/command.interface';
 const imageminGiflossy = require('imagemin-giflossy');
 
-const command = 'img:minify';
+class ImageMinify implements Command {
+  public readonly command = 'img:minify';
 
-const options = {
-  source: {
-    alias: 'src',
-    describe: 'Image source path without optimization.',
-    type: 'string' as 'string',
-    default: 'src/assets/img/src'
-  },
-  distribution: {
-    alias: 'dist',
-    describe: 'Distribution path for optimized images.',
-    type: 'string' as 'string',
-    default: 'src/assets/img/dist'
+  public readonly options = {
+    source: {
+      alias: 'src',
+      describe: 'Image source path without optimization.',
+      type: 'string' as 'string',
+      default: 'src/assets/img/src'
+    },
+    distribution: {
+      alias: 'dist',
+      describe: 'Distribution path for optimized images.',
+      type: 'string' as 'string',
+      default: 'src/assets/img/dist'
+    }
+  };
+
+  public readonly description = 'Minify images';
+
+  handler(yargs: Argv) {
+    yargs.command(this.command, this.description, this.options, async (args) => {
+      console.time(this.command);
+      await minify(args);
+      console.timeEnd(this.command);
+      Notify.info('Minify', 'End minify image task');
+    });
   }
-};
+}
 
-export type MinifyOptions = InferredOptionTypes<typeof options>;
-
-export async function minify({ source, distribution }: MinifyOptions) {
+async function minify({ source, distribution }: MinifyOptions) {
   const { default: imagemin } = await import('imagemin');
   const { default: imageminMozjpeg } = await import('imagemin-mozjpeg');
   const { default: imageminSvgo } = await import('imagemin-svgo');
 
   const src = File.find(source);
   if (!src.isDirectory()) {
-    error(command, `\nDirectory ${src.info.absolutePath} not found`);
+    error(imageMinify.command, `\nDirectory ${src.info.absolutePath} not found`);
 
     return;
   }
@@ -102,7 +114,7 @@ export async function minify({ source, distribution }: MinifyOptions) {
         ]
       });
       success(
-        command,
+        imageMinify.command,
         '\n[from]\t:',
         File.find(images[0].sourcePath).info.path,
         '\n[to]\t:',
@@ -115,13 +127,7 @@ export async function minify({ source, distribution }: MinifyOptions) {
   }
 }
 
-export default (yargs: Argv) => {
-  const description = 'Minify images';
+const imageMinify = new ImageMinify();
+type MinifyOptions = InferredOptionTypes<typeof imageMinify.options>;
 
-  yargs.command(command, description, options, async (args) => {
-    console.time(command);
-    await minify(args);
-    console.timeEnd(command);
-    Notify.info('Minify', 'End minify image task');
-  });
-};
+export { imageMinify, MinifyOptions, minify };

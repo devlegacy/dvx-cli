@@ -1,41 +1,40 @@
-import { sync } from 'glob';
-import { HTMLHint } from 'htmlhint';
-
+import { Argv, InferredOptionTypes } from 'yargs';
 import { cwd } from 'process';
-import { Argv } from 'yargs';
-import { error, log } from '../../shared/helpers/console';
-import { File } from '../../shared/lib/file';
-import { Notify } from '../../shared/lib/notify';
-import Config from '../../shared/helpers/config';
+import { File } from '@/shared/lib/file';
 import { Hint, Ruleset } from 'htmlhint/types';
+import { HTMLHint } from 'htmlhint';
+import { log, warn } from '@/shared/helpers/console';
+import { Notify } from '@/shared/lib/notify';
+import Config from '@/shared/helpers/config';
+import { Command } from '@/shared/interfaces/command.interface';
 
 const htmlhintStylish = require('htmlhint-stylish');
 
-export default (yargs: Argv) => {
-  const command = 'html:validate';
-  const description =
-    'Validate html files with htmlhint. \nRead about rules on:\n- https://github.com/htmlhint/HTMLHint/wiki/Rules\n- https://htmlhint.com/docs/user-guide/list-rules';
+export type HtmlValidateOptions = InferredOptionTypes<typeof htmlValidate.options>;
 
-  return yargs.command(
-    command,
-    description,
-    {
-      source: {
-        alias: 'src',
-        describe: 'Source path of the html files.',
-        type: 'string',
-        default: 'public'
-      }
-    },
-    (args) => {
-      console.time(command);
+class HtmlValidate implements Command {
+  public readonly command = 'html:validate';
+  public readonly description =
+    'Validate html files with htmlhint. \nRead about rules on:\n- https://github.com/htmlhint/HTMLHint/wiki/Rules\n- https://htmlhint.com/docs/user-guide/list-rules';
+  public readonly options = {
+    source: {
+      alias: 'src',
+      describe: 'Source path of the html files.',
+      type: 'string' as 'string',
+      default: 'public'
+    }
+  };
+
+  public handler(yargs: Argv) {
+    return yargs.command(this.command, this.description, this.options, (args) => {
+      console.time(this.command);
 
       const { source } = args;
-      const files = sync(`${source}/**/*.+(html)`, { nodir: true });
+      const files = File.sync(`${source}/**/*.+(html)`);
 
       if (!files.length) {
-        error(command, 'HTML files not found');
-        return;
+        warn(this.command, 'HTML files not found');
+        process.exit(0);
       }
 
       /**
@@ -50,17 +49,15 @@ export default (yargs: Argv) => {
           file
         }))
         .map(({ fileContent, file }) =>
-          HTMLHint.verify(fileContent, ruleSet).map((lintResult: Hint) => {
-            return {
-              file,
-              error: lintResult
-            };
-          })
+          HTMLHint.verify(fileContent, ruleSet).map((lintResult: Hint) => ({
+            file,
+            error: lintResult
+          }))
         )
         .filter((lintResult) => lintResult.length !== 0);
 
       if (!lintResults.length) {
-        log(command, 'No html errors has found :)');
+        log(this.command, 'No html errors has found :)');
         return;
       }
 
@@ -72,9 +69,11 @@ export default (yargs: Argv) => {
           }
         });
       }
-      console.timeEnd(command);
+      console.timeEnd(this.command);
 
-      Notify.info(command, 'Done, watch console results');
-    }
-  );
-};
+      Notify.info(this.command, 'Done, watch results in console');
+    });
+  }
+}
+const htmlValidate = new HtmlValidate();
+export { htmlValidate };

@@ -1,8 +1,9 @@
 import { FileInfoInterface } from '../interfaces/file-info.interface';
 import { statSync, existsSync, writeFileSync, readFileSync } from 'fs-extra';
 import { EOL } from 'os';
-import { resolve, relative, parse, ParsedPath } from 'path';
+import { resolve, relative, parse } from 'path';
 import { cwd } from 'process';
+import { sync } from 'glob';
 
 /**
  * * Inspired in: https://github.com/JeffreyWay/laravel-mix/blob/master/src/File.js
@@ -31,6 +32,10 @@ export class File {
    */
   public static find(filePath: string, context: string = cwd()): File {
     return new File(filePath, context);
+  }
+
+  public static sync(pattern: string) {
+    return sync(pattern, { nodir: true });
   }
 
   /**

@@ -1,36 +1,51 @@
-import { sync } from 'glob';
-import { join, resolve } from 'path';
-import sharp from 'sharp';
-import { mkdir } from 'shelljs';
 import { Argv, InferredOptionTypes } from 'yargs';
-import { error, log, warn } from '../../shared/helpers/console';
-import { File } from '../../shared/lib/file';
-import { Notify } from '../../shared/lib/notify';
+import { Command } from '@/shared/interfaces/command.interface';
+import { error, log, warn } from '@/shared/helpers/console';
+import { File } from '@/shared/lib/file';
+import { join, resolve } from 'path';
+import { mkdir } from 'shelljs';
+import { Notify } from '@/shared/lib/notify';
+import { sync } from 'glob';
+import sharp from 'sharp';
 
-const command = 'img:towebp';
+class ImageToWebP implements Command {
+  public readonly command = 'img:towebp';
 
-const options = {
-  source: {
-    alias: 'src',
-    describe: 'Source path of the images to convert webp.',
-    type: 'string' as 'string',
-    default: 'src/assets/img/dist'
-  },
-  distribution: {
-    alias: 'dist',
-    describe: 'Distribution path for webp images.',
-    type: 'string' as 'string',
-    default: 'src/assets/img/dist/webp'
+  public readonly options = {
+    source: {
+      alias: 'src',
+      describe: 'Source path of the images to convert webp.',
+      type: 'string' as 'string',
+      default: 'src/assets/img/dist'
+    },
+    distribution: {
+      alias: 'dist',
+      describe: 'Distribution path for webp images.',
+      type: 'string' as 'string',
+      default: 'src/assets/img/dist/webp'
+    }
+  };
+
+  public readonly description = 'Format/Convert images to webp';
+
+  handler(yargs: Argv) {
+    yargs.command(this.command, this.description, this.options, async (args) => {
+      console.time(this.command);
+      await towebp(args);
+      console.timeEnd(this.command);
+      Notify.info('To webp', 'End images to webp task');
+    });
   }
-};
+}
 
-export type ToWebPOptions = InferredOptionTypes<typeof options>;
+const imageToWebP = new ImageToWebP();
+type ToWebPOptions = InferredOptionTypes<typeof imageToWebP.options>;
 
-export async function towebp({ source, distribution }: ToWebPOptions) {
+async function towebp({ source, distribution }: ToWebPOptions) {
   const src = File.find(source);
 
   if (!src.isDirectory()) {
-    error(command, `Directory ${src.info.absolutePath} not found`);
+    error(imageToWebP.command, `Directory ${src.info.absolutePath} not found`);
     return;
   }
 
@@ -68,13 +83,4 @@ export async function towebp({ source, distribution }: ToWebPOptions) {
   }
 }
 
-export default (yargs: Argv) => {
-  const description = 'Format/Convert images to webp';
-
-  yargs.command(command, description, options, async (args) => {
-    console.time(command);
-    await towebp(args);
-    console.timeEnd(command);
-    Notify.info('To webp', 'End images to webp task');
-  });
-};
+export { imageToWebP, ToWebPOptions, towebp };

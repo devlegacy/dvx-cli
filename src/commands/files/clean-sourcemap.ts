@@ -1,34 +1,33 @@
-import { Argv } from 'yargs';
-import { sync } from 'glob';
-import { File } from '../../shared/lib/file';
+import { Argv, InferredOptionTypes } from 'yargs';
+import { Command } from '@/shared/interfaces/command.interface';
 import { error, log } from '../../shared/helpers/console';
+import { File } from '../../shared/lib/file';
 import { Notify } from '../../shared/lib/notify';
+import { sync } from 'glob';
 import Config from '../../shared/helpers/config';
 
-export default (yargs: Argv) => {
-  const command = 'files:clean-sourcemaps';
-  const description =
+class CleanSourcemap implements Command {
+  public readonly command = 'files:clean-sourcemaps';
+  public readonly description =
     'Clean sourcemaps comments (/*# sourceMappingURL=foo.css.map */) in css files that can cause conflicts in compilation or packaging';
-
-  return yargs.command(
-    command,
-    description,
-    {
-      source: {
-        alias: 'src',
-        describe: 'Source path of the files',
-        type: 'string',
-        default: './node_modules/'
-      },
-      packages: {
-        alias: 'pkg',
-        describe: 'List of npm packages with CSS files to clean',
-        type: 'array',
-        default: ['bootstrap-datepicker', 'tinymce']
-      }
+  public readonly options = {
+    source: {
+      alias: 'src',
+      describe: 'Source path of the files',
+      type: 'string' as 'string',
+      default: './node_modules/'
     },
-    (args) => {
-      console.time(command);
+    packages: {
+      alias: 'pkg',
+      describe: 'List of npm packages with CSS files to clean',
+      type: 'array' as 'array',
+      default: ['bootstrap-datepicker', 'tinymce']
+    }
+  };
+
+  public handler(yargs: Argv) {
+    return yargs.command(this.command, this.description, this.options, (args) => {
+      console.time(this.command);
 
       const pkg = getPackageJson();
       console.log(args.packages);
@@ -61,11 +60,11 @@ export default (yargs: Argv) => {
         file.write(replaced);
         log('[File]:', file.info.path);
       });
-      console.timeEnd(command);
-      Notify.info(command, 'Done, watch console results');
-    }
-  );
-};
+      console.timeEnd(this.command);
+      Notify.info(this.command, 'Done, watch console results');
+    });
+  }
+}
 
 const getPackageJson = () => {
   const packageJson = File.find('package.json');
@@ -84,3 +83,8 @@ const getDirectory = (source: string, pkg: string): File => {
   }
   return dir;
 };
+
+const cleanSourcemap = new CleanSourcemap();
+type CleanSourcemapOptions = InferredOptionTypes<typeof cleanSourcemap.options>;
+
+export { cleanSourcemap, CleanSourcemapOptions };
