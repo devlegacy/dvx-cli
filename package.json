@@ -8,6 +8,7 @@
     "dvx": "bin/index.js"
   },
   "scripts": {
+    "build": "rm -f tsconfig.build.tsbuildinfo && npm run tsc:build",
     "jest:init": "jest --init",
     "jest:watch": "jest --watchAll",
     "test": "jest --runInBand --detectOpenHandles",
@@ -75,7 +76,7 @@
     "imagemin-webp": "^7.0.0",
     "imagemin-zopfli": "^7.0.0",
     "node-notifier": "^10.0.1",
-    "sharp": "^0.30.2",
+    "sharp": "^0.30.3",
     "shelljs": "^0.8.5",
     "yargs": "^17.3.1"
   },
