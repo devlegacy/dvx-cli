@@ -5,7 +5,6 @@ import { exec, exit, which } from 'shelljs';
 import { extname } from 'path';
 import { File } from '@/shared/lib/file';
 import { Notify } from '@/shared/lib/notify';
-import { sync } from 'glob';
 import { writeFileSync } from 'fs-extra';
 import sharp from 'sharp';
 
@@ -39,8 +38,8 @@ class ImageResize implements Command {
       alias: 't',
       describe: 'Tool to use',
       type: `string` as `string`,
-      default: 'mogrify',
-      choices: ['mogrify', 'sharp']
+      default: 'sharp',
+      choices: ['sharp', 'mogrify']
     },
     exclude: {
       alias: 'e',
@@ -50,7 +49,7 @@ class ImageResize implements Command {
     }
   };
 
-  public readonly description = 'Resize images to 1024px width';
+  public readonly description = 'Resize images, fixes to 1024px width';
 
   handler(yargs: Argv) {
     return yargs.command(this.command, this.description, this.options, async (args) => {
@@ -67,19 +66,18 @@ async function resize({ source, exclude, tool, width, height }: ResizeOptions) {
 
   if (!src.isDirectory()) {
     error(imageResize.command, `Directory ${src.info.absolutePath} not found`);
-    return;
+    exit(0);
   }
 
-  const files = sync(`${src.info.absolutePath}/**/*.+(png|jpe?g)`, {
-    nodir: true
-  }).filter((file) => {
+  const files = File.sync(`${src.info.absolutePath}/**/*.+(png|jpe?g)`).filter((file) => {
     let include = true;
-    exclude.forEach((exclude: any) => {
-      if (file.includes(exclude)) {
+    for (const patter of exclude) {
+      if (file.includes(patter)) {
         warn('[Resize]:', `File excluded: ${file}, contains: ${exclude}`);
         include = !include;
+        break;
       }
-    });
+    }
 
     return include;
   });
@@ -88,7 +86,7 @@ async function resize({ source, exclude, tool, width, height }: ResizeOptions) {
     if (tool === 'mogrify') {
       await useMogrify(file, width, height);
     } else if (tool === 'sharp') {
-      await useSharp(file, width, height);
+      await useSharp(file, width, height, src);
     }
   }
 }
@@ -133,7 +131,7 @@ const useMogrify = async (file: any, width: any = 1024, height: any) => {
   }
 };
 
-const useSharp = async (file: any, width: number | undefined = 1024, height: number | undefined) => {
+const useSharp = async (file: string, width: number | undefined = 1024, height: number | undefined, src: File) => {
   const opts = {
     width,
     height
