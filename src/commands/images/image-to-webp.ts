@@ -76,7 +76,7 @@ async function towebp({ source, distribution }: ToWebPOptions) {
       const fileName = resolve(destination.info.absolutePath, `${file.info.name}.webp`);
       const data = await sharp(file.info.absolutePath).webp({ lossless: true }).toBuffer();
       await sharp(data).toFile(fileName);
-      log('[ToWebP]:', File.find(fileName).info.path);
+      log('[ToWebP]:', fileName);
     } catch (e) {
       error('[ToWebP]:', e);
     }

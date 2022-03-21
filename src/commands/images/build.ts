@@ -34,8 +34,8 @@ class ImageBuilder implements Command {
       alias: 't',
       describe: 'Tool to use',
       type: 'string' as 'string',
-      default: 'mogrify',
-      choices: ['mogrify', 'sharp']
+      default: 'sharp',
+      choices: ['sharp', 'mogrify']
     },
     exclude: {
       alias: 'e',
