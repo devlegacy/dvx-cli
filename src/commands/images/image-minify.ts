@@ -1,6 +1,5 @@
 import { join, resolve } from 'path';
-import { sync } from 'glob';
-import { error, success } from '@/shared/helpers/console';
+import { error, success, warn } from '@/shared/helpers/console';
 import { File } from '@/shared/lib/file';
 import { Notify } from '@/shared/lib/notify';
 
@@ -9,6 +8,7 @@ import imageminJpegtran from 'imagemin-jpegtran';
 import imageminZopfli from 'imagemin-zopfli';
 import { Argv, InferredOptionTypes } from 'yargs';
 import { Command } from '@/shared/interfaces/command.interface';
+import { exit } from 'process';
 const imageminGiflossy = require('imagemin-giflossy');
 
 class ImageMinify implements Command {
@@ -49,17 +49,20 @@ async function minify({ source, distribution }: MinifyOptions) {
   const src = File.find(source);
   if (!src.isDirectory()) {
     error(imageMinify.command, `\nDirectory ${src.info.absolutePath} not found`);
-
-    return;
+    exit(0);
   }
+  warn('[Minify]:', 'search in:', src.info.absolutePath);
 
   const dist = File.find(distribution);
+  warn('[Minify]:', 'result in:', dist.info.absolutePath);
   // Notify.info('Minify', 'Start minify image task');
 
-  const files = sync(`${src.info.absolutePath}/**/*.+(png|jpeg|jpg|gif|svg)`, {
-    nodir: true
-  }).map((file) => {
+  const files = File.sync(`${src.info.absolutePath}/**/*.+(png|jpeg|jpg|gif|svg)`).map((file) => {
+    // [input]: /dvx-demo-project/src/assets/img/src/webpack/webpack.png
+    // [output]: /webpack/webpack.png
     const distDir = File.find(file).info.dir.replace(src.info.absolutePath, '');
+    // [input]: /webpack/webpack.png
+    // [output]: /dvx-demo-project/src/assets/img/dist/webpack
     const destination =
       distDir.startsWith('\\') || distDir.startsWith('/')
         ? join(dist.info.absolutePath, distDir)
@@ -113,13 +116,10 @@ async function minify({ source, distribution }: MinifyOptions) {
           })
         ]
       });
-      success(
-        imageMinify.command,
-        '\n[from]\t:',
-        File.find(images[0].sourcePath).info.path,
-        '\n[to]\t:',
-        File.find(images[0].destinationPath).info.path
-      );
+      // Note: Extra process, evaluate
+      // File.find(images[0].sourcePath).info.path
+      // File.find(images[0].destinationPath).info.path
+      success(imageMinify.command, '\n[from]\t:', images[0].sourcePath, '\n[to]\t:', images[0].destinationPath);
       //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
     } catch (e) {
       error('[Minify]: ', `${file}\n${e}`);
