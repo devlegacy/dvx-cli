@@ -76,24 +76,6 @@ Integration and encapsulation of utilities (sharp, imagemin, htmlhint, ImageMagi
 │  │  │  ├─ :open_file_folder: `src/`
 
 
-<h2 id="" align="center">Examples</h2>
-
-### Images
-<!-- https://raw.githubusercontent.com/devlegacy/dvx-cli/master/assets/ -->
-![After img:build](./assets/img/minify.png)
-![After img:build](./assets/img/towebp.png)
-![After img:build](./assets/img/resize.png)
-
-Result after run `dvx img:build`
-
-![After img:build](./assets/img/after-build.png)
-
-### HTML
-
-![HTML validation without errors](./assets/img/validate.png)
-
-![HTML validation with errors](./assets/img/validate-error.png)
-
 <h2 id="" align="center">Sponsoring</h2>
 
 Thank you for reading :heart:. The feedback is appreciated.
