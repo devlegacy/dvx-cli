@@ -139,3 +139,106 @@ const argv = yargs.option('difficulty', {
   demandOption: true
 }).argv;
 ```
+
+
+```js
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
+import { Arguments } from 'yargs';
+
+const cli = yargs(hideBin(process.argv))
+  .scriptName('dvx')
+  .usage('$0 <cmd> [args]')
+  .command(
+    'hello [name]',
+    'welcome ter yargs!',
+    (yargs) => {
+      yargs.positional('name', {
+        type: 'string',
+        default: 'Cambi',
+        describe: 'the name to say hello to'
+      });
+    },
+    function (argv) {
+      console.log('hello', argv.name, 'welcome to yargs!');
+    }
+  )
+  .command(
+    'download <files...>',
+    'download a list of files',
+    (yargs: any) => {
+      return yargs.positional('files', {
+        describe: 'a list of files to do something with'
+      });
+    },
+    (argv: Arguments) => {
+      console.info(argv);
+    }
+  )
+  .command(
+    'curl <url>',
+    'fetch the contents of the URL',
+    () => {},
+    (argv) => {
+      console.info(argv);
+    }
+  )
+  .help();
+
+cli.argv;
+
+console.log(cli.argv);
+
+```
+//
+
+// args: Argv<
+//   InferredOptionTypes<{
+//     [key in keyof typeof HtmlValidate.builder]: typeof HtmlValidate.builder[key];
+//   }>
+// >;
+
+// {
+//   [key in keyof typeof HtmlValidate.builder]: InferredOptionType<typeof HtmlValidate.builder[key]>;
+// }
+
+
+/**
+ ** Notes:
+ ** dvx files:clean-sourcemaps --pkg=bootstrap-datepicker datepicker
+ *
+ ** We can use the command:
+ * find ./node_modules/tinymce/ -regex ".*\.\(css\|css\)$" -exec sed -i -E "/\/[\*]\#\s+(sourceMappingURL\=.*\.(css)\.map)\s+[\*]\//g" {}
+ *
+  exec(
+    `find ${dir.absolutePath} -regex ".*\\.\\(css\\)$" -exec sed -i -E "s/\\/[\\*]\\#\\s+(sourceMappingURL\\=.*\\.(css)\\.map)\\s+[\\*]\\//\\/\\*\\*\\//g" {} \;`,
+    (err, stdout, stderr) => {
+      if (err) {
+        error('[files:clear-sourcemap-comments-from-css]:', err);
+      }
+      log('[files:clear-sourcemap-comments-from-css]:', package);
+      // log("err: ", err);
+      log('stdout: ', stdout);
+      log('stderr: ', stderr);
+    }
+  );
+ */
+
+find . -name "*.bak" -type f
+find . -name "*.bak" -type f -delete
+Promise.resolve().then(() => tslib_1.__importStar(require
+Promise.resolve().then(() => tslib_1.__importStar(require
+Promise.resolve().then(() => tslib_1.__importStar(require
+## To do
+
+- [ ] Pendiente hacer las tareas con async y await para que img:build pueda funcionar de manera asíncrona.
+- [ ] Poner alertas visibles*
+- [ ] du -hs
+- [ ] Add notifications
+
+## Test
+
+```sh
+  npm test -- --coverage
+  npm test -- --updateSnapshot
+```

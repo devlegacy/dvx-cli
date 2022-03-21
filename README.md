@@ -1,44 +1,51 @@
 # Devexteam CLI
 
-<h2 id="" align="center">Install</h2>
+<h2 id="" align="center">📦 Install</h2>
 
-```bash
+```sh
   # Global
   npm install -g @devexteam/dvx-cli
+```
 
-  # In project
+```sh
+  # In personal project
+  ## As dev dependency
   npm install --save-dev @devexteam/dvx-cli
+  ## As optional dependency
+  npm install --save-optional @devexteam/dvx-cli
 ```
 
-<h2 id="" align="center">Show current version</h2>
+<h2 id="" align="center">🚀 How to use</h2>
+<h3 id="" align="center">Show current version</h3>
 
-```bash
-> dvx -v
+```sh
+  dvx --version
 ```
 
-<h2 id="" align="center">Show help</h2>
+<h3 id="" align="center">🔍 Show help</h3>
 
-```bash
-> dvx -h
+```sh
+  dvx --help
 ```
 
 ```console
 # Expected output:
 Devexteam CLI
-dvx <cmd> [args]
+Recommend usage: dvx <cmd> [args]
 
 Commands:
-  dvx files:clear-sourcemap-comments-in-css  Clean sourcemaps comments (/*#
-                                             sourceMappingURL=foo.css.map */) in css files that
-                                             can cause conflicts in compilation or packaging
-  dvx html:validate                          Validate html files with htmlhint.
-  dvx img:build                              Process images (minify, convert to webp and
-                                             resize).
-  dvx img:minify                             Minify images
-  dvx img:resize                             Resize images to 1024px width
-  dvx img:towebp                             Format/Convert images to webp
+  dvx img:minify              Minify images
+  dvx img:towebp              Format/Convert images to webp
+  dvx img:resize              Resize images to 1024px width
+  dvx img:build               Process images (minify, convert to webp and resize).
+  dvx html:validate           Validate html files with htmlhint.
+                              Read about rules on:
+                              - https://github.com/htmlhint/HTMLHint/wiki/Rules
+                              - https://htmlhint.com/docs/user-guide/list-rules
+  dvx files:clean-sourcemaps  Clean sourcemaps comments (/*# sourceMappingURL=foo.css.map */)
+                              in css files that can cause conflicts in compilation or packaging
 
-https://devexteam.com - Copyright 2020
+https://devexteam.com - Copyright 2022
 ```
 
 <h2 id="" align="center">Synopsis</h2>
@@ -69,28 +76,48 @@ Integration and encapsulation of utilities (sharp, imagemin, htmlhint, ImageMagi
 &nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :file_folder: `src`
 
 
+:open_file_folder: `project-name/`
+├─ :open_file_folder: `src/`
+│  ├─ :open_file_folder: `assets/`
+│  │  ├─ :open_file_folder: `img/`
+│  │  │  ├─ :open_file_folder: `dist/`
+│  │  │  ├─ :open_file_folder: `src/`
+
+:open_file_folder: `project-name/`
+└── :open_file_folder: `src/`
+    └── :open_file_folder: `assets/`
+        └── :open_file_folder: `img/`
+            ├── :open_file_folder: `dist`
+            └── :open_file_folder: `src`
+
+:open_file_folder: `project-name/`
+└──&nbsp;:open_file_folder: `src/`
+&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;:open_file_folder: `assets/`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;:open_file_folder: `img/`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;:open_file_folder: `dist`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;:open_file_folder: `src`
+
 <h2 id="" align="center">Examples</h2>
 
 ### Images
-
-![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/minify.PNG)
-![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/towebp.PNG)
-![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/resize.PNG)
+<!-- https://raw.githubusercontent.com/devlegacy/dvx-cli/master/assets/ -->
+![After img:build](./assets/img/minify.png)
+![After img:build](./assets/img/towebp.png)
+![After img:build](./assets/img/resize.png)
 
 Result after run `dvx img:build`
 
-![After img:build](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/after-build.PNG)
+![After img:build](./assets/img/after-build.png)
 
 ### HTML
 
-![HTML validation without errors](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/validate.PNG)
+![HTML validation without errors](./assets/img/validate.png)
 
-![HTML validation with errors](https://raw.githubusercontent.com/devlegacy/dvx-cli/master/docs/validate-error.PNG)
+![HTML validation with errors](./assets/img/validate-error.png)
 
 <h2 id="" align="center">Sponsoring</h2>
 
-Thank you for reading :heart:. The feedback is appreciated.  
+Thank you for reading :heart:. The feedback is appreciated.
 If you liked the project, it has been useful and you want to support the development or you simply want to invite me a coffee, you can do it via paypal with the following link:
 
 [![Donate](https://www.paypalobjects.com/en_US/MX/i/btn/btn_donateCC_LG.gif)](http://paypal.me/devlegacymx)
-
