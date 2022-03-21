@@ -33,7 +33,7 @@
     "bin": "bin"
   },
   "author": "Samuel R. <samuel@devexteam.com>",
-  "private": true,
+  "private": false,
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/htmlhint": "^1.1.2",
