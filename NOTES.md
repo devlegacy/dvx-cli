@@ -264,3 +264,7 @@ Result after run `dvx img:build`
 ![HTML validation without errors](./assets/img/validate.png)
 
 ![HTML validation with errors](./assets/img/validate-error.png)
+
+npm publish --dry-run
+"bin",
+"bin/**/*.js",
