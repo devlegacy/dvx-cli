@@ -1,18 +1,16 @@
-import { Notify } from '../../../../src/lib/notify';
-import Notifier from 'node-notifier';
+import { Notify } from '@/shared/lib/notify';
+import Notifier, { NotificationCallback } from 'node-notifier';
 import NotificationCenter from 'node-notifier/notifiers/notificationcenter';
 
 describe('Custom Notifier', () => {
   let notifier: jest.SpyInstance<
     NotificationCenter,
-    [title?: string | undefined, message?: string | undefined]
+    [title?: string | undefined, message?: string | undefined, cb?: NotificationCallback | undefined]
   >;
   beforeEach(() => {
-    notifier = jest
-      .spyOn(Notify, 'info')
-      .mockImplementation((title: string = '', message: string = '') => {
-        return Notifier.notify();
-      });
+    notifier = jest.spyOn(Notify, 'info').mockImplementation((title: string = '', message: string = '') => {
+      return Notifier.notify();
+    });
   });
   afterEach(() => {
     notifier.mockClear();

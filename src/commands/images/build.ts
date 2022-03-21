@@ -1,42 +1,64 @@
-const { handler: minify } = require('./minify');
-const { handler: towebp } = require('./towebp');
-const { handler: resize } = require('./resize');
+import { Argv, InferredOptionTypes } from 'yargs';
+import { Command } from '@/shared/interfaces/command.interface';
+import { minify } from './image-minify';
+import { resize } from './image-resize';
+import { towebp } from './image-to-webp';
 
-module.exports = {
-  command: 'img:build',
-  description: 'Process images (minify, convert to webp and resize).',
-  options: {
+class ImageBuilder implements Command {
+  public readonly command = 'img:build';
+  public readonly options = {
     source: {
       alias: 'src',
       describe: 'Source path of the images without optimization.',
-      type: 'string',
-      default: 'src/assets/img/src',
+      type: 'string' as 'string',
+      default: 'src/assets/img/src'
     },
     distribution: {
       alias: 'dist',
       describe: 'Distribution path for optimized image .',
-      type: 'string',
-      default: 'src/assets/img/dist',
+      type: 'string' as 'string',
+      default: 'src/assets/img/dist'
     },
-    use: {
+    width: {
+      alias: 'w',
+      type: 'number' as 'number',
+      describe: 'Set the width',
+      default: 1024
+    },
+    height: {
+      alias: 'h',
+      type: 'number' as 'number',
+      describe: 'Set the height'
+    },
+    tool: {
+      alias: 't',
       describe: 'Tool to use',
-      type: 'string',
-      default: 'sharp',
-      choices: ['mogrify', 'sharp'],
+      type: 'string' as 'string',
+      default: 'mogrify',
+      choices: ['mogrify', 'sharp']
     },
     exclude: {
-      alias: 'exc',
+      alias: 'e',
       describe: 'Files to exclude / ignore, separated by spaces',
-      type: 'array',
-      default: ['opengraph'],
-    },
-  },
-  handler: async (args: any) => {
-    const dist = args.dist;
-    await minify(args);
-    args.dist = 'src/assets/img/dist/webp';
-    await towebp(args);
-    args.src = dist;
-    await resize(args);
-  },
-};
+      type: 'array' as 'array',
+      default: ['opengraph']
+    }
+  };
+
+  public readonly description = 'Process images (minify, convert to webp and resize).';
+
+  handler(yargs: Argv) {
+    return yargs.command(this.command, this.description, this.options, async (args) => {
+      const dist = args.distribution;
+      await minify(args);
+      args.distribution = 'src/assets/img/dist/webp';
+      await towebp(args);
+      args.source = dist;
+      await resize(args);
+    });
+  }
+}
+const imageBuilder = new ImageBuilder();
+type BuildOptions = InferredOptionTypes<typeof imageBuilder.options>;
+
+export { imageBuilder, BuildOptions };

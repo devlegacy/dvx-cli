@@ -1,10 +1,13 @@
-// Inspired in: https://github.com/JeffreyWay/laravel-mix/blob/master/src/File.js
-import { FileInfoInterface } from '../shared/interfaces/file-info.interface';
-import { resolve, relative, parse, ParsedPath } from 'path';
+import { FileInfoInterface } from '../interfaces/file-info.interface';
 import { statSync, existsSync, writeFileSync, readFileSync } from 'fs-extra';
-import os from 'os';
+import { EOL } from 'os';
+import { resolve, relative, parse } from 'path';
 import { cwd } from 'process';
+import { sync } from 'glob';
 
+/**
+ * * Inspired in: https://github.com/JeffreyWay/laravel-mix/blob/master/src/File.js
+ */
 export class File {
   private absolutePath: string;
   private filePath: string;
@@ -12,7 +15,8 @@ export class File {
 
   /**
    * Create a new instance of file class
-   * @param {string} filePath
+   * @param {string} filePath - File path
+   * @param {string} context - Context
    */
   constructor(filePath: string, context: string = cwd()) {
     this.absolutePath = resolve(context, filePath);
@@ -22,41 +26,25 @@ export class File {
 
   /**
    * Static constructor
-   * @param {string} file
-   * @return {File} File;
+   * @param {string} file - File path
+   * @param {string} context - Context
+   * @return {File} File
    */
   public static find(filePath: string, context: string = cwd()): File {
     return new File(filePath, context);
   }
 
+  public static sync(pattern: string) {
+    return sync(pattern, { nodir: true });
+  }
+
   /**
-   * Determine if the given file exists.r
+   * Determine if the given file exists.
    *
    * @param {string} file
    */
   public static exists(file: string): boolean {
     return existsSync(file);
-  }
-
-  /**
-   * Get info about filePath
-   */
-  private parse(): FileInfoInterface {
-    /**
-     * Read more on: https://nodejs.org/dist/latest-v10.x/docs/api/path.html#path_path_parse_path
-     */
-    const parsed: ParsedPath = parse(this.absolutePath);
-
-    return {
-      isDir: this.isDirectory(),
-      isFile: this.isFile(),
-      path: this.filePath,
-      absolutePath: this.path(),
-      dir: parsed.dir,
-      file: parsed.base,
-      name: parsed.name,
-      ext: parsed.ext,
-    };
   }
 
   /**
@@ -86,6 +74,27 @@ export class File {
    */
   public path(): string {
     return this.absolutePath;
+  }
+
+  /**
+   * Parse the file path and get info about filePath
+   */
+  private parse(): FileInfoInterface {
+    /**
+     * Read more on: https://nodejs.org/dist/latest-v10.x/docs/api/path.html#path_path_parse_path
+     */
+    const parsed = parse(this.absolutePath);
+
+    return {
+      isDir: this.isDirectory(),
+      isFile: this.isFile(),
+      path: this.filePath,
+      absolutePath: this.path(),
+      dir: parsed.dir,
+      file: parsed.base,
+      name: parsed.name,
+      ext: parsed.ext
+    };
   }
 
   /**
@@ -133,7 +142,7 @@ export class File {
       body = JSON.stringify(body, null, 4);
     }
 
-    body = body + os.EOL;
+    body = body + EOL;
 
     writeFileSync(this.absolutePath, body);
 

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "noEmit": false,
+    "pretty": true,
+    "removeComments": true
+  },
+  "exclude": [".vscode", "./bin/**/*", "coverage", "node_modules", "tests"]
+}

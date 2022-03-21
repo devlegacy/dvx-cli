@@ -8,7 +8,8 @@
 - Add permission: `chmod +x ./cli.js`
 - Move: `mv ./cli.js /usr/bin/`
 - where is?: `where dvx`
-- [Read more on stackoverflow:](https://stackoverflow.com/questions/20643470/execute-a-command-line-binary-with-node-js)
+- Size on end: `du -sh ./src/img/src/`
+- [Read more on stackoverflow:](https://stackoverflow.com/questions/20643470/execute-a-command-line-binary-with-node-js "stackoverflow")
 
 ## Console name
 
@@ -60,3 +61,206 @@ c(process.cwd());
 c(process.argv);
 c(process.argv0);
 ```
+
+## Examples TS with yargs
+
+```ts
+#!/usr/bin/env node
+
+import yargs, { Argv } from 'yargs';
+
+let argv = yargs
+    .command('serve', "Start the server.", (yargs: Argv) => {
+        return yargs.option('port', {
+            describe: "Port to bind on",
+            default: "5000",
+        }).option('verbose', {
+            alias: 'v',
+            default: false,
+        })
+    }).argv;
+
+if (argv.verbose) {
+    console.info("Verbose mode on.");
+}
+
+serve(argv.port);
+
+function serve(port: string) {
+    console.info(`Serve on port ${port}.`);
+}
+```
+
+```ts
+#!/usr/bin/env node
+import yargs, { Argv } from 'yargs';
+
+const argv = yargs(process.argv.slice(2)).options({
+  a: { type: 'boolean', default: false },
+  b: { type: 'string', demandOption: true },
+  c: { type: 'number', alias: 'chill' },
+  d: { type: 'array' },
+  e: { type: 'count' },
+  f: { choices: ['1', '2', '3'] }
+}).argv;
+```
+
+```ts
+#!/usr/bin/env node
+import yargs, { Argv } from 'yargs';
+interface Arguments {
+    [x: string]: unknown;
+    a: boolean;
+    b: string;
+    c: number | undefined;
+    d: (string | number)[] | undefined;
+    e: number;
+    f: string | undefined;
+  }
+const argv:Arguments = yargs(process.argv.slice(2)).options({
+  a: { type: 'boolean', default: false },
+  b: { type: 'string', demandOption: true },
+  c: { type: 'number', alias: 'chill' },
+  d: { type: 'array' },
+  e: { type: 'count' },
+  f: { choices: ['1', '2', '3'] }
+}).argv;
+```
+
+```ts
+#!/usr/bin/env node
+import yargs, { Argv } from 'yargs';
+
+type Difficulty = 'normal' | 'nightmare' | 'hell';
+const difficulties: ReadonlyArray<Difficulty> = ['normal', 'nightmare', 'hell'];
+
+const argv = yargs.option('difficulty', {
+  choices: difficulties,
+  demandOption: true
+}).argv;
+```
+
+
+```js
+import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
+import { Arguments } from 'yargs';
+
+const cli = yargs(hideBin(process.argv))
+  .scriptName('dvx')
+  .usage('$0 <cmd> [args]')
+  .command(
+    'hello [name]',
+    'welcome ter yargs!',
+    (yargs) => {
+      yargs.positional('name', {
+        type: 'string',
+        default: 'Cambi',
+        describe: 'the name to say hello to'
+      });
+    },
+    function (argv) {
+      console.log('hello', argv.name, 'welcome to yargs!');
+    }
+  )
+  .command(
+    'download <files...>',
+    'download a list of files',
+    (yargs: any) => {
+      return yargs.positional('files', {
+        describe: 'a list of files to do something with'
+      });
+    },
+    (argv: Arguments) => {
+      console.info(argv);
+    }
+  )
+  .command(
+    'curl <url>',
+    'fetch the contents of the URL',
+    () => {},
+    (argv) => {
+      console.info(argv);
+    }
+  )
+  .help();
+
+cli.argv;
+
+console.log(cli.argv);
+
+```
+//
+
+// args: Argv<
+//   InferredOptionTypes<{
+//     [key in keyof typeof HtmlValidate.builder]: typeof HtmlValidate.builder[key];
+//   }>
+// >;
+
+// {
+//   [key in keyof typeof HtmlValidate.builder]: InferredOptionType<typeof HtmlValidate.builder[key]>;
+// }
+
+
+/**
+ ** Notes:
+ ** dvx files:clean-sourcemaps --pkg=bootstrap-datepicker datepicker
+ *
+ ** We can use the command:
+ * find ./node_modules/tinymce/ -regex ".*\.\(css\|css\)$" -exec sed -i -E "/\/[\*]\#\s+(sourceMappingURL\=.*\.(css)\.map)\s+[\*]\//g" {}
+ *
+  exec(
+    `find ${dir.absolutePath} -regex ".*\\.\\(css\\)$" -exec sed -i -E "s/\\/[\\*]\\#\\s+(sourceMappingURL\\=.*\\.(css)\\.map)\\s+[\\*]\\//\\/\\*\\*\\//g" {} \;`,
+    (err, stdout, stderr) => {
+      if (err) {
+        error('[files:clear-sourcemap-comments-from-css]:', err);
+      }
+      log('[files:clear-sourcemap-comments-from-css]:', package);
+      // log("err: ", err);
+      log('stdout: ', stdout);
+      log('stderr: ', stderr);
+    }
+  );
+ */
+
+find . -name "*.bak" -type f
+find . -name "*.bak" -type f -delete
+Promise.resolve().then(() => tslib_1.__importStar(require
+Promise.resolve().then(() => tslib_1.__importStar(require
+Promise.resolve().then(() => tslib_1.__importStar(require
+## To do
+
+- [ ] Pendiente hacer las tareas con async y await para que img:build pueda funcionar de manera asíncrona.
+- [ ] Poner alertas visibles*
+- [ ] du -hs
+- [ ] Add notifications
+
+## Test
+
+```sh
+  npm test -- --coverage
+  npm test -- --updateSnapshot
+```
+
+const { default: imagemin } = await import('imagemin');
+const { default: imageminMozjpeg } = await import('imagemin-mozjpeg');
+const { default: imageminSvgo } = await import('imagemin-svgo');
+
+<h2 id="" align="center">Examples</h2>
+
+### Images
+<!-- https://raw.githubusercontent.com/devlegacy/dvx-cli/master/assets/ -->
+![After img:build](./assets/img/minify.png)
+![After img:build](./assets/img/towebp.png)
+![After img:build](./assets/img/resize.png)
+
+Result after run `dvx img:build`
+
+![After img:build](./assets/img/after-build.png)
+
+### HTML
+
+![HTML validation without errors](./assets/img/validate.png)
+
+![HTML validation with errors](./assets/img/validate-error.png)

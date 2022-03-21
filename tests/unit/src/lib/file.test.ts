@@ -1,4 +1,4 @@
-import { File } from '../../../../src/lib/file';
+import { File } from '@/shared/lib/file';
 import { resolve, normalize } from 'path';
 import { ensureDirSync, emptyDirSync } from 'fs-extra';
 import { cwd } from 'process';
@@ -14,7 +14,7 @@ describe('File', () => {
     emptyDirSync(stubsDir);
   });
 
-  describe('Relative to validations', () => {
+  describe('Related to validations', () => {
     test('it returns if a file does not exists', () => {
       const file: string = resolve(stubsDir, 'file.js');
       expect(File.exists(file)).toBeFalsy();
@@ -50,7 +50,7 @@ describe('File', () => {
     });
   });
 
-  describe('Relative to path', () => {
+  describe('Related to path', () => {
     test('it returns the absolute path of the file', () => {
       const file: string = resolve(stubsDir, 'file.js');
       expect(file).toBe(new File(file).path());
@@ -76,7 +76,7 @@ describe('File', () => {
     });
   });
 
-  describe('Relative to filename', () => {
+  describe('Related to filename', () => {
     test('it returns file name', () => {
       const file: File = new File('path/to/file.js');
 
