@@ -63,17 +63,17 @@ Integration and encapsulation of utilities (sharp, imagemin, htmlhint, ImageMagi
 
 <h2 id="" align="center">Recommend directory structure</h2>
 
-+&nbsp;:open_file_folder: `project-name`
++&nbsp;:open_file_folder: `project-name/`
 
-&nbsp;|&nbsp;&nbsp;+-- :open_file_folder: `src`
+&nbsp;|&nbsp;&nbsp;+-- :open_file_folder: `src/`
 
-&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :open_file_folder: `assets`
+&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :open_file_folder: `assets/`
 
-&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :open_file_folder: `img`
+&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :open_file_folder: `img/`
 
-&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :file_folder: `dist`
+&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :file_folder: `dist/`
 
-&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :file_folder: `src`
+&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;+-- :file_folder: `src/`
 
 
 :open_file_folder: `project-name/`
@@ -87,32 +87,6 @@ Integration and encapsulation of utilities (sharp, imagemin, htmlhint, ImageMagi
 │  │  │  ├─ :open_file_folder: `dist/`
 
 │  │  │  ├─ :open_file_folder: `src/`
-
-
-:open_file_folder: `project-name/`
-
-└── :open_file_folder: `src/`
-
-    └── :open_file_folder: `assets/`
-    
-        └── :open_file_folder: `img/`
-        
-            ├── :open_file_folder: `dist`
-            
-            └── :open_file_folder: `src`
-            
-
-:open_file_folder: `project-name/`
-
-└──&nbsp;:open_file_folder: `src/`
-
-&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;:open_file_folder: `assets/`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;:open_file_folder: `img/`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──&nbsp;:open_file_folder: `dist`
-
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──&nbsp;:open_file_folder: `src`
 
 
 <h2 id="" align="center">Examples</h2>
