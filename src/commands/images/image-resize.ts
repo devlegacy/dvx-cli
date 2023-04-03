@@ -1,5 +1,5 @@
 import { Argv, InferredOptionTypes } from 'yargs';
-import { Command } from '@/shared/interfaces/command.interface';
+import { Command } from '@/shared/interfaces/command';
 import { error, log, warn } from '@/shared/helpers/console';
 import { exec, exit, which } from 'shelljs';
 import { extname } from 'path';
@@ -14,42 +14,42 @@ import sharp from 'sharp';
 // type Arg1 = { [key: string]: Options } & typeof options;
 
 class ImageResize implements Command {
-  public readonly command = 'img:resize';
+  readonly command = 'img:resize';
 
-  public readonly options = {
+  readonly options = {
     source: {
       alias: 'src',
       describe: 'Source path of the images to resize',
-      type: `string` as `string`,
+      type: 'string' as const,
       default: 'src/assets/img/dist'
     },
     width: {
       alias: 'w',
-      type: `number` as `number`,
+      type: 'number' as const,
       describe: 'Set the width',
       default: 1024
     },
     height: {
       alias: 'h',
-      type: `number` as `number`,
+      type: 'number' as const,
       describe: 'Set the height'
     },
     tool: {
       alias: 't',
       describe: 'Tool to use',
-      type: `string` as `string`,
+      type: 'string' as const,
       default: 'sharp',
       choices: ['sharp', 'mogrify']
     },
     exclude: {
       alias: 'e',
       describe: 'Files to exclude / ignore, separated by spaces',
-      type: `array` as `array`,
+      type: 'array' as const,
       default: ['opengraph']
     }
   };
 
-  public readonly description = 'Resize images, fixes to 1024px width';
+  readonly description = 'Resize images, fixes to 1024px width';
 
   handler(yargs: Argv) {
     return yargs.command(this.command, this.description, this.options, async (args) => {
@@ -69,10 +69,10 @@ async function resize({ source, exclude, tool, width, height }: ResizeOptions) {
     exit(0);
   }
 
-  const files = File.sync(`${src.info.absolutePath}/**/*.+(png|jpe?g)`).filter((file) => {
+  const files = File.sync('**/*.{png,jpe?g}', { cwd: src.info.absolutePath, absolute: true }).filter((file) => {
     let include = true;
     for (const patter of exclude) {
-      if (file.includes(patter)) {
+      if (file.includes(patter.toString())) {
         warn('[Resize]:', `File excluded: ${file}, contains: ${exclude}`);
         include = !include;
         break;

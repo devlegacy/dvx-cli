@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2020",
+    "lib": ["ESNext"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "rootDir": ".",
+    "outDir": "../bin/",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "baseUrl": "../",
+    "types": ["jest", "node", "../types"],
+    "skipLibCheck": true
+  },
+  "references": [{ "path": "../tsconfig.json" }]
+}

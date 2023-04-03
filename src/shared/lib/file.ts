@@ -2,7 +2,7 @@ import { statSync, existsSync, writeFileSync, readFileSync } from 'fs-extra';
 import { EOL } from 'os';
 import { resolve, relative, parse } from 'path';
 import { cwd } from 'process';
-import { sync } from 'glob';
+import { globSync } from 'glob';
 
 export interface FileParsed {
   isDir: boolean;
@@ -44,8 +44,8 @@ export class File {
     return new File(path, context);
   }
 
-  static sync(pattern: string) {
-    return sync(pattern);
+  static sync(pattern: string, opts?: { nodir?: boolean; cwd?: string; absolute?: boolean }) {
+    return globSync(pattern, opts);
   }
 
   /**

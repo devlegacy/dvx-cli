@@ -5,32 +5,30 @@ import { Hint, Ruleset } from 'htmlhint/types';
 import { HTMLHint } from 'htmlhint';
 import { log, warn } from '@/shared/helpers/console';
 import { Notify } from '@/shared/lib/notify';
-import Config from '@/shared/helpers/config';
-import { Command } from '@/shared/interfaces/command.interface';
+import config from '@/shared/helpers/config';
+import { Command } from '@/shared/interfaces/command';
 
 const htmlhintStylish = require('htmlhint-stylish');
 
-export type HtmlValidateOptions = InferredOptionTypes<typeof htmlValidate.options>;
-
 class HtmlValidate implements Command {
-  public readonly command = 'html:validate';
-  public readonly description =
+  readonly command = 'html:validate';
+  readonly description =
     'Validate html files with htmlhint. \nRead about rules on:\n- https://github.com/htmlhint/HTMLHint/wiki/Rules\n- https://htmlhint.com/docs/user-guide/list-rules';
-  public readonly options = {
+  readonly options = {
     source: {
       alias: 'src',
       describe: 'Source path of the html files.',
-      type: 'string' as 'string',
+      type: 'string' as const,
       default: 'public'
     }
   };
 
-  public handler(yargs: Argv) {
+  handler(yargs: Argv) {
     return yargs.command(this.command, this.description, this.options, (args) => {
       console.time(this.command);
 
       const { source } = args;
-      const files = File.sync(`${source}/**/*.+(html)`);
+      const files = File.sync(`${source}/**/*.+(html)`, { absolute: true });
 
       if (!files.length) {
         warn(this.command, 'HTML files not found');
@@ -38,10 +36,10 @@ class HtmlValidate implements Command {
       }
 
       /**
-       * Note: Can be a factory of configs?
+       * DEBT: Can it be a factory of configs?
        */
       const htmlhintrc = File.find('.htmlhintrc');
-      const ruleSet: Ruleset = htmlhintrc.isFile() ? JSON.parse(htmlhintrc.read()) : Config.HTML_RULE_SET;
+      const ruleSet: Ruleset = htmlhintrc.isFile() ? JSON.parse(htmlhintrc.read()) : config.HTML_RULE_SET;
 
       const lintResults = files
         .map((file) => ({
@@ -57,7 +55,7 @@ class HtmlValidate implements Command {
         .filter((lintResult) => lintResult.length !== 0);
 
       if (!lintResults.length) {
-        log(this.command, 'No html errors has found :)');
+        log(this.command, 'No html errors have been found :)');
         return;
       }
 
@@ -71,9 +69,11 @@ class HtmlValidate implements Command {
       }
       console.timeEnd(this.command);
 
-      Notify.info(this.command, 'Done, watch results in console');
+      Notify.info(this.command, 'Task done, watch results in console');
     });
   }
 }
 const htmlValidate = new HtmlValidate();
-export { htmlValidate };
+type HtmlValidateOptions = InferredOptionTypes<typeof htmlValidate.options>;
+
+export { htmlValidate, HtmlValidateOptions };

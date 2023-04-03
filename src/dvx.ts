@@ -12,7 +12,14 @@ import { Command } from './shared/interfaces/command';
 
 export class DvxCLI {
   #yargs: Argv;
-  #commands: Command[] = [] //[imageMinify, imageToWebP, imageResize, imageBuilder, htmlValidate, cleanSourcemap];
+  #commands: Command[] = [
+    imageMinify,
+    imageToWebP,
+    imageResize,
+    imageBuilder,
+    htmlValidate,
+    cleanSourcemap
+  ];
 
   constructor(argv: string[]) {
     this.#yargs = yargs(hideBin(argv));
@@ -41,7 +48,6 @@ export class DvxCLI {
 
   private bindCommands() {
     for (const command of this.#commands) {
-      // Attach to yargs
       command.handler(this.#yargs);
     }
   }

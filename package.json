@@ -10,8 +10,8 @@
   "scripts": {
     "prebuild": "npm run clean:build",
     "build": "npm run tsc:build",
-    "tsc:watch": "npm run clean:build && tsc --project tsconfig.build.json --watch --pretty",
-    "tsc:build": "tsc -p tsconfig.build.json && resolve-tspaths -p tsconfig.json -s ./src -o ./bin",
+    "tsc:watch": "npm run clean:build && tsnd --watch -r ts-node/register/transpile-only -r tsconfig-paths/register -- ./src/index.ts",
+    "tsc:build": "tsc -p ./src/tsconfig.json && resolve-tspaths -p ./src/tsconfig.json -s ./src -o ./bin",
     "clean:build": "rm -f tsconfig.build.tsbuildinfo && rm -Rf ./bin/* ; exit 0",
     "jest:init": "jest --init",
     "jest:watch": "jest --watchAll",

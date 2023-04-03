@@ -1,21 +1,37 @@
-import { NotificationCallback, notify } from 'node-notifier';
-import { platform } from 'os';
+import { notify } from 'node-notifier';
 import { File } from './file';
 
-const iconDir = 'assets/icons/info.jpg';
-
-const icon = File.find(`../../../${iconDir}`, __dirname);
+const messages = ['info', 'done', 'fail'];
+const icons = messages.reduce((icons: Record<string, string>, icon) => {
+  if (!(icon in icons)) icons[icon] = File.find(`../../../assets/icons/${icon}.jpg`, __dirname).info.absolutePath;
+  return icons;
+}, {});
 
 export class Notify {
-  public static readonly icon: string = icon.info.absolutePath;
-
-  public static info(title: string = 'Default title', message: string = 'Default message') {
-    return notify({
+  static info(title = '📌 Default info ℹ title', message = '💬 Default message') {
+    notify({
       title,
       message,
-      icon: Notify.icon, // Absolute path (doesn't work on balloons)
-      sound: true, // Only Notification Center or Windows Toasters
-      wait: true // Wait with callback, until user action is taken against notification, does not apply to Windows Toasters as they always wait or notify-send as it does not support the wait option
+      icon: icons.info,
+      sound: true
+    });
+  }
+
+  static done(title = '📌 Default done ✅ title', message = '💬 Default message') {
+    notify({
+      title,
+      message,
+      icon: icons.done,
+      sound: true
+    });
+  }
+
+  static fail(title = '📌 Default error ❌ title', message = '💬 Default message') {
+    notify({
+      title,
+      message,
+      icon: icons.fail,
+      sound: true
     });
   }
 }

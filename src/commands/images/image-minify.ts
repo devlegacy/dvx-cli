@@ -6,37 +6,37 @@ import { Notify } from '@/shared/lib/notify';
 import imageminPngquant from 'imagemin-pngquant';
 import imageminJpegtran from 'imagemin-jpegtran';
 import imageminZopfli from 'imagemin-zopfli';
-import { Argv, InferredOptionTypes } from 'yargs';
-import { Command } from '@/shared/interfaces/command.interface';
+import { Argv, InferredOptionTypes, Options } from 'yargs';
+import { Command } from '@/shared/interfaces/command';
 import { exit } from 'process';
 const imageminGiflossy = require('imagemin-giflossy');
 
 class ImageMinify implements Command {
-  public readonly command = 'img:minify';
+  readonly command = 'img:minify';
 
-  public readonly options = {
+  readonly options = {
     source: {
       alias: 'src',
-      describe: 'Image source path without optimization.',
-      type: 'string' as 'string',
+      describe: 'Source path without optimization.',
+      type: 'string' as const,
       default: 'src/assets/img/src'
     },
     distribution: {
       alias: 'dist',
       describe: 'Distribution path for optimized images.',
-      type: 'string' as 'string',
+      type: 'string' as const,
       default: 'src/assets/img/dist'
     }
   };
 
-  public readonly description = 'Minify images';
+  readonly description = 'Minify images';
 
   handler(yargs: Argv) {
     yargs.command(this.command, this.description, this.options, async (args) => {
       console.time(this.command);
       await minify(args);
       console.timeEnd(this.command);
-      Notify.info('Minify', 'End minify image task');
+      Notify.info('Minify', 'Minify images task has ended');
     });
   }
 }
@@ -51,13 +51,15 @@ async function minify({ source, distribution }: MinifyOptions) {
     error(imageMinify.command, `\nDirectory ${src.info.absolutePath} not found`);
     exit(0);
   }
-  warn('[Minify]:', 'search in:', src.info.absolutePath);
+
+  warn(imageMinify.command, 'Search in:', src.info.absolutePath);
 
   const dist = File.find(distribution);
-  warn('[Minify]:', 'result in:', dist.info.absolutePath);
+  warn(imageMinify.command, 'Result in:', dist.info.absolutePath);
+
   // Notify.info('Minify', 'Start minify image task');
 
-  const files = File.sync(`${src.info.absolutePath}/**/*.+(png|jpeg|jpg|gif|svg)`).map((file) => {
+  const files = File.sync('**/*.{png,jpeg,jpg,gif,svg}', { cwd: src.info.absolutePath, absolute: true }).map((file) => {
     // [input]: /dvx-demo-project/src/assets/img/src/webpack/webpack.png
     // [output]: /webpack/webpack.png
     const distDir = File.find(file).info.dir.replace(src.info.absolutePath, '');
@@ -67,7 +69,6 @@ async function minify({ source, distribution }: MinifyOptions) {
       distDir.startsWith('\\') || distDir.startsWith('/')
         ? join(dist.info.absolutePath, distDir)
         : resolve(dist.info.absolutePath, distDir);
-
     return {
       file,
       destination
@@ -122,12 +123,13 @@ async function minify({ source, distribution }: MinifyOptions) {
       success(imageMinify.command, '\n[from]\t:', images[0].sourcePath, '\n[to]\t:', images[0].destinationPath);
       //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
     } catch (e) {
-      error('[Minify]: ', `${file}\n${e}`);
+      error(imageMinify.command, `${file}\n${e}`);
     }
   }
 }
 
 const imageMinify = new ImageMinify();
+
 type MinifyOptions = InferredOptionTypes<typeof imageMinify.options>;
 
 export { imageMinify, MinifyOptions, minify };
