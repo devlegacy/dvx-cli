@@ -2,7 +2,7 @@ import { spawnSync, SpawnSyncReturns } from 'child_process';
 import { platform, version } from 'process';
 import { arch } from 'os';
 
-const validate = (command: SpawnSyncReturns<string>, errorMessage: string) => {
+const validateCommand = (command: SpawnSyncReturns<Buffer>, errorMessage: string) => {
   return !command.error
     ? command.stdout
         .toString()
@@ -12,47 +12,39 @@ const validate = (command: SpawnSyncReturns<string>, errorMessage: string) => {
     : errorMessage;
 };
 
-class Magick {
-  private downloadInfo = 'Download on https://www.imagemagick.org/script/download.php';
-  validate(): string {
-    const magick = spawnSync('magick', ['-version']);
-    // @ts-ignore
-    return validate(magick, this.downloadInfo);
-  }
-}
-
-class GraphicMagick {
-  private downloadInfo = 'Download on http://www.graphicsmagick.org/download.html';
-  validate(): string {
-    const gm = spawnSync('gm', ['-version']);
-    // @ts-ignore
-    return validate(gm, this.downloadInfo);
-  }
-}
-
-class Node {
-  version() {
+abstract class Node {
+  static get version() {
     return version;
   }
 }
 
-class Shell {
-  magick() {
-    return new Magick();
+const messages = {
+  download: {
+    graphicMagick: '🔽 Download on: 🔗 http://www.graphicsmagick.org/download.html',
+    imageMagick: '🔽 Download on: 🔗 https://www.imagemagick.org/script/download.php'
+  }
+};
+
+abstract class Shell {
+  static get imageMagick() {
+    const magick = spawnSync('magick', ['-version']);
+    const response = validateCommand(magick, messages.download.imageMagick);
+    return response;
   }
 
-  gm() {
-    return new GraphicMagick();
+  static get graphicMagick() {
+    const gm = spawnSync('gm', ['-version']);
+    const response = validateCommand(gm, messages.download.graphicMagick);
+    return response;
   }
 
-  node() {
-    return new Node();
+  static get node() {
+    return Node;
   }
 
-  os() {
+  static get os() {
     return `${platform} ${arch()}`;
   }
 }
 
-const shell = new Shell();
-export default shell;
+export default Shell;

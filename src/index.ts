@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-import DvxCLI from './dvx';
+import { DvxCLI } from './dvx';
 
-new DvxCLI();
+new DvxCLI(process.argv);

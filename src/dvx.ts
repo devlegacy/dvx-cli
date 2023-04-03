@@ -8,20 +8,20 @@ import { imageResize } from './commands/images/image-resize';
 import { imageBuilder } from './commands/images/build';
 import { hideBin } from 'yargs/helpers';
 import { Argv } from 'yargs';
-import { Command } from './shared/interfaces/command.interface';
+import { Command } from './shared/interfaces/command';
 
-export default class DvxCLI {
+export class DvxCLI {
   #yargs: Argv;
-  #commands: Array<Command> = [imageMinify, imageToWebP, imageResize, imageBuilder, htmlValidate, cleanSourcemap];
+  #commands: Command[] = [] //[imageMinify, imageToWebP, imageResize, imageBuilder, htmlValidate, cleanSourcemap];
 
-  constructor() {
-    this.#yargs = yargs(hideBin(process.argv));
-    this.setConfig();
-    this.installAllCommands();
-    this.setValidation();
+  constructor(argv: string[]) {
+    this.#yargs = yargs(hideBin(argv));
+    this.configureYargs();
+    this.bindCommands();
+    this.parse();
   }
 
-  private setConfig() {
+  private configureYargs() {
     this.#yargs
       .epilogue(epilogue)
       .help('help', 'Show help', false)
@@ -29,7 +29,7 @@ export default class DvxCLI {
       .scriptName(scriptName)
       .usage(usage)
       .wrap(95)
-      .version(...version)
+      .version('version', 'Show current version number', version)
       .hide('version')
       .hide('help')
       .strictCommands();
@@ -39,29 +39,30 @@ export default class DvxCLI {
     return this.#yargs;
   }
 
-  private installAllCommands() {
-    this.#yargs;
+  private bindCommands() {
     for (const command of this.#commands) {
       // Attach to yargs
       command.handler(this.#yargs);
     }
   }
 
-  private async setValidation(): Promise<void> {
+  private async parse() {
     try {
-      // argv from vector arg - vector or arg - array
-      // http://decsai.ugr.es/~jfv/ed1/c/cdrom/cap6/cap64.htm
-      const argv = await this.args.parse(); // args vector - without flags
+      /**
+       * NOTE: argv, the letter v is an abbreviation of vector, arg - vector | arg - array
+       * Read more on: http://decsai.ugr.es/~jfv/ed1/c/cdrom/cap6/cap64.htm
+       */
+      const argv = await this.#yargs.parse(); // args vector - without flags
       const argsCount = argv._.length;
+
       // const commands: Array<string> = argv.commands && Array.isArray(argv.commands) ? argv.commands : [];
       // || commands.includes(String(argv._[0]))
-      if (!argsCount) {
-        this.args.showHelp();
-      }
+
+      if (!argsCount) this.args.showHelp();
     } catch (err) {
-      if (err instanceof Error) {
-        console.warn('[error]:', `${err.message}\n ${await this.args.getHelp()}`);
-      }
+      if (err instanceof Error) console.error('[error]:', `${err.message}\n ${this.args.getHelp()}`);
+
+      console.error('[error]:', `unknown error\n ${this.args.getHelp()}`);
     }
   }
 }
