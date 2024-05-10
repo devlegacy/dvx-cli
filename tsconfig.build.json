@@ -1,10 +1,25 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src",
+    "outDir": "./bin",
     "noEmit": false,
-    "pretty": true,
+    "pretty": false,
     "removeComments": true
   },
-  "exclude": [".vscode", "./bin/**/*", "coverage", "node_modules", "tests"]
+  "include": [
+    // "src/**/*",
+    // "package.json"
+  ],
+  "exclude": [
+    "**/*.js",
+    "**/*.test.ts",
+    "**/*spec.ts",
+    "bin",
+    "jest.config.ts",
+    "jest.setup.ts",
+    "node_modules",
+    "tests"
+  ]
 }
