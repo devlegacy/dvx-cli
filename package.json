@@ -13,15 +13,11 @@
   "type": "module",
   "scripts": {
     "prebuild": "node --run build:clean",
-    "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file '/#@/src//g' '#@/bin/' bin/**/*.js --isRegex",
+    "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#@/src//g\" \"#@/bin/\" \"./bin/**/*.js\" --isRegex",
     "tsc:watch": "npm run build:clean && tsnd --watch -r ts-node/register/transpile-only -r tsconfig-paths/register -- ./src/index.ts",
     "tsc:build": "tsc -p ./src/tsconfig.json && resolve-tspaths -p ./src/tsconfig.json -s ./src -o ./bin",
     "build:clean": "rm -Rf ./bin",
-    "jest:init": "jest --init",
-    "jest:watch": "jest --watchAll",
-    "test": "jest --runInBand --detectOpenHandles",
-    "webpack:build": "npm run build:clean && webpack --stats-error-details=true --config webpack.config.js --mode=production && echo #!/usr/bin/env node > dist/bin/www && cat ./dist/bin/www.js >> dist/bin/www && rm ./dist/bin/www.js",
-    "package:update": "ncu -u && npm i --legacy-peer-deps && npm audit fix --legacy-peer-deps"
+    "package:update": "ncu -u && pnpm i && pnpm audit --fix"
   },
   "keywords": [
     "Devexteam",
@@ -51,7 +47,6 @@
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "10.0.5",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/jest": "29.5.12",
     "@types/node": "20.12.11",
     "@types/node-notifier": "8.0.5",
     "@types/sharp": "0.31.1",
@@ -103,5 +98,20 @@
   "bugs": {
     "url": "https://github.com/devlegacy/dvx-cli/issues"
   },
-  "homepage": "https://github.com/devlegacy/dvx-cli#readme"
+  "homepage": "https://github.com/devlegacy/dvx-cli#readme",
+  "packageManager": "pnpm@9.1.0+sha512.67f5879916a9293e5cf059c23853d571beaf4f753c707f40cb22bed5fb1578c6aad3b6c4107ccb3ba0b35be003eb621a16471ac836c87beb53f9d54bb4612724",
+  "pnpm": {
+    "overrides": {
+      "braces@<2.3.1": ">=2.3.1",
+      "tunnel-agent@<0.6.0": ">=0.6.0",
+      "got@<11.8.5": ">=11.8.5",
+      "decompress@<4.2.1": ">=4.2.1",
+      "http-cache-semantics@<4.1.1": ">=4.1.1",
+      "semver-regex@<3.1.3": ">=3.1.3",
+      "semver-regex@<3.1.4": ">=3.1.4",
+      "glob-parent@<5.1.2": ">=5.1.2",
+      "trim-newlines@<3.0.1": ">=3.0.1",
+      "semver@<5.7.2": ">=5.7.2"
+    }
+  }
 }
