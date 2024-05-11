@@ -1,26 +1,15 @@
 import type { Argv } from 'yargs'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
+import type { Class } from 'type-fest'
 
 import { version, epilogue, usage, scriptName } from '#@/src/commands/version.js'
-import { htmlValidate } from '#@/src/commands/html/html-validate.command.js'
-import { imageMinify } from '#@/src/commands/images/image-minify.command.js'
-import { imageToWebP } from '#@/src/commands/images/image-to-webp.command.js'
-import { imageResize } from '#@/src/commands/images/image-resize.command.js'
-import { imageBuilder } from '#@/src/commands/images/image-optimize.command.js'
-import { cleanSourcemap } from '#@/src/commands/files/clean-sourcemap.command.js'
 import type { YargsCommand } from './shared/yargs-command.js'
+import { readModulesRecursively } from './shared/readModulesRecursively.js'
+import { isConstructor } from './shared/isConstructor.js'
 
 export class DvxCLI {
   #yargs: Argv
-  #commands: YargsCommand[] = [
-    cleanSourcemap,
-    imageMinify,
-    imageToWebP,
-    imageResize,
-    imageBuilder,
-    htmlValidate,
-  ]
 
   constructor(argv: string[]) {
     this.#yargs = yargs(hideBin(argv))
@@ -41,15 +30,21 @@ export class DvxCLI {
       .strictCommands()
   }
 
-  async installCommands() {
-    for (const command of this.#commands) {
-      this.#yargs.command(
-        command.command,
-        command.description,
-        command.builder,
-        command.handler.bind(command),
-      )
+  async installCommands(path = 'commands') {
+    for await (const entities of readModulesRecursively(
+      new URL(path, import.meta.url),
+      /\.command\.(ts|js)$/,
+    )) {
+      const keys = Object.keys(entities)
+      for (const key of keys) {
+        const entity = entities[`${key}`]
+        if (!isConstructor(entity)) continue
+        const command = entity as Class<YargsCommand>
+        const cmd = new command() as YargsCommand
+        this.#yargs.command(cmd.command, cmd.description, cmd.builder, cmd.handler.bind(command))
+      }
     }
+
     return this
   }
 

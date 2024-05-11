@@ -123,6 +123,9 @@ importers:
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.5.5)(@types/node@20.12.11)(typescript@5.4.5)
+      type-fest:
+        specifier: 4.18.2
+        version: 4.18.2
       typescript:
         specifier: 5.4.5
         version: 5.4.5
@@ -2371,6 +2374,10 @@ packages:
   type-fest@3.13.1:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
+
+  type-fest@4.18.2:
+    resolution: {integrity: sha512-+suCYpfJLAe4OXS6+PPXjW3urOS4IoP9waSiLuXfLgqZODKw/aWwASvzqE886wA0kQgGy0mIWyhd87VpqIy6Xg==}
+    engines: {node: '>=16'}
 
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
@@ -4826,6 +4833,8 @@ snapshots:
       safe-buffer: 5.2.1
 
   type-fest@3.13.1: {}
+
+  type-fest@4.18.2: {}
 
   typedarray@0.0.6: {}
 
