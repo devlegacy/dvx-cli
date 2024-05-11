@@ -1,92 +1,105 @@
-import { Argv, InferredOptionTypes } from 'yargs';
-import { error, log } from '@/shared/helpers/console';
-import { File } from '@/shared/lib/file';
-import { Notify } from '@/shared/lib/notify';
-import config from '@/shared/helpers/config';
-import { Command } from '@/shared/interfaces/command';
+import { uptime } from 'node:process'
 
-class CleanSourcemap implements Command {
-  readonly command = 'files:clean-sourcemaps';
+import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+
+import { error, log } from '#@/src/shared/helpers/console.js'
+import { File } from '#@/src/shared/lib/file.js'
+import { Notify } from '#@/src/shared/lib/notify.js'
+import config from '#@/src/shared/helpers/config.js'
+import { YargsCommand } from '#@/src/shared/yargs-command.js'
+
+class CleanSourcemap extends YargsCommand {
+  readonly command = 'files:clean-sourcemaps'
   readonly description =
-    'Clean sourcemaps comments (/*# sourceMappingURL=foo.css.map */) in css files that can cause conflicts in compilation or packaging process.';
-  readonly options = {
+    'Clean sourcemaps comments (like /*# sourceMappingURL=foo.css.map */) from your CSS files. They can cause conflict in the compiling or packaging process.'
+  readonly builder = this.options({
     source: {
       alias: 'src',
       describe: 'Source path of the files.',
-      type: 'string' as const,
-      default: './node_modules/'
+      type: 'string',
+      default: './node_modules/',
     },
     packages: {
       alias: 'pkg',
       describe: 'List of npm packages with CSS files to clean.',
-      type: 'array' as const,
-      default: ['bootstrap-datepicker', 'tinymce']
+      type: 'array',
+      default: ['bootstrap-datepicker', 'tinymce'],
+    },
+  } as const)
+
+  constructor() {
+    super()
+  }
+
+  handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>) {
+    const commandStartedAt = uptime()
+
+    const packageJson = getPackageJson()
+
+    // https://github.com/npm/validate-npm-package-name
+    const packages = args.packages.map((_) => _.toString().trim()) // sanitize
+    const { source } = args
+
+    const ensurePackages = [
+      ...Object.keys(packageJson?.dependencies ?? {}),
+      ...Object.keys(packageJson?.devDependencies ?? {}),
+    ].some((pkg) => packages.indexOf(pkg) >= 0)
+
+    if (!ensurePackages) {
+      error(`[${this.command}]:`, 'Dependencies not found')
+      return
     }
-  };
 
-  handler(yargs: Argv) {
-    const command = yargs.command(this.command, this.description, this.options, (args) => {
-      console.time(this.command);
+    const directories = packages
+      .map((pkg) => getDirectory(source, pkg))
+      .filter((file) => file.isDirectory())
+    const files = directories.reduce(
+      (files: File[], { info: { absolutePath } }) =>
+        files.concat(
+          ...File.sync('**/*.css', {
+            nodir: true,
+            cwd: absolutePath,
+            absolute: true,
+          }).map((file) => File.find(file)),
+        ),
+      [],
+    )
 
-      const pkg = getPackageJson();
+    const regexp = config.CSS_SOURCEMAP_REGEX
+    for (const file of files) {
+      const data = file.read()
+      const replaced = data.replace(regexp, '')
+      file.write(replaced)
+      log('[File]:', file.info.path)
+    }
+    const commandFinishedAt = uptime()
+    const commandElapsedTime = commandFinishedAt - commandStartedAt
 
-      const packages = args.packages.map((pkg: string) => pkg.trim()); // sanitize
-      const { source } = args;
-
-      if (
-        ![...Object.keys(pkg.dependencies), ...Object.keys(pkg.devDependencies)].some(
-          (pkg) => packages.indexOf(pkg) >= 0
-        )
-      ) {
-        return error('[files:clean-sourcemaps]:', 'Dependencies not found');
-      }
-
-      const directories = packages.map((pkg) => getDirectory(source, pkg)).filter((file) => file.isDirectory());
-      const files = directories.reduce(
-        (files: File[], { info: { absolutePath } }) =>
-          files.concat(
-            ...File.sync('**/*.css', { nodir: true, cwd: absolutePath, absolute: true }).map((file) =>
-              File.find(file)
-            )
-          ),
-        []
-      );
-
-      const regexp = config.CSS_SOURCEMAP_REGEX;
-      files.forEach((file) => {
-        const data = file.read();
-        const replaced = data.replace(regexp, '');
-        file.write(replaced);
-        log('[File]:', file.info.path);
-      });
-      console.timeEnd(this.command);
-      Notify.done(this.command, 'Task done, watch console results');
-    });
-
-    return command;
+    log(`[${this.command}]:`, `${commandElapsedTime.toFixed(3)}s`)
+    Notify.done(this.command, 'Done, watch console results')
   }
 }
 
-const getPackageJson = (): { devDependencies: Record<string, string>[]; dependencies: Record<string, string>[] } => {
-  const packageJson = File.find('package.json');
-  if (!packageJson.info.isFile) {
-    error('[Error]: ', 'No existe el archivo package.json');
-    return;
+const getPackageJson = (): {
+  devDependencies: Record<string, string>
+  dependencies: Record<string, string>
+} => {
+  const filename = 'package.json'
+  const file = File.find(filename)
+  if (!file.info.isFile) {
+    throw new Error(`There is no <${filename}> file in the root directory of the project.`)
   }
 
-  return JSON.parse(packageJson.read());
-};
+  return JSON.parse(file.read())
+}
 
 const getDirectory = (source: string, pkg: string): File => {
-  const dir = File.find(`${source}/${pkg}/`);
+  const dir = File.find(`${source}/${pkg}/`)
   if (!dir.info.isDir) {
-    error('[files:clean-sourcemaps]:', `Directory of package ${pkg} no found`);
-    return;
+    throw new Error(`${pkg} directory of package not found`)
   }
-  return dir;
-};
+  return dir
+}
 
-const cleanSourcemap = new CleanSourcemap();
-type CleanSourcemapOptions = InferredOptionTypes<typeof cleanSourcemap.options>;
-
-export { cleanSourcemap, CleanSourcemapOptions };
+const cleanSourcemap = new CleanSourcemap()
+export { cleanSourcemap }
