@@ -1,4 +1,7 @@
-import { Ruleset } from 'htmlhint/types';
+import type { HTMLHint } from 'htmlhint'
+
+type Ruleset = (typeof HTMLHint)['defaultRuleset']
+
 export default class config {
   static readonly HTML_RULE_SET: Ruleset = {
     'alt-require': true,
@@ -23,8 +26,8 @@ export default class config {
     'tag-pair': true,
     'tag-self-close': false,
     'tagname-lowercase': true,
-    'title-require': true
-  };
+    'title-require': true,
+  }
 
-  static readonly CSS_SOURCEMAP_REGEX = /\/[\*]\#\s+(sourceMappingURL\=.*\.(css)\.map)\s+[\*]\//g;
+  static readonly CSS_SOURCEMAP_REGEX = /\/[\*]\#\s+(sourceMappingURL\=.*\.(css)\.map)\s+[\*]\//g
 }
