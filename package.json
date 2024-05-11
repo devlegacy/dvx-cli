@@ -17,6 +17,7 @@
     "tsc:watch": "npm run build:clean && tsnd --watch -r ts-node/register/transpile-only -r tsconfig-paths/register -- ./src/index.ts",
     "tsc:build": "tsc -p ./src/tsconfig.json && resolve-tspaths -p ./src/tsconfig.json -s ./src -o ./bin",
     "build:clean": "rm -Rf ./bin",
+    "test:unit": "node --import @swc-node/register/esm-register --env-file=.env --test ./tests/**/*.test.ts",
     "package:update": "ncu -u && pnpm i && pnpm audit --fix"
   },
   "keywords": [
@@ -53,23 +54,12 @@
     "@types/shelljs": "0.8.15",
     "@types/yargs": "17.0.32",
     "replace-in-file": "7.1.0",
-    "resolve-tspaths": "0.8.18",
-    "string-replace-loader": "3.1.0",
-    "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
-    "tsconfig-paths": "4.2.0",
-    "tsconfig-paths-webpack-plugin": "4.1.0",
-    "typescript": "5.4.5",
-    "webpack": "5.91.0",
-    "webpack-cli": "5.1.4",
-    "webpack-merge": "5.10.0",
-    "webpack-node-externals": "3.0.0"
+    "typescript": "5.4.5"
   },
   "dependencies": {
-    "@squoosh/lib": "0.5.3",
     "beeper": "3.0.0",
-    "fs-extra": "11.2.0",
-    "glob": "10.3.14",
+    "fast-glob": "3.3.2",
     "htmlhint": "1.1.4",
     "htmlhint-stylish": "1.0.3",
     "imagemin": "9.0.0",
@@ -83,7 +73,6 @@
     "node-notifier": "10.0.1",
     "sharp": "0.33.3",
     "shelljs": "0.8.5",
-    "tslib": "2.6.2",
     "yargs": "17.7.2"
   },
   "engines": {

@@ -48,7 +48,6 @@
     "skipLibCheck": true,
     "noErrorTruncation": true
   },
-  // "files": ["package.json"],
   "ts-node": {
     "swc": true,
     "esm": true,
