@@ -1,6 +1,4 @@
-import { spawnSync, SpawnSyncReturns } from 'child_process';
-import { platform, version } from 'process';
-import { arch } from 'os';
+import { spawnSync, type SpawnSyncReturns } from 'node:child_process'
 
 const validateCommand = (command: SpawnSyncReturns<Buffer>, errorMessage: string) => {
   return !command.error
@@ -9,42 +7,39 @@ const validateCommand = (command: SpawnSyncReturns<Buffer>, errorMessage: string
         .split('\n')
         .filter((data) => data.length > 0)
         .shift() || ''
-    : errorMessage;
-};
-
-abstract class Node {
-  static get version() {
-    return version;
-  }
+    : errorMessage
 }
 
 const messages = {
-  download: {
-    graphicMagick: '🔽 Download on: 🔗 http://www.graphicsmagick.org/download.html',
-    imageMagick: '🔽 Download on: 🔗 https://www.imagemagick.org/script/download.php'
-  }
-};
+  magick: '🔽 Download on: 🔗 http://www.graphicsmagick.org/download.html',
+  gm: '🔽 Download on: 🔗 https://www.imagemagick.org/script/download.php',
+}
 
-abstract class Shell {
+class Shell {
   static get imageMagick() {
-    const magick = spawnSync('magick', ['-version']);
-    const response = validateCommand(magick, messages.download.imageMagick);
-    return response;
+    const command = 'magick'
+    let response = ''
+    try {
+      const magick = spawnSync(command, ['-version'])
+      response = validateCommand(magick, messages[command])
+    } catch {
+      response = messages[command]
+    }
+
+    return response
   }
 
   static get graphicMagick() {
-    const gm = spawnSync('gm', ['-version']);
-    const response = validateCommand(gm, messages.download.graphicMagick);
-    return response;
-  }
-
-  static get node() {
-    return Node;
-  }
-
-  static get os() {
-    return `${platform} ${arch()}`;
+    const command = 'gm'
+    let response = ''
+    try {
+      const gm = spawnSync(command, ['-version'])
+      response = validateCommand(gm, messages[command])
+    } catch {
+      response = messages[command]
+    }
+    return response
   }
 }
 
-export default Shell;
+export default Shell
