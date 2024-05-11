@@ -5,7 +5,7 @@ import { cwd } from 'node:process'
 import { mkdirSync } from 'node:fs'
 
 import { File } from '#@/src/shared/lib/file.js'
-import { emptyDirSync } from '#@/src/shared/utils.js'
+import { emptyDirSync } from '#@/src/shared/emptyDirSync.js'
 
 const stubsDir = resolve(`${cwd()}/tests`, 'stubs')
 
