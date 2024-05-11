@@ -15,7 +15,7 @@ import { File } from '#@/src/shared/lib/file.js'
 import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 
-class ImageMinify extends YargsCommand {
+export class ImageMinify extends YargsCommand {
   readonly command = 'img:minify'
 
   readonly builder = this.options({
@@ -43,16 +43,16 @@ class ImageMinify extends YargsCommand {
   }
 }
 
-async function minify({ source, distribution }: { source: string; distribution: string }) {
+export async function minify({ source, distribution }: { source: string; distribution: string }) {
   const src = File.find(source)
   if (!src.isDirectory()) {
-    error(imageMinify.command, `\nDirectory ${src.info.absolutePath} not found`)
+    error('img:minify', `\nDirectory ${src.info.absolutePath} not found`)
     exit(0)
   }
 
-  warn(imageMinify.command, 'Search in:', src.info.absolutePath)
+  warn('img:minify', 'Search in:', src.info.absolutePath)
   const dist = File.find(distribution)
-  warn(imageMinify.command, 'Result in:', dist.info.absolutePath)
+  warn('img:minify', 'Result in:', dist.info.absolutePath)
 
   // Notify.info('Minify', 'Start minify image task');
 
@@ -148,7 +148,7 @@ async function minify({ source, distribution }: { source: string; distribution: 
       // File.find(images[0].sourcePath).info.path
       // File.find(images[0].destinationPath).info.path
       success(
-        imageMinify.command,
+        'img:minify',
         '\n[from]\t:',
         images[0]!.sourcePath,
         '\n[to]\t:',
@@ -156,11 +156,7 @@ async function minify({ source, distribution }: { source: string; distribution: 
       )
       //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
     } catch (e) {
-      error(imageMinify.command, `${file}\n${e}`)
+      error('img:minify', `${file}\n${e}`)
     }
   }
 }
-
-const imageMinify = new ImageMinify()
-
-export { imageMinify, minify }

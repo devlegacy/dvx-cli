@@ -12,7 +12,7 @@ import { YargsCommand } from '#@/src/shared/yargs-command.js'
 
 const { exec, exit, which } = shelljs
 
-class ImageResize extends YargsCommand {
+export class ImageResize extends YargsCommand {
   readonly command = 'img:resize'
 
   readonly builder = this.options({
@@ -63,7 +63,7 @@ class ImageResize extends YargsCommand {
   }
 }
 
-async function resize({
+export async function resize({
   source,
   width,
   height,
@@ -79,7 +79,7 @@ async function resize({
   const src = File.find(source)
 
   if (!src.isDirectory()) {
-    error(imageResize.command, `Directory ${src.info.absolutePath} not found`)
+    error('[img:resize]:', `Directory ${src.info.absolutePath} not found`)
     exit(0)
   }
 
@@ -164,7 +164,3 @@ const useSharp = async (
     log('[Resize]:', file)
   })
 }
-
-const imageResize = new ImageResize()
-
-export { imageResize, resize }

@@ -13,7 +13,7 @@ import { YargsCommand } from '#@/src/shared/yargs-command.js'
 type Ruleset = (typeof HTMLHint)['defaultRuleset']
 type Hint = ReturnType<(typeof HTMLHint)['verify']>[number]
 
-class HtmlValidate extends YargsCommand {
+export class HtmlValidate extends YargsCommand {
   readonly command = 'html:validate'
   readonly description =
     'Validate html files with htmlhint. \nRead about rules on:\n- https://github.com/htmlhint/HTMLHint/wiki/Rules\n- https://htmlhint.com/docs/user-guide/list-rules'
@@ -83,5 +83,3 @@ class HtmlValidate extends YargsCommand {
     Notify.info(this.command, 'Task done, watch results in console')
   }
 }
-const htmlValidate = new HtmlValidate()
-export { htmlValidate }

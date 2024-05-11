@@ -8,7 +8,7 @@ import { Notify } from '#@/src/shared/lib/notify.js'
 import config from '#@/src/shared/helpers/config.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 
-class CleanSourcemap extends YargsCommand {
+export class CleanSourcemap extends YargsCommand {
   readonly command = 'files:clean-sourcemaps'
   readonly description =
     'Clean sourcemaps comments (like /*# sourceMappingURL=foo.css.map */) from your CSS files. They can cause conflict in the compiling or packaging process.'
@@ -100,6 +100,3 @@ const getDirectory = (source: string, pkg: string): File => {
   }
   return dir
 }
-
-const cleanSourcemap = new CleanSourcemap()
-export { cleanSourcemap }

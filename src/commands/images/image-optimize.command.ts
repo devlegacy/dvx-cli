@@ -5,7 +5,7 @@ import { resize } from './image-resize.command.js'
 import { towebp } from './image-to-webp.command.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 
-class ImageOptimize extends YargsCommand {
+export class ImageOptimize extends YargsCommand {
   readonly command = 'img:optimize'
   readonly builder = this.options({
     source: {
@@ -60,6 +60,3 @@ class ImageOptimize extends YargsCommand {
     await resize(args)
   }
 }
-const imageBuilder = new ImageOptimize()
-
-export { imageBuilder }

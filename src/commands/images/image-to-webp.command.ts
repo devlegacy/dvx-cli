@@ -11,7 +11,7 @@ import { YargsCommand } from '#@/src/shared/yargs-command.js'
 
 const { mkdir } = shelljs
 
-class ImageToWebP extends YargsCommand {
+export class ImageToWebP extends YargsCommand {
   readonly command = 'img:towebp'
 
   readonly builder = this.options({
@@ -39,11 +39,11 @@ class ImageToWebP extends YargsCommand {
   }
 }
 
-async function towebp({ source, distribution }: { source: string; distribution: string }) {
+export async function towebp({ source, distribution }: { source: string; distribution: string }) {
   const src = File.find(source)
 
   if (!src.isDirectory()) {
-    error(imageToWebP.command, `Directory ${src.info.absolutePath} not found`)
+    error('[img:towebp]:', `Directory ${src.info.absolutePath} not found`)
     return
   }
 
@@ -63,7 +63,7 @@ async function towebp({ source, distribution }: { source: string; distribution: 
         : resolve(dist, distDir),
     )
     if (!destination.isDirectory()) {
-      warn('[ToWebP]:', `Creating dir, ${destination.info.absolutePath}`)
+      warn('[img:towebp]:', `Creating dir, ${destination.info.absolutePath}`)
       mkdir('-p', destination.info.absolutePath)
     }
     return {
@@ -78,13 +78,9 @@ async function towebp({ source, distribution }: { source: string; distribution: 
       const fileName = resolve(destination.info.absolutePath, `${file.info.name}.webp`)
       const data = await sharp(file.info.absolutePath).webp({ lossless: true }).toBuffer()
       await sharp(data).toFile(fileName)
-      log('[ToWebP]:', fileName)
+      log('[img:towebp]:', fileName)
     } catch (e) {
-      error('[ToWebP]:', e)
+      error('[img:towebp]:', e)
     }
   }
 }
-
-const imageToWebP = new ImageToWebP()
-
-export { imageToWebP, towebp }
