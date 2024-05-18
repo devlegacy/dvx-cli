@@ -40,7 +40,7 @@
   "devDependencies": {
     "@swc-node/register": "1.9.1",
     "@swc/cli": "0.3.12",
-    "@swc/core": "1.5.5",
+    "@swc/core": "1.5.7",
     "@types/fs-extra": "11.0.4",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "8.0.5",
@@ -48,7 +48,7 @@
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "10.0.5",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "20.12.11",
+    "@types/node": "20.12.12",
     "@types/node-notifier": "8.0.5",
     "@types/sharp": "0.31.1",
     "@types/shelljs": "0.8.15",
@@ -70,16 +70,16 @@
     "imagemin-pngquant": "10.0.0",
     "imagemin-webp": "8.0.0",
     "imagemin-zopfli": "7.0.0",
-    "is-svg": "5.0.0",
+    "is-svg": "5.0.1",
     "node-notifier": "10.0.1",
-    "sharp": "0.33.3",
+    "sharp": "0.33.4",
     "shelljs": "0.8.5",
     "svgo": "3.3.2",
     "yargs": "17.7.2"
   },
   "engines": {
-    "node": ">=22.1.0",
-    "npm": ">=10.7.0"
+    "node": ">=22.2.0",
+    "npm": ">=10.8.0"
   },
   "engineStrict": true,
   "repository": {
