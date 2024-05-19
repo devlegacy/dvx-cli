@@ -7,6 +7,8 @@ import { version, epilogue, usage, scriptName } from '#@/src/commands/version.js
 import type { YargsCommand } from './shared/yargs-command.js'
 import { readModulesRecursively } from './shared/readModulesRecursively.js'
 import { isConstructor } from './shared/isConstructor.js'
+import { error } from '#@/bin/shared/helpers/console.js'
+import { exit } from 'node:process'
 
 export class DvxCLI {
   #yargs: Argv
@@ -30,6 +32,11 @@ export class DvxCLI {
       .strictCommands()
   }
 
+  #onError(command: string, err: unknown) {
+    error(`[${command}]:`, err instanceof Error ? err.message : 'unknown error')
+    exit(0)
+  }
+
   async installCommands(path = 'commands') {
     for await (const entities of readModulesRecursively(
       new URL(path, import.meta.url),
@@ -41,7 +48,23 @@ export class DvxCLI {
         if (!isConstructor(entity)) continue
         const command = entity as Class<YargsCommand>
         const cmd = new command() as YargsCommand
-        this.#yargs.command(cmd.command, cmd.description, cmd.builder, cmd.handler.bind(command))
+        const handler =
+          cmd.handler.constructor.name === 'AsyncFunction'
+            ? async (args: any) => {
+                try {
+                  await cmd.handler.bind(cmd)(args)
+                } catch (err) {
+                  this.#onError(cmd.command, err)
+                }
+              }
+            : (args: any) => {
+                try {
+                  cmd.handler.bind(cmd)(args)
+                } catch (err) {
+                  this.#onError(cmd.command, err)
+                }
+              }
+        this.#yargs.command(cmd.command, cmd.description, cmd.builder, handler)
       }
     }
 
