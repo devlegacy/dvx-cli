@@ -1,22 +1,21 @@
 import { join, resolve } from 'node:path'
-import { exit } from 'node:process'
+import { cpus } from 'node:os'
+import { isMainThread } from 'node:worker_threads'
+import { URL } from 'node:url'
 
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
-import imageminPngquant from 'imagemin-pngquant'
-import imageminJpegtran from 'imagemin-jpegtran'
-import imageminZopfli from 'imagemin-zopfli'
-import imagemin from 'imagemin'
-import imageminMozjpeg from 'imagemin-mozjpeg'
-import imageminGiflossy from 'imagemin-giflossy'
 
-import imageminSvgo from '#@/src/shared/imagemin-svgo.js'
 import { error, success, warn } from '#@/src/shared/helpers/console.js'
 import { File } from '#@/src/shared/lib/file.js'
 import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
+import { chunkArray } from '#@/src/shared/chunkArray.js'
+import { runWorker } from '#@/src/shared/runWorker.js'
 
+const command = 'img:minify'
+const tasks: Promise<void>[] = []
 export class ImageMinify extends YargsCommand {
-  readonly command = 'img:minify'
+  readonly command = command
 
   readonly builder = this.options({
     source: {
@@ -44,119 +43,51 @@ export class ImageMinify extends YargsCommand {
 }
 
 export async function minify({ source, distribution }: { source: string; distribution: string }) {
-  const src = File.find(source)
-  if (!src.isDirectory()) {
-    error('img:minify', `\nDirectory ${src.info.absolutePath} not found`)
-    exit(0)
-  }
-
-  warn('img:minify', 'Search in:', src.info.absolutePath)
-  const dist = File.find(distribution)
-  warn('img:minify', 'Result in:', dist.info.absolutePath)
-
-  // Notify.info('Minify', 'Start minify image task');
-
-  const files = File.sync('**/*.{png,jpeg,jpg,gif,svg}', {
-    cwd: src.info.absolutePath,
-    absolute: true,
-  }).map((filePath) => {
-    const file = File.find(filePath)
-    // [input]: /dvx-demo-project/src/assets/img/src/webpack/webpack.png
-    // [output]: /webpack/webpack.png
-    const distDir = file.info.dir.replace(src.info.absolutePath, '')
-    // [input]: /webpack/webpack.png
-    // [output]: /dvx-demo-project/src/assets/img/dist/webpack
-    const destination =
-      distDir.startsWith('\\') || distDir.startsWith('/')
-        ? join(dist.info.absolutePath, distDir)
-        : resolve(dist.info.absolutePath, distDir)
-    return {
-      file: filePath,
-      destination,
-      ext: file.info.ext.toLocaleLowerCase(),
+  if (isMainThread) {
+    const src = File.find(source)
+    if (!src.isDirectory()) {
+      throw new Error(`Directory ${src.info.absolutePath} not found`)
     }
-  })
+    const dist = File.find(distribution)
 
-  for (const fileInfo of files) {
-    const { file, destination, ext } = fileInfo
-    const plugins = [
-      ...(['.png'].includes(ext)
-        ? [
-            imageminPngquant({
-              speed: 1,
-              quality: [0.6, 0.8], //98 //lossy settings
-            }),
-            imageminZopfli({
-              more: true,
-            }),
-          ]
-        : []),
-      ...(['.gif'].includes(ext)
-        ? [
-            imageminGiflossy({
-              optimizationLevel: 3,
-              optimize: 3, //keep-empty: Preserve empty transparent frames
-              lossy: 2,
-            }),
-          ]
-        : []),
-      ...(['.svg'].includes(ext)
-        ? [
-            imageminSvgo({
-              plugins: [
-                {
-                  name: 'preset-default',
-                },
-                {
-                  name: 'removeViewBox',
-                  // @ts-ignore
-                  active: true,
-                },
-                {
-                  name: 'cleanupIds',
-                  // @ts-ignore
-                  active: false,
-                },
-                {
-                  name: 'sortAttrs',
-                  params: {
-                    xmlnsOrder: 'alphabetical',
-                  },
-                },
-              ],
-            }),
-          ]
-        : []),
-      ...(['.jpg', '.jpeg'].includes(ext)
-        ? [
-            imageminJpegtran({
-              progressive: true,
-            }),
-            imageminMozjpeg({
-              quality: 90,
-            }),
-          ]
-        : []),
-    ]
+    warn(`[${command}]:`, 'search in:', src.info.absolutePath)
+    warn(`[${command}]:`, 'result in:', dist.info.absolutePath)
 
-    try {
-      const images = await imagemin([file], {
+    const extensions = ['png', 'jpeg', 'jpg', 'gif', 'svg']
+    const files = File.sync(`**/*.{${extensions.join(',')}}`, {
+      cwd: src.info.absolutePath,
+      absolute: true,
+    }).map((filePath) => {
+      const file = File.find(filePath)
+      // [input]: /dvx-demo-project/src/assets/img/src/webpack/webpack.png
+      // [output]: /webpack/webpack.png
+      const distDir = file.info.dir.replace(src.info.absolutePath, '')
+      // [input]: /webpack/webpack.png
+      // [output]: /dvx-demo-project/src/assets/img/dist/webpack
+      const destination =
+        distDir.startsWith('\\') || distDir.startsWith('/')
+          ? join(dist.info.absolutePath, distDir)
+          : resolve(dist.info.absolutePath, distDir)
+      return {
+        source: filePath,
         destination,
-        plugins,
-      })
-      // Note: Extra process, evaluate
-      // File.find(images[0].sourcePath).info.path
-      // File.find(images[0].destinationPath).info.path
-      success(
-        'img:minify',
-        '\n[from]\t:',
-        images[0]!.sourcePath,
-        '\n[to]\t:',
-        images[0]!.destinationPath,
+        ext: file.info.ext.toLocaleLowerCase(),
+      }
+    })
+    const cpuCount = cpus().length - 1
+
+    const chunkedTasks = chunkArray(files, cpuCount)
+    for (const chunk of chunkedTasks) {
+      tasks.push(
+        runWorker(
+          {
+            files: chunk,
+            command,
+          },
+          new URL('./minify.job.js', import.meta.url),
+        ),
       )
-      //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
-    } catch (e) {
-      error('img:minify', `${file}\n${e}`)
     }
+    await Promise.all(tasks)
   }
 }
