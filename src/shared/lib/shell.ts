@@ -11,8 +11,8 @@ const validateCommand = (command: SpawnSyncReturns<Buffer>, errorMessage: string
 }
 
 const messages = {
-  magick: '🔽 Download on: 🔗 http://www.graphicsmagick.org/download.html',
-  gm: '🔽 Download on: 🔗 https://www.imagemagick.org/script/download.php',
+  magick: '🔽 Download here 🔗 https://www.imagemagick.org/script/download.php',
+  gm: '🔽 Download here 🔗 http://www.graphicsmagick.org/download.html',
 }
 
 class Shell {
