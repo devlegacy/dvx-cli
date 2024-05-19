@@ -1,4 +1,4 @@
-import { uptime } from 'node:process'
+import { cwd, uptime } from 'node:process'
 
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
@@ -33,7 +33,6 @@ export class CleanSourcemap extends YargsCommand {
 
   handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>) {
     const commandStartedAt = uptime()
-
     const packageJson = getPackageJson()
 
     // https://github.com/npm/validate-npm-package-name
@@ -43,7 +42,7 @@ export class CleanSourcemap extends YargsCommand {
     const ensurePackages = [
       ...Object.keys(packageJson?.dependencies ?? {}),
       ...Object.keys(packageJson?.devDependencies ?? {}),
-    ].some((pkg) => packages.indexOf(pkg) >= 0)
+    ].some((dependencies) => packages.indexOf(dependencies) >= 0)
 
     if (!ensurePackages) {
       error(`[${this.command}]:`, 'Dependencies not found')
@@ -87,16 +86,25 @@ const getPackageJson = (): {
   const filename = 'package.json'
   const file = File.find(filename)
   if (!file.info.isFile) {
-    throw new Error(`There is no <${filename}> file in the root directory of the project.`)
+    throw new Error(
+      `The file <${filename}> does not exist in the root directory of the project located at <${cwd()}>. Please ensure that the file is present and try again.`,
+    )
   }
 
-  return JSON.parse(file.read())
+  try {
+    const json = JSON.parse(file.read())
+    return json
+  } catch (error) {
+    throw new Error(
+      `Error parsing the file <${filename}> in the root directory of the project located at <${cwd()}>`,
+    )
+  }
 }
 
 const getDirectory = (source: string, pkg: string): File => {
   const dir = File.find(`${source}/${pkg}/`)
   if (!dir.info.isDir) {
-    throw new Error(`${pkg} directory of package not found`)
+    throw new Error(`The directory of the package <${pkg}> was not found`)
   }
   return dir
 }
