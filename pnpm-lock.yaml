@@ -20,9 +20,6 @@ importers:
 
   .:
     dependencies:
-      beeper:
-        specifier: 3.0.0
-        version: 3.0.0
       fast-glob:
         specifier: 3.3.2
         version: 3.3.2
@@ -565,10 +562,6 @@ packages:
   beeper@1.1.1:
     resolution: {integrity: sha512-3vqtKL1N45I5dV0RdssXZG7X6pCqQrWPNOlBPZPrd+QkE2HEhR57Z04m0KtpbsZH73j+a3F8UD1TQnn+ExTvIA==}
     engines: {node: '>=0.10.0'}
-
-  beeper@3.0.0:
-    resolution: {integrity: sha512-8d0BXEuBIiPfmKvATnSCN58sGKCB3vy+lwORdSvfC5uN6OMlPj9/aVMXsmvt5dIvjjyxiuKYfMVWpiAh/kJr5w==}
-    engines: {node: '>=12'}
 
   bin-build@2.2.0:
     resolution: {integrity: sha512-m8gaq/BdoePIT5RlHW3KNJZwNkg9YtPn2C89x85/0KYIExoHMm3D/RL/Wxrvum9CI6pbF2KUQa8a/WWFudVmng==}
@@ -2507,10 +2500,6 @@ packages:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
 
-  yoctodelay@1.2.0:
-    resolution: {integrity: sha512-12y/P9MSig9/5BEhBgylss+fkHiCRZCvYR81eH35NW9uw801cvJt31EAV+WOLcwZRZbLiIQl/hxcdXXXFmGvXg==}
-    engines: {node: '>=4'}
-
   zopflipng-bin@6.0.1:
     resolution: {integrity: sha512-+aybvXv/xafL6I67uSH5yLHrSy4/OaSOV9tniw4yZFIHpINXUcctVHE/WzHxOONrL2GHzJ8Fd4iDrNyaS6TVbg==}
     engines: {node: '>=10'}
@@ -2883,10 +2872,6 @@ snapshots:
   base64-js@1.5.1: {}
 
   beeper@1.1.1: {}
-
-  beeper@3.0.0:
-    dependencies:
-      yoctodelay: 1.2.0
 
   bin-build@2.2.0:
     dependencies:
@@ -4968,8 +4953,6 @@ snapshots:
       fd-slicer: 1.1.0
 
   yn@3.1.1: {}
-
-  yoctodelay@1.2.0: {}
 
   zopflipng-bin@6.0.1:
     dependencies:

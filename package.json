@@ -14,8 +14,6 @@
   "scripts": {
     "prebuild": "node --run build:clean",
     "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#@/src//g\" \"#@/bin/\" \"./bin/**/*.js\" --isRegex",
-    "tsc:watch": "npm run build:clean && tsnd --watch -r ts-node/register/transpile-only -r tsconfig-paths/register -- ./src/index.ts",
-    "tsc:build": "tsc -p ./src/tsconfig.json && resolve-tspaths -p ./src/tsconfig.json -s ./src -o ./bin",
     "build:clean": "rm -Rf ./bin",
     "test:unit": "node --import @swc-node/register/esm-register --env-file=.env --test ./tests/**/*.test.ts",
     "package:update": "ncu -u && pnpm i && pnpm audit --fix"
@@ -59,7 +57,6 @@
     "typescript": "5.4.5"
   },
   "dependencies": {
-    "beeper": "3.0.0",
     "fast-glob": "3.3.2",
     "htmlhint": "1.1.4",
     "htmlhint-stylish": "1.0.3",
