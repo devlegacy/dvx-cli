@@ -73,10 +73,10 @@ This CLI tool integrates and encapsulates essential utilities (`sharp`, `imagemi
 
 📂 `project-root/`     
 ├─ 📂 `src/`     
-│  ├─ 📂 `assets/`     
-│  │  ├─ 📂 `img/`     
-│  │  │  └─ 📂 `dist/`     
-│  │  │  └─ 📂  `src/`     
+ │  ├─ 📂 `assets/`     
+ │  │  ├─ 📂 `img/`     
+ │  │  │  ├─ 📂 `dist/`     
+ │  │  │  └─ 📂  `src/`     
 
 <h2 align="center">Sponsoring</h2>
 
