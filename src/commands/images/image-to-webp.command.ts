@@ -51,8 +51,8 @@ export async function towebp({ source, distribution }: { source: string; distrib
     }
     const dist = resolve(distribution)
 
-    const extensions = ['png', 'jpeg', 'jpg', 'gif']
-    const files = File.sync(`**/*.{${extensions.join(',')}}`, {
+    const extensions = 'png,jpeg,jpg,gif'
+    const files = File.sync(`**/*.{${extensions}}`, {
       absolute: true,
       cwd: src.info.absolutePath,
     }).map((path) => {

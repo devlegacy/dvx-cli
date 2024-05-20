@@ -5,7 +5,7 @@ import { URL } from 'node:url'
 
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
-import { error, success, warn } from '#@/src/shared/helpers/console.js'
+import { warn } from '#@/src/shared/helpers/console.js'
 import { File } from '#@/src/shared/lib/file.js'
 import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
@@ -53,8 +53,8 @@ export async function minify({ source, distribution }: { source: string; distrib
     warn(`[${command}]:`, 'search in:', src.info.absolutePath)
     warn(`[${command}]:`, 'result in:', dist.info.absolutePath)
 
-    const extensions = ['png', 'jpeg', 'jpg', 'gif', 'svg']
-    const files = File.sync(`**/*.{${extensions.join(',')}}`, {
+    const extensions = 'png,jpeg,jpg,gif,svg'
+    const files = File.sync(`**/*.{${extensions}}`, {
       cwd: src.info.absolutePath,
       absolute: true,
     }).map((path) => {

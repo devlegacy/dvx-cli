@@ -1,4 +1,4 @@
-import type { ArgumentsCamelCase, Argv, InferredOptionTypes } from 'yargs'
+import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
 import { minify } from './image-minify.command.js'
 import { resize } from './image-resize.command.js'
