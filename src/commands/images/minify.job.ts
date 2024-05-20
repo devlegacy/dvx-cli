@@ -73,8 +73,8 @@ if (!isMainThread) {
     }[]
     command: string
   }
-  for (const fileInfo of files) {
-    const { source, destination, ext } = fileInfo
+  for (const file of files) {
+    const { source, destination, ext } = file
     const plugins = imageminPlugins[ext as keyof typeof imageminPlugins] as readonly Plugin[]
     promises.push(
       imagemin([source], {

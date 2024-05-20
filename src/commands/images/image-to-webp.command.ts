@@ -1,18 +1,22 @@
+import { isMainThread } from 'node:worker_threads'
 import { join, resolve } from 'node:path'
+import { mkdirSync } from 'node:fs'
+import { cpus } from 'node:os'
 
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
-import sharp from 'sharp'
 
-import { error, log, warn } from '#@/src/shared/helpers/console.js'
+import { warn } from '#@/src/shared/helpers/console.js'
 import { File } from '#@/src/shared/lib/file.js'
-import shelljs from 'shelljs'
 import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
+import { chunkArray } from '#@/src/shared/chunkArray.js'
+import { runWorker } from '#@/src/shared/runWorker.js'
 
-const { mkdir } = shelljs
+const command = 'img:towebp'
+const tasks: Promise<void>[] = []
 
 export class ImageToWebP extends YargsCommand {
-  readonly command = 'img:towebp'
+  readonly command = command
 
   readonly builder = this.options({
     source: {
@@ -40,47 +44,48 @@ export class ImageToWebP extends YargsCommand {
 }
 
 export async function towebp({ source, distribution }: { source: string; distribution: string }) {
-  const src = File.find(source)
-
-  if (!src.isDirectory()) {
-    error('[img:towebp]:', `Directory ${src.info.absolutePath} not found`)
-    return
-  }
-
-  const dist = resolve(distribution)
-  // Notify.info('To webp', 'Start images to webp task');
-
-  const files = File.sync('**/*.{png,jpeg,jpg,gif}', {
-    nodir: true,
-    absolute: true,
-    cwd: src.info.absolutePath,
-  }).map((fileInfo) => {
-    const file = File.find(fileInfo)
-    const distDir = file.info.dir.replace(src.info.absolutePath, '')
-    const destination = File.find(
-      distDir.startsWith('\\') || distDir.startsWith('/')
-        ? join(dist, distDir)
-        : resolve(dist, distDir),
-    )
-    if (!destination.isDirectory()) {
-      warn('[img:towebp]:', `Creating dir, ${destination.info.absolutePath}`)
-      mkdir('-p', destination.info.absolutePath)
+  if (isMainThread) {
+    const src = File.find(source)
+    if (!src.isDirectory()) {
+      throw new Error(`Directory ${src.info.absolutePath} not found`)
     }
-    return {
-      file,
-      destination,
-    }
-  })
+    const dist = resolve(distribution)
 
-  for (const fileInfo of files) {
-    const { file, destination } = fileInfo
-    try {
-      const fileName = resolve(destination.info.absolutePath, `${file.info.name}.webp`)
-      const data = await sharp(file.info.absolutePath).webp({ lossless: true }).toBuffer()
-      await sharp(data).toFile(fileName)
-      log('[img:towebp]:', fileName)
-    } catch (e) {
-      error('[img:towebp]:', e)
+    const extensions = ['png', 'jpeg', 'jpg', 'gif']
+    const files = File.sync(`**/*.{${extensions.join(',')}}`, {
+      absolute: true,
+      cwd: src.info.absolutePath,
+    }).map((path) => {
+      const file = File.find(path)
+      const distDir = file.info.dir.replace(src.info.absolutePath, '')
+      const destination = File.find(
+        distDir.startsWith('\\') || distDir.startsWith('/')
+          ? join(dist, distDir)
+          : resolve(dist, distDir),
+      )
+      if (!destination.isDirectory()) {
+        warn(`[${command}]:`, `Creating directory <${destination.info.absolutePath}>`)
+        mkdirSync(destination.info.absolutePath, { recursive: true })
+      }
+      return {
+        file: file.info,
+        destination: destination.info.absolutePath,
+      }
+    })
+    const cpuCount = cpus().length - 1
+
+    const chunkedTasks = chunkArray(files, cpuCount)
+    for (const chunk of chunkedTasks) {
+      tasks.push(
+        runWorker(
+          {
+            files: chunk,
+            command,
+          },
+          new URL('./to-webp.job.js', import.meta.url),
+        ),
+      )
     }
+    await Promise.all(tasks)
   }
 }

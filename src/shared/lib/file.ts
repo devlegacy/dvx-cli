@@ -47,7 +47,7 @@ export class File {
     return new File(path, context)
   }
 
-  static sync(pattern: string, opts?: { nodir?: boolean; cwd?: string; absolute?: boolean }) {
+  static sync(pattern: string, opts?: { cwd?: string; absolute?: boolean }) {
     return fg.globSync(pattern, opts)
   }
 

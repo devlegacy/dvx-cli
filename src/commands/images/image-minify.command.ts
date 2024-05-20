@@ -57,8 +57,8 @@ export async function minify({ source, distribution }: { source: string; distrib
     const files = File.sync(`**/*.{${extensions.join(',')}}`, {
       cwd: src.info.absolutePath,
       absolute: true,
-    }).map((filePath) => {
-      const file = File.find(filePath)
+    }).map((path) => {
+      const file = File.find(path)
       // [input]: /dvx-demo-project/src/assets/img/src/webpack/webpack.png
       // [output]: /webpack/webpack.png
       const distDir = file.info.dir.replace(src.info.absolutePath, '')
@@ -69,7 +69,7 @@ export async function minify({ source, distribution }: { source: string; distrib
           ? join(dist.info.absolutePath, distDir)
           : resolve(dist.info.absolutePath, distDir)
       return {
-        source: filePath,
+        source: path,
         destination,
         ext: file.info.ext.toLocaleLowerCase(),
       }
