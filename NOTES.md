@@ -1,7 +1,7 @@
-# Notes
+# 📝 Notes
 
+Local test command:
 ```sh
-  # Local test command:
   npm link
 ```
 
@@ -9,18 +9,18 @@
 - Move: `mv ./cli.js /usr/bin/`
 - where is?: `where dvx`
 - Size on end: `du -sh ./src/img/src/`
-- [Read more on stackoverflow:](https://stackoverflow.com/questions/20643470/execute-a-command-line-binary-with-node-js "stackoverflow")
+- [Execute a command line binary with Node.JS](https://stackoverflow.com/questions/20643470/execute-a-command-line-binary-with-node-js "stackoverflow")
 
 ## Console name
 
+- [Text to ASCII art generator](http://patorjk.com/software/taag/#p=testall&f=3D%20Diagonal&t=Devexteam%20CLI)
+- Font Name: Standard
 ```sh
    ____                      _                          ____ _     ___
   |  _ \  _____   _______  _| |_ ___  __ _ _ __ ___    / ___| |   |_ _|
   | | | |/ _ \ \ / / _ \ \/ / __/ _ \/ _` | '_ ` _ \  | |   | |    | |
   | |_| |  __/\ V /  __/>  <| ||  __/ (_| | | | | | | | |___| |___ | |
   |____/ \___| \_/ \___/_/\_\\__\___|\__,_|_| |_| |_|  \____|_____|___|
-  # http://patorjk.com/software/taag/#p=testall&f=3D%20Diagonal&t=Devexteam%20CLI
-  # Font Name: Standard
 ```
 
 ## Node environment
@@ -30,29 +30,28 @@
  * [0] Reserved by Node.js
  * [1] Reserved by Node.js
  */
- process.argv[3] = 'Estamos aprendiendo Node.JS';
- process.argv[4] = 19;
- process.argv[5] = null;
- process.argv[6] = true;
+process.argv[3] = 'Estamos aprendiendo Node.JS';
+process.argv[4] = 19;
+process.argv[5] = null;
+process.argv[6] = true;
 
- c('----------------------------------------');
- c('        PROCESOS DE NODE.JS             ');
- c(`ID del proceso............${process.pid}`);
- c(`Título....................${process.title}`);
- c(`Directorio de Node.JS.....${process.execPath}`);
- c(`Directorio actual.........${process.cwd()}`);
- c(`Versión de Node.JS........${process.version}`);
- c(`Versiones de dependencias.${process.versions}`);
- c(`Plataforma (S.O.).........${process.platform}`);
- c(`Arquitectura (S.O.).......${process.arch}`);
- c(`Tiempo activo de Node.JS..${process.uptime()}`);
- c(`Argumento de procesos.....${process.argv}`);
- c('----------------------------------------');
+c('----------------------------------------');
+c('        PROCESOS DE NODE.JS             ');
+c(`ID del proceso............${process.pid}`);
+c(`Título....................${process.title}`);
+c(`Directorio de Node.JS.....${process.execPath}`);
+c(`Directorio actual.........${process.cwd()}`);
+c(`Versión de Node.JS........${process.version}`);
+c(`Versiones de dependencias.${process.versions}`);
+c(`Plataforma (S.O.).........${process.platform}`);
+c(`Arquitectura (S.O.).......${process.arch}`);
+c(`Tiempo activo de Node.JS..${process.uptime()}`);
+c(`Argumento de procesos.....${process.argv}`);
+c('----------------------------------------');
 
- for(let i in process.argv){
-   c(`[${i}] - ${process.argv[i]}`);
- }
-
+for(let i in process.argv){
+  c(`[${i}] - ${process.argv[i]}`);
+}
 
 c(__dirname);
 c(__filename);
@@ -243,10 +242,6 @@ Promise.resolve().then(() => tslib_1.__importStar(require
   npm test -- --updateSnapshot
 ```
 
-const { default: imagemin } = await import('imagemin');
-const { default: imageminMozjpeg } = await import('imagemin-mozjpeg');
-const { default: imageminSvgo } = await import('imagemin-svgo');
-
 <h2 id="" align="center">Examples</h2>
 
 ### Images
@@ -268,3 +263,10 @@ Result after run `dvx img:build`
 npm publish --dry-run
 "bin",
 "bin/**/*.js",
+
+
+https://nodejs.org/api/process.html#processargv0
+
+node ~/src/github.com/devlegacy/dvx-cli html:validate
+@squoosh/lib
+imagemin-svgo

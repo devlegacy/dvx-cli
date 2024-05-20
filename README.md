@@ -71,12 +71,12 @@ This CLI tool integrates and encapsulates essential utilities (`sharp`, `imagemi
 
 <h2 align="center">Directory structure example</h2>
 
-📂 `project-root/`   
-├─ 📂 `src/`   
-│  ├─ 📂 `assets/`   
-│  │  ├─ 📂 `img/`   
-│  │  │  ├─ 📂 `dist/`   
-│  │  │  ├─ 📂  `src/`   
+📂 `project-root/`     
+├─ 📂 `src/`     
+│  ├─ 📂 `assets/`     
+│  │  ├─ 📂 `img/`     
+│  │  │  └─ 📂 `dist/`     
+│  │  │  └─ 📂  `src/`     
 
 <h2 align="center">Sponsoring</h2>
 
