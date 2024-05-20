@@ -1,27 +1,24 @@
-import yargs from 'yargs/yargs';
-import { version, epilogue, usage, scriptName } from './commands/helpers/version';
-import { htmlValidate } from './commands/html/html-validate';
-import { imageMinify } from './commands/images/image-minify';
-import { imageToWebP } from './commands/images/image-to-webp';
-import { cleanSourcemap } from './commands/files/clean-sourcemap';
-import { imageResize } from './commands/images/image-resize';
-import { imageBuilder } from './commands/images/build';
-import { hideBin } from 'yargs/helpers';
-import { Argv } from 'yargs';
-import { Command } from './shared/interfaces/command.interface';
+import type { Argv } from 'yargs'
+import yargs from 'yargs/yargs'
+import { hideBin } from 'yargs/helpers'
+import type { Class } from 'type-fest'
 
-export default class DvxCLI {
-  #yargs: Argv;
-  #commands: Array<Command> = [imageMinify, imageToWebP, imageResize, imageBuilder, htmlValidate, cleanSourcemap];
+import { version, epilogue, usage, scriptName } from '#@/src/commands/version.js'
+import type { YargsCommand } from './shared/yargs-command.js'
+import { readModulesRecursively } from './shared/readModulesRecursively.js'
+import { isConstructor } from './shared/isConstructor.js'
+import { error } from '#@/bin/shared/helpers/console.js'
+import { exit } from 'node:process'
 
-  constructor() {
-    this.#yargs = yargs(hideBin(process.argv));
-    this.setConfig();
-    this.installAllCommands();
-    this.setValidation();
+export class DvxCLI {
+  #yargs: Argv
+
+  constructor(argv: string[]) {
+    this.#yargs = yargs(hideBin(argv))
+    this.#configureYargs()
   }
 
-  private setConfig() {
+  #configureYargs() {
     this.#yargs
       .epilogue(epilogue)
       .help('help', 'Show help', false)
@@ -29,39 +26,66 @@ export default class DvxCLI {
       .scriptName(scriptName)
       .usage(usage)
       .wrap(95)
-      .version(...version)
+      .version('version', 'Show current version number', version)
       .hide('version')
       .hide('help')
-      .strictCommands();
+      .strictCommands()
   }
 
-  get args() {
-    return this.#yargs;
+  #onError(command: string, err: unknown) {
+    error(`[${command}]:`, err instanceof Error ? err.message : 'unknown error')
+    exit(0)
   }
 
-  private installAllCommands() {
-    this.#yargs;
-    for (const command of this.#commands) {
-      // Attach to yargs
-      command.handler(this.#yargs);
+  async installCommands(path = 'commands') {
+    for await (const entities of readModulesRecursively(
+      new URL(path, import.meta.url),
+      /\.command\.(ts|js)$/,
+    )) {
+      const keys = Object.keys(entities)
+      for (const key of keys) {
+        const entity = entities[`${key}`]
+        if (!isConstructor(entity)) continue
+        const command = entity as Class<YargsCommand>
+        const cmd = new command() as YargsCommand
+        const handler =
+          cmd.handler.constructor.name === 'AsyncFunction'
+            ? async (args: any) => {
+                try {
+                  await cmd.handler.bind(cmd)(args)
+                } catch (err) {
+                  this.#onError(cmd.command, err)
+                }
+              }
+            : (args: any) => {
+                try {
+                  cmd.handler.bind(cmd)(args)
+                } catch (err) {
+                  this.#onError(cmd.command, err)
+                }
+              }
+        this.#yargs.command(cmd.command, cmd.description, cmd.builder, handler)
+      }
     }
+
+    return this
   }
 
-  private async setValidation(): Promise<void> {
+  async parse() {
     try {
-      // argv from vector arg - vector or arg - array
-      // http://decsai.ugr.es/~jfv/ed1/c/cdrom/cap6/cap64.htm
-      const argv = await this.args.parse(); // args vector - without flags
-      const argsCount = argv._.length;
-      // const commands: Array<string> = argv.commands && Array.isArray(argv.commands) ? argv.commands : [];
-      // || commands.includes(String(argv._[0]))
-      if (!argsCount) {
-        this.args.showHelp();
-      }
+      /**
+       * NOTE: argv, the letter v is an abbreviation of vector, arg - vector | arg - array
+       * Read more on: http://decsai.ugr.es/~jfv/ed1/c/cdrom/cap6/cap64.htm
+       */
+      const argv = await this.#yargs.parse() // args vector - without flags
+      const argsCount = argv._.length
+
+      if (!argsCount) this.#yargs.showHelp()
     } catch (err) {
-      if (err instanceof Error) {
-        console.warn('[error]:', `${err.message}\n ${await this.args.getHelp()}`);
-      }
+      const help = await this.#yargs.getHelp()
+      if (err instanceof Error) console.error('[error]:', `${err.message}\n${help}`)
+
+      console.error('[error]:', `unknown error\n${help}`)
     }
   }
 }

@@ -1,58 +1,45 @@
-import { spawnSync, SpawnSyncReturns } from 'child_process';
-import { platform, version } from 'process';
-import { arch } from 'os';
+import { spawnSync, type SpawnSyncReturns } from 'node:child_process'
 
-const validate = (command: SpawnSyncReturns<string>, errorMessage: string) => {
+const validateCommand = (command: SpawnSyncReturns<Buffer>, errorMessage: string) => {
   return !command.error
     ? command.stdout
         .toString()
         .split('\n')
         .filter((data) => data.length > 0)
         .shift() || ''
-    : errorMessage;
-};
-
-class Magick {
-  private downloadInfo = 'Download on https://www.imagemagick.org/script/download.php';
-  validate(): string {
-    const magick = spawnSync('magick', ['-version']);
-    // @ts-ignore
-    return validate(magick, this.downloadInfo);
-  }
+    : errorMessage
 }
 
-class GraphicMagick {
-  private downloadInfo = 'Download on http://www.graphicsmagick.org/download.html';
-  validate(): string {
-    const gm = spawnSync('gm', ['-version']);
-    // @ts-ignore
-    return validate(gm, this.downloadInfo);
-  }
-}
-
-class Node {
-  version() {
-    return version;
-  }
+const messages = {
+  magick: '🔽 Download here 🔗 https://www.imagemagick.org/script/download.php',
+  gm: '🔽 Download here 🔗 http://www.graphicsmagick.org/download.html',
 }
 
 class Shell {
-  magick() {
-    return new Magick();
+  static get imageMagick() {
+    const command = 'magick'
+    let response = ''
+    try {
+      const magick = spawnSync(command, ['-version'])
+      response = validateCommand(magick, messages[command])
+    } catch {
+      response = messages[command]
+    }
+
+    return response
   }
 
-  gm() {
-    return new GraphicMagick();
-  }
-
-  node() {
-    return new Node();
-  }
-
-  os() {
-    return `${platform} ${arch()}`;
+  static get graphicMagick() {
+    const command = 'gm'
+    let response = ''
+    try {
+      const gm = spawnSync(command, ['-version'])
+      response = validateCommand(gm, messages[command])
+    } catch {
+      response = messages[command]
+    }
+    return response
   }
 }
 
-const shell = new Shell();
-export default shell;
+export default Shell

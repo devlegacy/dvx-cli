@@ -7,17 +7,16 @@
   "bin": {
     "dvx": "bin/index.js"
   },
+  "imports": {
+    "#@/*": "./*"
+  },
+  "type": "module",
   "scripts": {
-    "prebuild": "rm -f tsconfig.build.tsbuildinfo",
-    "build": "npm run tsc:build",
-    "jest:init": "jest --init",
-    "jest:watch": "jest --watchAll",
-    "test": "jest --runInBand --detectOpenHandles",
-    "tsc:watch": "npm run build:clean && tsc --project tsconfig.build.json --watch --pretty",
-    "tsc:build": "npm run build:clean && tsc -p tsconfig.build.json && resolve-tspaths",
-    "build:clean": "rm -Rf ./bin/* ; exit 0;",
-    "webpack:build": "npm run build:clean && webpack --stats-error-details=true --config webpack.config.js --mode=production && echo #!/usr/bin/env node > dist/bin/www && cat ./dist/bin/www.js >> dist/bin/www && rm ./dist/bin/www.js",
-    "package:update": "ncu -u && npm i --legacy-peer-deps && npm audit fix --legacy-peer-deps"
+    "prebuild": "node --run build:clean",
+    "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#@/src//g\" \"#@/bin/\" \"./bin/**/*.js\" --isRegex",
+    "build:clean": "rm -Rf ./bin",
+    "test:unit": "node --import @swc-node/register/esm-register --env-file=.env --test ./tests/**/*.test.ts",
+    "package:update": "ncu -u && pnpm i && pnpm audit --fix"
   },
   "keywords": [
     "Devexteam",
@@ -29,7 +28,7 @@
   "files": [
     "assets/icons",
     "bin",
-    "README.MD"
+    "README.md"
   ],
   "directories": {
     "bin": "bin"
@@ -37,55 +36,49 @@
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": false,
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
-    "@types/htmlhint": "^1.1.2",
-    "@types/imagemin": "^8.0.0",
-    "@types/imagemin-jpegtran": "^5.0.1",
-    "@types/imagemin-mozjpeg": "^8.0.1",
-    "@types/imagemin-svgo": "^10.0.1",
-    "@types/imagemin-zopfli": "^7.0.1",
-    "@types/jest": "^27.4.1",
-    "@types/node": "^17.0.22",
-    "@types/node-notifier": "^8.0.2",
-    "@types/sharp": "^0.30.0",
-    "@types/shelljs": "^0.8.11",
-    "@types/yargs": "^17.0.10",
-    "jest": "^27.5.1",
-    "resolve-tspaths": "^0.2.4",
-    "string-replace-loader": "^3.1.0",
-    "ts-jest": "^27.1.3",
-    "ts-loader": "^9.2.8",
-    "tsconfig-paths": "^3.14.0",
-    "tsconfig-paths-webpack-plugin": "^3.5.2",
-    "typescript": "^4.6.2",
-    "webpack": "^5.70.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-merge": "^5.8.0",
-    "webpack-node-externals": "^3.0.0"
+    "@swc-node/register": "1.9.1",
+    "@swc/cli": "0.3.12",
+    "@swc/core": "1.5.7",
+    "@types/fs-extra": "11.0.4",
+    "@types/htmlhint": "1.1.5",
+    "@types/imagemin": "8.0.5",
+    "@types/imagemin-jpegtran": "5.0.4",
+    "@types/imagemin-mozjpeg": "8.0.4",
+    "@types/imagemin-svgo": "10.0.5",
+    "@types/imagemin-zopfli": "7.0.4",
+    "@types/node": "20.12.12",
+    "@types/node-notifier": "8.0.5",
+    "@types/sharp": "0.31.1",
+    "@types/shelljs": "0.8.15",
+    "@types/yargs": "17.0.32",
+    "replace-in-file": "7.1.0",
+    "ts-node": "10.9.2",
+    "type-fest": "4.18.2",
+    "typescript": "5.4.5"
   },
   "dependencies": {
-    "beeper": "^3.0.0",
-    "fs-extra": "^10.0.1",
-    "glob": "^7.2.0",
-    "htmlhint": "^1.1.2",
-    "htmlhint-stylish": "^1.0.3",
-    "imagemin": "^8.0.1",
-    "imagemin-giflossy": "^5.1.10",
-    "imagemin-jpegtran": "^7.0.0",
-    "imagemin-mozjpeg": "^10.0.0",
-    "imagemin-pngquant": "^9.0.2",
-    "imagemin-svgo": "^10.0.1",
-    "imagemin-webp": "^7.0.0",
-    "imagemin-zopfli": "^7.0.0",
-    "node-notifier": "^10.0.1",
-    "sharp": "^0.30.3",
-    "shelljs": "^0.8.5",
-    "tslib": "^2.3.1",
-    "yargs": "^17.4.0"
+    "fast-glob": "3.3.2",
+    "htmlhint": "1.1.4",
+    "htmlhint-stylish": "1.0.3",
+    "imagemin": "9.0.0",
+    "imagemin-giflossy": "5.1.10",
+    "imagemin-jpegtran": "7.0.0",
+    "imagemin-mozjpeg": "10.0.0",
+    "imagemin-pngquant": "10.0.0",
+    "imagemin-webp": "8.0.0",
+    "imagemin-zopfli": "7.0.0",
+    "is-svg": "5.0.1",
+    "node-notifier": "10.0.1",
+    "sharp": "0.33.4",
+    "shelljs": "0.8.5",
+    "svgo": "3.3.2",
+    "yargs": "17.7.2"
   },
   "engines": {
-    "node": ">=12.18.3 <=16.14.0"
+    "node": ">=22.2.0",
+    "npm": ">=10.8.0"
   },
+  "engineStrict": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/devlegacy/dvx-cli.git"
@@ -93,5 +86,20 @@
   "bugs": {
     "url": "https://github.com/devlegacy/dvx-cli/issues"
   },
-  "homepage": "https://github.com/devlegacy/dvx-cli#readme"
+  "homepage": "https://github.com/devlegacy/dvx-cli#readme",
+  "packageManager": "pnpm@9.1.0+sha512.67f5879916a9293e5cf059c23853d571beaf4f753c707f40cb22bed5fb1578c6aad3b6c4107ccb3ba0b35be003eb621a16471ac836c87beb53f9d54bb4612724",
+  "pnpm": {
+    "overrides": {
+      "braces@<2.3.1": ">=2.3.1",
+      "tunnel-agent@<0.6.0": ">=0.6.0",
+      "got@<11.8.5": ">=11.8.5",
+      "decompress@<4.2.1": ">=4.2.1",
+      "http-cache-semantics@<4.1.1": ">=4.1.1",
+      "semver-regex@<3.1.3": ">=3.1.3",
+      "semver-regex@<3.1.4": ">=3.1.4",
+      "glob-parent@<5.1.2": ">=5.1.2",
+      "trim-newlines@<3.0.1": ">=3.0.1",
+      "semver@<5.7.2": ">=5.7.2"
+    }
+  }
 }

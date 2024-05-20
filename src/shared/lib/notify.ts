@@ -1,21 +1,63 @@
-import { NotificationCallback, notify } from 'node-notifier';
-import { platform } from 'os';
-import { File } from './file';
+import NodeNotifier from 'node-notifier'
+import { File } from './file.js'
 
-const iconDir = 'assets/icons/info.jpg';
+const { notify } = NodeNotifier
+const __dirname = new URL('.', import.meta.url).pathname
+const BASE_ICON_PATH = '../../../assets/icons'
+const iconFinder = (icon: string) =>
+  File.find(`${BASE_ICON_PATH}/${icon}`, __dirname).info.absolutePath
 
-const icon = File.find(`../../../${iconDir}`, __dirname);
+const messages = {
+  info: {
+    icon: iconFinder('info.jpg'),
+    fallback: 'ℹ',
+  },
+  done: {
+    icon: iconFinder('done.jpg'),
+    fallback: '✅',
+  },
+  fail: {
+    icon: iconFinder('fail.jpg'),
+    fallback: '❌',
+  },
+}
+
+const timeout = 0
 
 export class Notify {
-  public static readonly icon: string = icon.info.absolutePath;
+  static info(title = 'ℹ Default info title 📌', message = 'Default message 💬') {
+    setTimeout(() => {
+      notify({
+        title,
+        message,
+        icon: messages.info.icon || messages.info.fallback,
+        sound: true,
+        wait: false,
+      })
+    }, timeout)
+  }
 
-  public static info(title: string = 'Default title', message: string = 'Default message') {
-    return notify({
-      title,
-      message,
-      icon: Notify.icon, // Absolute path (doesn't work on balloons)
-      sound: true, // Only Notification Center or Windows Toasters
-      wait: true // Wait with callback, until user action is taken against notification, does not apply to Windows Toasters as they always wait or notify-send as it does not support the wait option
-    });
+  static done(title = '✅ Default done title 📌', message = 'Default message 💬') {
+    setTimeout(() => {
+      notify({
+        title,
+        message,
+        icon: messages.done.icon || messages.done.fallback,
+        sound: true,
+        wait: false,
+      })
+    }, timeout)
+  }
+
+  static fail(title = '❌ Default error title 📌', message = 'Default message 💬') {
+    setTimeout(() => {
+      notify({
+        title,
+        message,
+        icon: messages.fail.icon || messages.fail.fallback,
+        sound: true,
+        wait: false,
+      })
+    }, timeout)
   }
 }

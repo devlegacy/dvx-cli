@@ -1,41 +1,56 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    /* Projects */
     "incremental": true,
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["esnext"],
-    "declaration": true,
-    "sourceMap": true,
-    "outDir": "./bin",
-    // "rootDir": "./",
     "composite": true,
-    // "tsBuildInfoFile": ".", // Tech debt: Cause error TS5033: Could not write file EISDIR: illegal operation on a directory
-    "removeComments": true,
-    "noEmit": true,
-    "importHelpers": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": false,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "baseUrl": "./",
-    "newLine": "lf",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "types": ["jest", "node"],
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "inlineSources": true,
+    /* Language and Environment */
+    "target": "ESNext",
+    "lib": ["ESNext"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "useDefineForClassFields": true,
+    "moduleDetection": "force",
+    /* Modules */
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "baseUrl": "./",
+    "paths": {
+      "#@/*": ["./*"]
+    },
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node"],
+    "resolveJsonModule": true,
+    /* JavaScript Support */
+    "allowJs": true,
+    /* Emit */
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noEmit": true,
+    "importHelpers": true,
+    "inlineSources": true,
+    "newLine": "lf",
+    "noEmitHelpers": true,
+    /* Interop Constraints */
+    "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    /* Type Checking */
+    "strict": true,
+    "useUnknownInCatchVariables": true,
+    "noUnusedLocals": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    /* Completeness */
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "noErrorTruncation": true
+  },
+  "ts-node": {
+    "swc": true,
+    "esm": true,
+    "transpileOnly": true
   }
 }

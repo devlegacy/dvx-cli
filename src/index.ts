@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
-import DvxCLI from './dvx';
+import { argv } from 'node:process'
+import { DvxCLI } from './dvx.js'
 
-new DvxCLI();
+await (await new DvxCLI(argv).installCommands()).parse()
