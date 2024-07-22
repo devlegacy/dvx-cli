@@ -36,25 +36,25 @@
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": false,
   "devDependencies": {
-    "@swc-node/register": "1.9.1",
-    "@swc/cli": "0.3.12",
-    "@swc/core": "1.5.7",
+    "@swc-node/register": "1.10.9",
+    "@swc/cli": "0.4.0",
+    "@swc/core": "1.7.0",
     "@types/fs-extra": "11.0.4",
     "@types/htmlhint": "1.1.5",
-    "@types/imagemin": "8.0.5",
+    "@types/imagemin": "9.0.0",
     "@types/imagemin-jpegtran": "5.0.4",
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "10.0.5",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "20.12.12",
+    "@types/node": "20.14.11",
     "@types/node-notifier": "8.0.5",
     "@types/sharp": "0.31.1",
     "@types/shelljs": "0.8.15",
     "@types/yargs": "17.0.32",
-    "replace-in-file": "7.1.0",
+    "replace-in-file": "8.1.0",
     "ts-node": "10.9.2",
-    "type-fest": "4.18.2",
-    "typescript": "5.4.5"
+    "type-fest": "4.23.0",
+    "typescript": "5.5.4"
   },
   "dependencies": {
     "fast-glob": "3.3.2",
@@ -75,8 +75,9 @@
     "yargs": "17.7.2"
   },
   "engines": {
-    "node": ">=22.2.0",
-    "npm": ">=10.8.0"
+    "node": ">=16.15.0 <=22.5.1",
+    "npm": ">=9.8.0 <=10.8.2",
+    "pnpm": ">=9.6.0"
   },
   "engineStrict": true,
   "repository": {
@@ -87,7 +88,7 @@
     "url": "https://github.com/devlegacy/dvx-cli/issues"
   },
   "homepage": "https://github.com/devlegacy/dvx-cli#readme",
-  "packageManager": "pnpm@9.1.0+sha512.67f5879916a9293e5cf059c23853d571beaf4f753c707f40cb22bed5fb1578c6aad3b6c4107ccb3ba0b35be003eb621a16471ac836c87beb53f9d54bb4612724",
+  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e",
   "pnpm": {
     "overrides": {
       "braces@<2.3.1": ">=2.3.1",
@@ -97,9 +98,9 @@
       "http-cache-semantics@<4.1.1": ">=4.1.1",
       "semver-regex@<3.1.3": ">=3.1.3",
       "semver-regex@<3.1.4": ">=3.1.4",
-      "glob-parent@<5.1.2": ">=5.1.2",
       "trim-newlines@<3.0.1": ">=3.0.1",
-      "semver@<5.7.2": ">=5.7.2"
+      "semver@<5.7.2": ">=5.7.2",
+      "braces@<3.0.3": ">=3.0.3"
     }
   }
 }
