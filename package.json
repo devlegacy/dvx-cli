@@ -57,7 +57,6 @@
     "typescript": "5.5.4"
   },
   "dependencies": {
-    "fast-glob": "3.3.2",
     "htmlhint": "1.1.4",
     "htmlhint-stylish": "1.0.3",
     "imagemin": "9.0.0",
