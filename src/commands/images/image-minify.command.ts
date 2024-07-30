@@ -35,10 +35,10 @@ export class ImageMinify extends YargsCommand {
   readonly description = 'Minify images'
 
   async handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>) {
-    console.time(this.command)
-    await minify(args)
-    console.timeEnd(this.command)
-    Notify.info('Minify', 'Minify images task has ended')
+    // console.time(this.command)
+    minify(args)
+    // console.timeEnd(this.command)
+    // Notify.info('Minify', 'Minify images task has ended')
   }
 }
 
@@ -88,6 +88,6 @@ export async function minify({ source, distribution }: { source: string; distrib
         ),
       )
     }
-    await Promise.all(tasks)
+    Promise.allSettled(tasks)
   }
 }

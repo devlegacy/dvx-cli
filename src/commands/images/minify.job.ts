@@ -1,4 +1,5 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads'
+import { performance } from 'node:perf_hooks'
 
 import imageminPngquant from 'imagemin-pngquant'
 import imageminJpegtran from 'imagemin-jpegtran'
@@ -8,7 +9,11 @@ import imageminMozjpeg from 'imagemin-mozjpeg'
 import imageminGiflossy from 'imagemin-giflossy'
 
 import imageminSvgo from '#@/src/shared/imagemin-svgo.js'
-import { error, success } from '#@/src/shared/helpers/console.js'
+import {
+  // error,
+  log,
+  //  success
+} from '#@/src/shared/helpers/console.js'
 
 const jpgPlugins = [
   imageminJpegtran({
@@ -65,6 +70,7 @@ const imageminPlugins = {
 }
 const promises = []
 if (!isMainThread) {
+  const startsAt = performance.now()
   const { files, command } = workerData as {
     files: {
       source: string
@@ -84,7 +90,7 @@ if (!isMainThread) {
         // Note: Extra process, evaluate
         // File.find(images[0].sourcePath).info.path
         // File.find(images[0].destinationPath).info.path
-        success(
+        log(
           `[${command}]:`,
           '\n[from]\t:',
           images[0]!.sourcePath,
@@ -95,13 +101,13 @@ if (!isMainThread) {
       }),
     )
   }
-  Promise.all(promises)
-    .then(() => {
-      parentPort?.postMessage({
-        processed: files.length,
-      })
+  Promise.allSettled(promises).then(() => {
+    parentPort?.postMessage({
+      processed: files.length,
+      endTime: (performance.now() - startsAt) / 1000,
     })
-    .catch((e) => {
-      error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`)
-    })
+  })
+  // .catch((e) => {
+  //   error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`)
+  // })
 }

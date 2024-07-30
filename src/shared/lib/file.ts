@@ -2,8 +2,7 @@ import { statSync, existsSync, writeFileSync, readFileSync, lstatSync } from 'no
 import { EOL } from 'node:os'
 import { resolve, relative, parse } from 'node:path'
 import { cwd } from 'node:process'
-
-import fg from 'fast-glob'
+import { globSync } from 'node:fs'
 
 export interface FileParsed {
   isDir: boolean
@@ -47,8 +46,12 @@ export class File {
     return new File(path, context)
   }
 
-  static sync(pattern: string, opts?: { cwd?: string; absolute?: boolean }) {
-    return fg.globSync(pattern, opts)
+  static sync(pattern: string, opts?: { cwd?: string; absolute?: boolean; ignore?: string[] }) {
+    const files = globSync(pattern, {
+      ...opts,
+    }).map((file) => resolve(opts?.cwd!, file))
+
+    return files
   }
 
   /**

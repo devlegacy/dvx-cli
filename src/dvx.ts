@@ -38,33 +38,21 @@ export class DvxCLI {
   }
 
   async installCommands(path = 'commands') {
-    for await (const entities of readModulesRecursively(
-      new URL(path, import.meta.url),
-      /\.command\.(ts|js)$/,
-    )) {
+    const parentUrl = new URL(path, import.meta.url)
+    const mask = /\.command\.(ts|js)$/
+    for await (const entities of readModulesRecursively(parentUrl, mask)) {
       const keys = Object.keys(entities)
       for (const key of keys) {
         const entity = entities[`${key}`]
         if (!isConstructor(entity)) continue
         const command = entity as Class<YargsCommand>
         const cmd = new command() as YargsCommand
-        const handler =
-          cmd.handler.constructor.name === 'AsyncFunction'
-            ? async (args: any) => {
-                try {
-                  await cmd.handler.bind(cmd)(args)
-                } catch (err) {
-                  this.#onError(cmd.command, err)
-                }
-              }
-            : (args: any) => {
-                try {
-                  cmd.handler.bind(cmd)(args)
-                } catch (err) {
-                  this.#onError(cmd.command, err)
-                }
-              }
-        this.#yargs.command(cmd.command, cmd.description, cmd.builder, handler)
+
+        try {
+          this.#yargs.command(cmd.command, cmd.description, cmd.builder, cmd.handler.bind(cmd))
+        } catch (err) {
+          this.#onError(cmd.command, err)
+        }
       }
     }
 
@@ -74,7 +62,7 @@ export class DvxCLI {
   async parse() {
     try {
       /**
-       * NOTE: argv, the letter v is an abbreviation of vector, arg - vector | arg - array
+       * DOC: argv, the letter v is an abbreviation of vector, arg - vector | arg - array
        * Read more on: http://decsai.ugr.es/~jfv/ed1/c/cdrom/cap6/cap64.htm
        */
       const argv = await this.#yargs.parse() // args vector - without flags
