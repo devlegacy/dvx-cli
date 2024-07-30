@@ -1,5 +1,5 @@
-name: Node.js CI ⬢
-run-name: Node.js CI ⬢
+name: Node.js ⬢ CI
+run-name: Node.js ⬢ CI
 
 on:
   push:
@@ -10,10 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [21.x, 22.x]
+        node-version: [22.x]
     steps:
       - name: Checkout 📖
         uses: actions/checkout@v4
 
       - name: Use Node.js ${{ matrix.node-version }} 🚀
         run: echo "Using Node.js ${{ matrix.node-version }} ${{github.workflow}} ${{github.event_name}} ${{github.actor}}"
+
+      - name: more and mode
+        env: 
+          JOB_CONTEXT: ${{toJson(job)}}
+        run: |
+          echo "Job context: ${JOB_CONTEXT}"
+          echo "Done!!!"
