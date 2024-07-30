@@ -15,7 +15,8 @@
     "prebuild": "node --run build:clean",
     "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#@/src//g\" \"#@/bin/\" \"./bin/**/*.js\" --isRegex",
     "build:clean": "rm -Rf ./bin",
-    "test": "pnpm run test:unit",
+    "test": "pnpm run test:unit && pnpm run test:features",
+    "test:features": "true",
     "test:unit": "node --import @swc-node/register/esm-register --test ./tests/**/*.test.ts",
     "package:update": "ncu -u && pnpm i && pnpm audit --fix"
   },
