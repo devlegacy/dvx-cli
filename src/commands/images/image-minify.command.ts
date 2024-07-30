@@ -7,7 +7,7 @@ import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
 import { warn } from '#@/src/shared/helpers/console.js'
 import { File } from '#@/src/shared/lib/file.js'
-import { Notify } from '#@/src/shared/lib/notify.js'
+// import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 import { chunkArray } from '#@/src/shared/chunkArray.js'
 import { runWorker } from '#@/src/shared/runWorker.js'

@@ -7,7 +7,7 @@ import { version, epilogue, usage, scriptName } from '#@/src/commands/version.js
 import type { YargsCommand } from './shared/yargs-command.js'
 import { readModulesRecursively } from './shared/readModulesRecursively.js'
 import { isConstructor } from './shared/isConstructor.js'
-import { error } from '#@/bin/shared/helpers/console.js'
+import { error } from '#@/src/shared/helpers/console.js'
 import { exit } from 'node:process'
 
 export class DvxCLI {
