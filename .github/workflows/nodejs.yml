@@ -31,8 +31,8 @@ jobs:
           echo "Done!!!"
         # JOB_CONTEXT.status === 'fail', send notification to slack
 
-      - name: Install build dependencies 🛠️ (giflossy, zopflipng)
-        run: sudo apt-get update && sudo apt-get install -y build-essential libpng-dev
+      - name: Install infra build dependencies 🛠️ (giflossy, zopflipng)
+        run: sh .etc/install.sh
 
       - name: Enable corepack and pnpm ⚙️
         run: |
