@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [21.x, 22.x]
+
+    name: Node.js ${{ matrix.node-version }} 🚀
     steps:
       - name: Checkout 📖
         uses: actions/checkout@v4
@@ -57,4 +59,4 @@ jobs:
 
       - name: Run tests 🧪
         run: |
-          node --run test
+          pnpm run test
