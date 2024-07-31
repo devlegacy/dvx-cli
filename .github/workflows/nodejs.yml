@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [21.x, 22.x]
+        node-version: [22.x]
+        # globSync is not supported in Node.js 21.x yet
+        # node --run is not supported in Node.js 21.x yet
 
     name: Node.js ${{ matrix.node-version }} 🚀
     steps:
@@ -59,4 +61,4 @@ jobs:
 
       - name: Run tests 🧪
         run: |
-          pnpm run test
+          node --run test
