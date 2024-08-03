@@ -17,10 +17,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout 📖
-        if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v4
-
       - name: Tag major, minor, and patch versions 🏷️
         if: ${{ steps.release.outputs.release_created }}
         run: |
@@ -45,6 +41,10 @@ jobs:
           git push origin :refs/tags/v$MAJOR || true
           git push origin :refs/tags/v$MAJOR.$MINOR || true
 
+      - name: Checkout 📖
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+
       - name: Enable corepack and pnpm ⚙️
         run: |
           corepack enable
@@ -57,6 +57,7 @@ jobs:
           node-version: 22
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Cache dependencies 🔒
         id: cache-pnpm-store
         uses: actions/cache@v4
