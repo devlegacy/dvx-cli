@@ -40,7 +40,7 @@
   "devDependencies": {
     "@swc-node/register": "1.10.9",
     "@swc/cli": "0.4.0",
-    "@swc/core": "1.7.4",
+    "@swc/core": "1.7.5",
     "@types/fs-extra": "11.0.4",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "9.0.0",
@@ -48,7 +48,7 @@
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "10.0.5",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "22.0.2",
+    "@types/node": "22.1.0",
     "@types/node-notifier": "8.0.5",
     "@types/shelljs": "0.8.15",
     "@types/yargs": "17.0.32",
