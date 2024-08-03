@@ -9,5 +9,7 @@ export abstract class YargsCommand {
     return options
   }
 
-  abstract handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>): void
+  abstract handler(
+    args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>,
+  ): Promise<void>
 }

@@ -1,5 +1,6 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads'
 import { extname } from 'node:path'
+import { performance } from 'node:perf_hooks'
 
 import sharp from 'sharp'
 import shelljs from 'shelljs'
@@ -63,6 +64,7 @@ const useSharp = async (
 const promises = []
 
 if (!isMainThread) {
+  const startsAt = performance.now()
   const { files, width, height, tool, command } = workerData
   for (const file of files) {
     if (tool === 'mogrify') {
@@ -71,11 +73,11 @@ if (!isMainThread) {
       promises.push(useSharp(file, width, height).then(() => log(`[${command}]:`, file)))
     }
   }
-  Promise.all(promises)
-    .then(() => {
-      parentPort?.postMessage({
-        processed: files.length,
-      })
+  Promise.allSettled(promises).then(() => {
+    parentPort?.postMessage({
+      processed: files.length,
+      endTime: (performance.now() - startsAt) / 1000,
     })
-    .catch((e) => error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`))
+  })
+  // .catch((e) => error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`))
 }

@@ -3,7 +3,7 @@ import { cpus } from 'node:os'
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
 import { File } from '#@/src/shared/lib/file.js'
-import { Notify } from '#@/src/shared/lib/notify.js'
+// import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 import { chunkArray } from '#@/src/shared/chunkArray.js'
 import { runWorker } from '#@/src/shared/runWorker.js'
@@ -55,10 +55,10 @@ export class ImageResize extends YargsCommand {
   }
 
   async handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>) {
-    console.time(this.command)
-    await resize(args)
-    console.timeEnd(this.command)
-    Notify.info('Resize', 'End resize images task')
+    // console.time(this.command)
+    resize(args)
+    // console.timeEnd(this.command)
+    // Notify.info('Resize', 'End resize images task')
   }
 }
 
@@ -105,6 +105,6 @@ export async function resize({
         ),
       )
     }
-    await Promise.all(tasks)
+    Promise.allSettled(tasks)
   }
 }

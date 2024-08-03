@@ -1,0 +1,50 @@
+name: Node.js ⬢ CI
+run-name: Node.js ⬢ CI
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    name: Node.js ${{ matrix.node-version }} 🚀
+    steps:
+      - name: Checkout 📖
+        uses: actions/checkout@v4
+
+      - name: Install infra build dependencies 🛠️
+        run: sh .etc/bin/ci_install
+
+      - name: Enable corepack and pnpm ⚙️
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+          pnpm config set store-dir ~/.pnpm-store
+
+      - name: Use Node.js ⚙️ ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Cache dependencies 🔒
+        id: cache-pnpm-store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('package.json') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies 📦
+        run: |
+          pnpm install --frozen-lockfile
+
+      - name: Run tests 🧪
+        run: |
+          make test

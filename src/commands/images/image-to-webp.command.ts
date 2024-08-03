@@ -7,7 +7,7 @@ import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
 import { warn } from '#@/src/shared/helpers/console.js'
 import { File } from '#@/src/shared/lib/file.js'
-import { Notify } from '#@/src/shared/lib/notify.js'
+// import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 import { chunkArray } from '#@/src/shared/chunkArray.js'
 import { runWorker } from '#@/src/shared/runWorker.js'
@@ -36,10 +36,10 @@ export class ImageToWebP extends YargsCommand {
   readonly description = 'Format/Convert images to webp'
 
   async handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>) {
-    console.time(this.command)
-    await towebp(args)
-    console.timeEnd(this.command)
-    Notify.info('To webp', 'End images to webp task')
+    // console.time(this.command)
+    towebp(args)
+    // console.timeEnd(this.command)
+    // Notify.info('To webp', 'End images to webp task')
   }
 }
 
@@ -86,6 +86,6 @@ export async function towebp({ source, distribution }: { source: string; distrib
         ),
       )
     }
-    await Promise.all(tasks)
+    Promise.allSettled(tasks)
   }
 }

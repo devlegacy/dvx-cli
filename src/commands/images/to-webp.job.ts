@@ -1,11 +1,17 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads'
 import { resolve } from 'node:path'
+import { performance } from 'node:perf_hooks'
 
 import sharp from 'sharp'
 
-import { error, log } from '#@/src/shared/helpers/console.js'
+import {
+  //  error,
+  log,
+} from '#@/src/shared/helpers/console.js'
+
 const promises = []
 if (!isMainThread) {
+  const startsAt = performance.now()
   const { files, command } = workerData
   for (const fileInfo of files) {
     const { file, destination } = fileInfo
@@ -15,17 +21,15 @@ if (!isMainThread) {
       sharp(file.absolutePath)
         .webp({ lossless: true })
         .toBuffer()
-        .then((data) => {
-          return sharp(data).toFile(fileName)
-        })
+        .then((data) => sharp(data).toFile(fileName))
         .then(() => log(`[${command}]:`, fileName)),
     )
   }
-  Promise.all(promises)
-    .then(() => {
-      parentPort?.postMessage({
-        processed: files.length,
-      })
+  Promise.allSettled(promises).then(() => {
+    parentPort?.postMessage({
+      processed: files.length,
+      endTime: (performance.now() - startsAt) / 1000,
     })
-    .catch((e) => error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`))
+  })
+  // .catch((e) => error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`))
 }
