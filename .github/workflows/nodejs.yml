@@ -8,32 +8,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # runs-on: ubuntu-24
     strategy:
       matrix:
         node-version: [22.x]
-        # globSync is not supported in Node.js 21.x yet
-        # node --run is not supported in Node.js 21.x yet
 
     name: Node.js ${{ matrix.node-version }} 🚀
     steps:
       - name: Checkout 📖
         uses: actions/checkout@v4
-
-      - name: Hello! from matrix ${{ matrix.node-version }} 🚀
-        run: echo "Using Node.js ${{ matrix.node-version }} ${{github.workflow}} ${{github.event_name}} ${{github.actor}}"
-
-      - name: More and mode 🤓
-        env:
-          JOB_CONTEXT: ${{toJson(job)}}
-          # status to this point
-        run: |
-          echo "Job context: ${JOB_CONTEXT}"
-          echo "Done!!!"
-        # JOB_CONTEXT.status === 'fail', send notification to slack
-
-      - name: Install infra build dependencies 🛠️ (giflossy, zopflipng)
-        run: sh .etc/install.sh
 
       - name: Enable corepack and pnpm ⚙️
         run: |
