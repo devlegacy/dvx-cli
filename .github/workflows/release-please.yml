@@ -12,6 +12,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout 📖
+        uses: actions/checkout@v4
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
@@ -40,10 +43,6 @@ jobs:
           git tag -d "v$MAJOR.$MINOR" || true
           git push origin :refs/tags/v$MAJOR || true
           git push origin :refs/tags/v$MAJOR.$MINOR || true
-
-      - name: Checkout 📖
-        if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v4
 
       - name: Enable corepack and pnpm ⚙️
         run: |
