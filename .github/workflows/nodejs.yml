@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install infra build dependencies 🛠️
-        run: sh .etc/bin/ci_install.sh
+        run: sh .etc/bin/ci_install
 
       - name: Enable corepack and pnpm ⚙️
         run: |
