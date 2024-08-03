@@ -1,0 +1,78 @@
+name: Release Workflow
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout 📖
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+
+      - name: Tag major, minor, and patch versions 🏷️
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+          # Extract version components
+          VERSION=${{ steps.release.outputs.version }}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          # Add and push tags for major, minor, and patch versions
+          git tag -a "v$MAJOR" -m "Release v$MAJOR"
+          git tag -a "v$MAJOR.$MINOR" -m "Release v$MAJOR.$MINOR"
+          git tag -a "v$MAJOR.$MINOR.$PATCH" -m "Release v$MAJOR.$MINOR.$PATCH"
+          git push origin "v$MAJOR"
+          git push origin "v$MAJOR.$MINOR"
+          git push origin "v$MAJOR.$MINOR.$PATCH"
+
+          # Cleanup old tags if needed (optional)
+          git tag -d "v$MAJOR" || true
+          git tag -d "v$MAJOR.$MINOR" || true
+          git push origin :refs/tags/v$MAJOR || true
+          git push origin :refs/tags/v$MAJOR.$MINOR || true
+
+      - name: Enable corepack and pnpm ⚙️
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+          pnpm config set store-dir ~/.pnpm-store
+
+      - name: Use Node.js ⚙️ 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Cache dependencies 🔒
+        id: cache-pnpm-store
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('package.json') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies 📦
+        run: |
+          pnpm install --frozen-lockfile
+
+      - name: Publish to npm 🚀
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          pnpm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
