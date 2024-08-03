@@ -4,9 +4,9 @@ current_work_directory := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 export current_work_directory
 
-include ./.bin/colors
+include ./.etc/bin/colors
 
-print_message:=./.bin/print_message
+print_message:=./.etc/bin/print_message
 
 .DEFAULT_GOAL := help
 
