@@ -75,9 +75,6 @@ importers:
       '@swc/core':
         specifier: 1.7.5
         version: 1.7.5
-      '@types/fs-extra':
-        specifier: 11.0.4
-        version: 11.0.4
       '@types/htmlhint':
         specifier: 1.1.5
         version: 1.1.5
@@ -495,9 +492,6 @@ packages:
   '@types/cacheable-request@6.0.3':
     resolution: {integrity: sha512-IQ3EbTzGxIigb1I3qPZc1rWJnH0BmSKv5QYTalEwweFvyBDLSAe24zP0le/hyi7ecGfZVlIVAg4BZqb8WBwKqw==}
 
-  '@types/fs-extra@11.0.4':
-    resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
-
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
 
@@ -521,9 +515,6 @@ packages:
 
   '@types/imagemin@9.0.0':
     resolution: {integrity: sha512-4IaT+BdPUAFf/AAy3XlFAbqGk4RawhdidxWO5XTe+PJAYAr4d7m2FHiqyEPXbDpwS+IaLIJq5AIjLE9HcwMGBg==}
-
-  '@types/jsonfile@6.1.4':
-    resolution: {integrity: sha512-D5qGUYwjvnNNextdU59/+fI+spnwtTFmyQP0h+PfIOSkNfpU6AOICUOkm4i0OnSk+NyjdPJrxCDro0sJsWlRpQ==}
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
@@ -3017,11 +3008,6 @@ snapshots:
       '@types/node': 22.1.0
       '@types/responselike': 1.0.3
 
-  '@types/fs-extra@11.0.4':
-    dependencies:
-      '@types/jsonfile': 6.1.4
-      '@types/node': 22.1.0
-
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
@@ -3049,10 +3035,6 @@ snapshots:
       '@types/imagemin': 9.0.0
 
   '@types/imagemin@9.0.0':
-    dependencies:
-      '@types/node': 22.1.0
-
-  '@types/jsonfile@6.1.4':
     dependencies:
       '@types/node': 22.1.0
 
