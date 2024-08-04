@@ -56,7 +56,6 @@ export class CleanSourcemap extends YargsCommand {
       (files: File[], { info: { absolutePath } }) =>
         files.concat(
           ...File.sync('**/*.css', {
-            nodir: true,
             cwd: absolutePath,
             absolute: true,
           }).map((file) => File.find(file)),

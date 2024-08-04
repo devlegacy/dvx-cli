@@ -1,7 +1,6 @@
 import type { Argv } from 'yargs'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
-import type { Class } from 'type-fest'
 
 import { version, epilogue, usage, scriptName } from '#@/src/commands/version.js'
 import type { YargsCommand } from './shared/yargs-command.js'
@@ -44,15 +43,9 @@ export class DvxCLI {
       const keys = Object.keys(entities)
       for (const key of keys) {
         const entity = entities[`${key}`]
-        if (!isConstructor(entity)) continue
-        const command = entity as Class<YargsCommand>
-        const cmd = new command() as YargsCommand
-
-        try {
-          this.#yargs.command(cmd.command, cmd.description, cmd.builder, cmd.handler.bind(cmd))
-        } catch (err) {
-          this.#onError(cmd.command, err)
-        }
+        if (!isConstructor<YargsCommand>(entity)) continue
+        const cmd = new entity()
+        this.#yargs.command(cmd.command, cmd.description, cmd.builder, cmd.handler.bind(cmd))
       }
     }
 
