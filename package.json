@@ -28,12 +28,10 @@
     "frontend"
   ],
   "files": [
+    "bin",
+    "assets/icons",
     "README.md"
   ],
-  "directories": {
-    "bin": "bin",
-    "assets/icons": "assets/icons"
-  },
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": false,
   "devDependencies": {
