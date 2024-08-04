@@ -28,12 +28,11 @@
     "frontend"
   ],
   "files": [
-    "assets/icons",
-    "bin",
     "README.md"
   ],
   "directories": {
-    "bin": "bin"
+    "bin": "bin",
+    "assets/icons": "assets/icons"
   },
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": false,
@@ -41,7 +40,6 @@
     "@swc-node/register": "1.10.9",
     "@swc/cli": "0.4.0",
     "@swc/core": "1.7.5",
-    "@types/fs-extra": "11.0.4",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "9.0.0",
     "@types/imagemin-jpegtran": "5.0.4",
