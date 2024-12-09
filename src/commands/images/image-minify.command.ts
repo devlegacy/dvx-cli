@@ -7,7 +7,6 @@ import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
 import { warn } from '#@/src/shared/helpers/console.js'
 import { File } from '#@/src/shared/lib/file.js'
-// import { Notify } from '#@/src/shared/lib/notify.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 import { chunkArray } from '#@/src/shared/chunkArray.js'
 import { runWorker } from '#@/src/shared/runWorker.js'
@@ -35,10 +34,7 @@ export class ImageMinify extends YargsCommand {
   readonly description = 'Minify images'
 
   async handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>) {
-    // console.time(this.command)
     minify(args)
-    // console.timeEnd(this.command)
-    // Notify.info('Minify', 'Minify images task has ended')
   }
 }
 
@@ -46,12 +42,12 @@ export async function minify({ source, distribution }: { source: string; distrib
   if (isMainThread) {
     const src = File.find(source)
     if (!src.isDirectory()) {
-      throw new Error(`Directory ${src.info.absolutePath} not found`)
+      throw new Error(`Directory <${src.info.absolutePath}> not found`)
     }
     const dist = File.find(distribution)
 
-    warn(`[${command}]:`, 'search in:', src.info.absolutePath)
-    warn(`[${command}]:`, 'result in:', dist.info.absolutePath)
+    warn(`[${command}]:`, 'source:', src.info.absolutePath)
+    warn(`[${command}]:`, 'distribution:', dist.info.absolutePath)
 
     const extensions = 'png,jpeg,jpg,gif,svg'
     const files = File.sync(`**/*.{${extensions}}`, {

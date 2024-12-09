@@ -4,7 +4,6 @@ import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
 import { error, log } from '#@/src/shared/helpers/console.js'
 import { File } from '#@/src/shared/lib/file.js'
-import { Notify } from '#@/src/shared/lib/notify.js'
 import config from '#@/src/shared/helpers/config.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 
@@ -74,7 +73,6 @@ export class CleanSourcemap extends YargsCommand {
     const commandElapsedTime = commandFinishedAt - commandStartedAt
 
     log(`[${this.command}]:`, `${commandElapsedTime.toFixed(3)}s`)
-    Notify.done(this.command, 'Done, watch console results')
   }
 }
 

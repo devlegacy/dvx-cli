@@ -2,7 +2,7 @@ import { styleText } from 'node:util'
 import process from 'node:process'
 import { arch } from 'node:os'
 
-import Shell from '#@/src/shared/lib/shell.js'
+import { Shell } from '#@/src/shared/lib/shell.js'
 import pkg from '#@/package.json' with { type: 'json' }
 
 const brand = `

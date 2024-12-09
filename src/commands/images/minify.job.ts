@@ -9,11 +9,7 @@ import imageminMozjpeg from 'imagemin-mozjpeg'
 import imageminGiflossy from 'imagemin-giflossy'
 
 import imageminSvgo from '#@/src/shared/imagemin-svgo.js'
-import {
-  // error,
-  log,
-  //  success
-} from '#@/src/shared/helpers/console.js'
+import { log } from '#@/src/shared/helpers/console.js'
 
 const jpgPlugins = [
   imageminJpegtran({
@@ -82,26 +78,31 @@ if (!isMainThread) {
   for (const file of files) {
     const { source, destination, ext } = file
     const plugins = imageminPlugins[ext as keyof typeof imageminPlugins] as readonly Plugin[]
+
     promises.push(
       imagemin([source], {
         destination,
         plugins,
-      }).then((images) => {
-        // Note: Extra process, evaluate
-        // File.find(images[0].sourcePath).info.path
-        // File.find(images[0].destinationPath).info.path
-        log(
-          `[${command}]:`,
-          '\n[from]\t:',
-          images[0]!.sourcePath,
-          '\n[to]\t:',
-          images[0]!.destinationPath,
-        )
-        //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
-      }),
+      })
+        .then((images) => {
+          // NOTE: Extra process, evaluate
+          // File.find(images[0].sourcePath).info.path
+          // File.find(images[0].destinationPath).info.path
+          log(
+            `[${command}]:`,
+            '\n[from]\t:',
+            images[0]!.sourcePath,
+            '\n[to]\t:',
+            images[0]!.destinationPath,
+          )
+          //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
+        })
+        .catch((e) => {
+          log(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`)
+        }),
     )
   }
-  Promise.allSettled(promises).then(() => {
+  Promise.allSettled(promises).then((data) => {
     parentPort?.postMessage({
       processed: files.length,
       endTime: (performance.now() - startsAt) / 1000,
@@ -111,3 +112,5 @@ if (!isMainThread) {
   //   error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`)
   // })
 }
+
+// LDFLAGS="-L/usr/local/lib" CPPFLAGS="-I/usr/local/include" pnpm rebuild mozjpeg // is not working

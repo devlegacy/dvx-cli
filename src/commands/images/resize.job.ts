@@ -1,18 +1,18 @@
 import { isMainThread, parentPort, workerData } from 'node:worker_threads'
 import { extname } from 'node:path'
 import { performance } from 'node:perf_hooks'
+import { execSync } from 'node:child_process'
 
 import sharp from 'sharp'
-import shelljs from 'shelljs'
 
 import { error, log } from '#@/src/shared/helpers/console.js'
-
-const { exec, exit, which } = shelljs
+import { exit } from 'node:process'
+import { Shell } from '#@/src/shared/lib/shell.js'
 
 const useMogrify = async (file: any, width: any = 1024, height: any) => {
   const mogrify = 'mogrify'
   try {
-    if (!which(mogrify)) {
+    if (!Shell.exists(mogrify)) {
       throw new Error(`The command ${mogrify} does not exist.`)
     }
 
@@ -23,20 +23,14 @@ const useMogrify = async (file: any, width: any = 1024, height: any) => {
       : `-resize \"${width}>\"`
     // console.log(resize); -path processed
     if (ext.includes('.jpg')) {
-      stdOut = exec(`${mogrify} -verbose -format jpg -layers Dispose ${resize} ${file}`, {
-        async: false,
-        silent: true,
-      }).stdout
+      const command = `${mogrify} -verbose -format jpg -layers Dispose ${resize} ${file}`
+      stdOut = execSync(command).toString()
     } else if (ext.includes('.jpeg')) {
-      stdOut = exec(`${mogrify} -verbose -format jpeg -layers Dispose ${resize} ${file}`, {
-        async: false,
-        silent: true,
-      }).stdout
+      const command = `${mogrify} -verbose -format jpeg -layers Dispose ${resize} ${file}`
+      stdOut = execSync(command).toString()
     } else if (ext.includes('.png')) {
-      stdOut = exec(`${mogrify} -verbose -format png ${resize} ${file}`, {
-        async: false,
-        silent: true,
-      }).stdout
+      const command = `${mogrify} -verbose -format png ${resize} ${file}`
+      stdOut = execSync(command).toString()
     }
     log('[Resize]:', stdOut)
   } catch (e) {

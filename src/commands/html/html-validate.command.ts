@@ -6,7 +6,6 @@ import htmlhintStylish from 'htmlhint-stylish'
 
 import { File } from '#@/src/shared/lib/file.js'
 import { log, warn } from '#@/src/shared/helpers/console.js'
-import { Notify } from '#@/src/shared/lib/notify.js'
 import config from '#@/src/shared/helpers/config.js'
 import { YargsCommand } from '#@/src/shared/yargs-command.js'
 
@@ -80,6 +79,5 @@ export class HtmlValidate extends YargsCommand {
     const commandElapsedTime = commandFinishedAt - commandStartedAt
 
     log(this.command, `${commandElapsedTime.toFixed(3)}s`)
-    Notify.info(this.command, 'Task done, watch results in console')
   }
 }
