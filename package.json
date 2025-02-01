@@ -38,18 +38,18 @@
   "devDependencies": {
     "@swc-node/register": "1.10.9",
     "@swc/cli": "0.6.0",
-    "@swc/core": "1.10.7",
+    "@swc/core": "1.10.12",
     "@types/htmlhint": "1.1.5",
-    "@types/imagemin": "9.0.0",
+    "@types/imagemin": "9.0.1",
     "@types/imagemin-jpegtran": "5.0.4",
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "10.0.5",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "22.10.6",
+    "@types/node": "22.13.0",
     "@types/node-notifier": "8.0.5",
     "@types/yargs": "17.0.33",
     "replace-in-file": "8.3.0",
-    "type-fest": "4.32.0",
+    "type-fest": "4.33.0",
     "typescript": "5.7.3"
   },
   "dependencies": {
@@ -82,21 +82,5 @@
     "url": "https://github.com/devlegacy/dvx-cli/issues"
   },
   "homepage": "https://github.com/devlegacy/dvx-cli#readme",
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
-  "pnpm": {
-    "overrides": {
-      "braces@<2.3.1": ">=2.3.1",
-      "tunnel-agent@<0.6.0": ">=0.6.0",
-      "got@<11.8.5": ">=11.8.5",
-      "decompress@<4.2.1": ">=4.2.1",
-      "http-cache-semantics@<4.1.1": ">=4.1.1",
-      "semver-regex@<3.1.3": ">=3.1.3",
-      "semver-regex@<3.1.4": ">=3.1.4",
-      "trim-newlines@<3.0.1": ">=3.0.1",
-      "braces@<3.0.3": ">=3.0.3",
-      "micromatch@<4.0.8": ">=4.0.8",
-      "cross-spawn@<6.0.6": ">=6.0.6",
-      "semver@<5.7.2": ">=5.7.2"
-    }
-  }
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }
