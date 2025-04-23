@@ -13,7 +13,6 @@
   "type": "module",
   "scripts": {
     "prebuild": "node --run build:clean",
-    "postinstall": "pnpm rebuild pngquant-bin && pnpm rebuild jpegtran-bin && pnpm rebuild zopflipng-bin && pnpm rebuild mozjpeg-bin && pnpm rebuild mozjpeg",
     "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#@/src//g\" \"#@/bin/\" \"./bin/**/*.js\" --isRegex",
     "build:clean": "rm -Rf ./bin",
     "test": "pnpm run test:unit && pnpm run test:features",
@@ -36,26 +35,26 @@
   "author": "Samuel R. <samuel@devexteam.com>",
   "private": false,
   "devDependencies": {
-    "@swc-node/register": "1.10.9",
-    "@swc/cli": "0.6.0",
-    "@swc/core": "1.11.5",
+    "@swc-node/register": "1.10.10",
+    "@swc/cli": "0.7.3",
+    "@swc/core": "1.11.21",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "9.0.1",
     "@types/imagemin-jpegtran": "5.0.4",
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "10.0.5",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "22.13.8",
+    "@types/node": "22.14.1",
     "@types/node-notifier": "8.0.5",
     "@types/yargs": "17.0.33",
     "replace-in-file": "8.3.0",
-    "type-fest": "4.36.0",
-    "typescript": "5.8.2"
+    "type-fest": "4.40.0",
+    "typescript": "5.8.3"
   },
   "dependencies": {
     "htmlhint": "1.1.4",
     "htmlhint-stylish": "1.0.3",
-    "imagemin": "9.0.0",
+    "imagemin": "9.0.1",
     "imagemin-giflossy": "5.1.10",
     "imagemin-jpegtran": "8.0.0",
     "imagemin-mozjpeg": "10.0.0",
@@ -64,7 +63,7 @@
     "imagemin-webp": "8.0.0",
     "imagemin-zopfli": "7.0.0",
     "is-svg": "5.1.0",
-    "sharp": "0.33.5",
+    "sharp": "0.34.1",
     "svgo": "3.3.2",
     "yargs": "17.7.2"
   },
@@ -82,7 +81,17 @@
     "url": "https://github.com/devlegacy/dvx-cli/issues"
   },
   "homepage": "https://github.com/devlegacy/dvx-cli#readme",
-  "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b",
+  "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f",
+  "trustedDependencies": [
+    "@swc/core",
+    "cwebp-bin",
+    "giflossy",
+    "jpegtran-bin",
+    "mozjpeg",
+    "pngquant-bin",
+    "sharp",
+    "zopflipng-bin"
+  ],
   "pnpm": {
     "overrides": {
       "braces@<2.3.1": ">=2.3.1",
