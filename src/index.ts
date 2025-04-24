@@ -3,4 +3,4 @@
 import { argv } from 'node:process'
 import { DvxCLI } from './dvx.js'
 
-await (await new DvxCLI(argv).installCommands()).parse()
+await new DvxCLI(argv).parse()
