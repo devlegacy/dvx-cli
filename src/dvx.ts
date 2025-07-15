@@ -1,23 +1,25 @@
+import { exit } from 'node:process'
+import { URL } from 'node:url'
+
 import type { Argv } from 'yargs'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 
-import { version, epilogue, usage, scriptName } from '#@/src/commands/version.js'
-import type { YargsCommand } from './shared/yargs-command.js'
-import { readModulesRecursively } from './shared/readModulesRecursively.js'
-import { isConstructor } from './shared/isConstructor.js'
-import { error } from '#@/src/shared/helpers/console.js'
-import { exit } from 'node:process'
+import type { YargsCommand } from '#@/src/shared/infrastructure/yargs-command.js'
+import { version, epilogue, usage, scriptName } from '#@/src/shared/domain/cli-metadata.js'
+import { readModulesRecursively } from '#@/src/shared/domain/readModulesRecursively.js'
+import { isConstructor } from '#@/src/shared/domain/isConstructor.js'
+import { error } from '#@/src/shared/domain/console.js'
 
 export class DvxCLI {
   #yargs: Argv
 
   constructor(argv: string[]) {
     this.#yargs = yargs(hideBin(argv))
-    this.#configureYargs()
+    this.#configure()
   }
 
-  #configureYargs() {
+  #configure() {
     this.#yargs
       .epilogue(epilogue)
       .help('help', 'Show help', false)
@@ -36,7 +38,7 @@ export class DvxCLI {
     exit(0)
   }
 
-  async installCommands(path = 'commands') {
+  async #installCommands(path = 'commands') {
     const parentUrl = new URL(path, import.meta.url)
     const mask = /\.command\.(ts|js)$/
     for await (const entities of readModulesRecursively(parentUrl, mask)) {
@@ -54,6 +56,7 @@ export class DvxCLI {
 
   async parse() {
     try {
+      await this.#installCommands()
       /**
        * DOC: argv, the letter v is an abbreviation of vector, arg - vector | arg - array
        * Read more on: http://decsai.ugr.es/~jfv/ed1/c/cdrom/cap6/cap64.htm
@@ -64,7 +67,7 @@ export class DvxCLI {
       if (!argsCount) this.#yargs.showHelp()
     } catch (err) {
       const help = await this.#yargs.getHelp()
-      if (err instanceof Error) console.error('[error]:', `${err.message}\n${help}`)
+      if (err instanceof Error) return console.error('[error]:', `${err.message}\n${help}`)
 
       console.error('[error]:', `unknown error\n${help}`)
     }
