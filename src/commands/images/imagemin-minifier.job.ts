@@ -7,26 +7,52 @@ import imageminZopfli from 'imagemin-zopfli'
 import imagemin, { type Plugin } from 'imagemin'
 import imageminMozjpeg from 'imagemin-mozjpeg'
 import imageminGiflossy from 'imagemin-giflossy'
+import imageminSvgo from 'imagemin-svgo'
 
-import imageminSvgo from '#@/src/shared/imagemin-svgo.js'
-import { log } from '#@/src/shared/helpers/console.js'
+import { log } from '#@/src/shared/domain/console.js'
+
+const QUALITY_PRESETS = {
+  high: {
+    jpeg: 90,
+    png: [0.7, 0.9],
+    webp: 85,
+  },
+  medium: {
+    jpeg: 80,
+    png: [0.65, 0.85] as [number, number], // [0.6, 0.8]
+    webp: 80,
+  },
+  low: {
+    jpeg: 70,
+    png: [0.5, 0.7],
+    webp: 75,
+  },
+}
 
 const jpgPlugins = [
   imageminJpegtran({
     progressive: true,
   }),
   imageminMozjpeg({
-    quality: 90,
+    quality: QUALITY_PRESETS.medium.jpeg, // 80-85 min // 90 High quality
+    progressive: true, // Already handled by jpegtran, but mozjpeg does it better
+    arithmetic: false, // Keep false for better compatibility
+    dct: 'int', // Use integer DCT for better quality
+    quantTable: 3, // Use quality-based quantization table
   }),
 ]
+type ImageMinPlugins = keyof typeof imageminPlugins
 const imageminPlugins = {
   '.png': [
     imageminPngquant({
       speed: 1,
-      quality: [0.6, 0.8], //98 //lossy settings
+      quality: QUALITY_PRESETS.medium.png, // 98 // lossy settings
+      strip: true, // remove metadata
+      dithering: 1, // floyd-steinberg dithering for better gradients
     }),
     imageminZopfli({
       more: true,
+      iterations: 15, // More iterations for better compression
     }),
   ],
   '.gif': [
@@ -34,23 +60,39 @@ const imageminPlugins = {
       optimizationLevel: 3,
       optimize: 3, //keep-empty: Preserve empty transparent frames
       lossy: 2,
-    }),
+      colors: 256, // Limit color palette
+      interlaced: false, // Usually better for web
+    }) as Plugin,
   ],
   '.svg': [
+    // @ts-expect-error plugins is not well typed
     imageminSvgo({
       plugins: [
         {
           name: 'preset-default',
+          params: {
+            overrides: {
+              removeViewBox: false, // Keep viewBox for responsive SVGs
+              cleanupIds: false, // Keep IDs for external references
+            },
+          },
         },
+        // {
+        //   name: 'removeViewBox',
+        //   active: false,
+        // },
+        // {
+        //   name: 'cleanupIds',
+        //   // @ts-ignore
+        //   active: false,
+        // },
         {
-          name: 'removeViewBox',
-          // @ts-ignore
+          name: 'removeXMLProcInst',
           active: true,
         },
         {
-          name: 'cleanupIds',
-          // @ts-ignore
-          active: false,
+          name: 'removeDimensions',
+          active: true, // Remove width/height, keep viewBox
         },
         {
           name: 'sortAttrs',
@@ -59,12 +101,12 @@ const imageminPlugins = {
           },
         },
       ],
-    }),
+    }) as Plugin,
   ],
   '.jpg': jpgPlugins,
   '.jpeg': jpgPlugins,
 }
-const promises = []
+const promises: Promise<void>[] = []
 if (!isMainThread) {
   const startsAt = performance.now()
   const { files, command } = workerData as {
@@ -77,7 +119,7 @@ if (!isMainThread) {
   }
   for (const file of files) {
     const { source, destination, ext } = file
-    const plugins = imageminPlugins[ext as keyof typeof imageminPlugins] as readonly Plugin[]
+    const plugins = imageminPlugins[ext as ImageMinPlugins] as readonly Plugin[]
 
     promises.push(
       imagemin([source], {
@@ -90,9 +132,9 @@ if (!isMainThread) {
           // File.find(images[0].destinationPath).info.path
           log(
             `[${command}]:`,
-            '\n[from]\t:',
+            '\n[source]\t:',
             images[0]!.sourcePath,
-            '\n[to]\t:',
+            '\n[destination]\t:',
             images[0]!.destinationPath,
           )
           //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]

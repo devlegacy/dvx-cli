@@ -7,7 +7,7 @@ import sharp from 'sharp'
 import {
   //  error,
   log,
-} from '#@/src/shared/helpers/console.js'
+} from '#@/src/shared/domain/console.js'
 
 const promises = []
 if (!isMainThread) {
@@ -19,9 +19,17 @@ if (!isMainThread) {
     const fileName = resolve(destination, `${file.name}.webp`)
     promises.push(
       sharp(file.absolutePath)
-        .webp({ lossless: true })
-        .toBuffer()
-        .then((data) => sharp(data).toFile(fileName))
+        .webp({
+          quality: 85, // Good balance of quality/size (75-85 recommended)
+          effort: 4, // Compression effort (0-6, higher = better compression)
+          lossless: false, // Use lossy compression for smaller files
+          nearLossless: false, // Optional: true for better quality at cost of size
+          smartSubsample: true, // Better chroma subsampling
+
+          preset: 'default',
+          alphaQuality: 80, // for images with transparency
+        })
+        .toFile(fileName)
         .then(() => log(`[${command}]:`, fileName)),
     )
   }

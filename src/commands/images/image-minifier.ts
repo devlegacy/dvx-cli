@@ -1,44 +1,27 @@
 import { join, resolve } from 'node:path'
 import { cpus } from 'node:os'
 import { isMainThread } from 'node:worker_threads'
-import { URL } from 'node:url'
+import { type URL } from 'node:url'
 
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { warn } from '#@/src/shared/domain/console.js'
+import { File } from '#@/src/shared/domain/file.js'
+import { chunkArray } from '#@/src/shared/domain/chunkArray.js'
+import { runWorker } from '#@/src/shared/domain/runWorker.js'
 
-import { warn } from '#@/src/shared/helpers/console.js'
-import { File } from '#@/src/shared/lib/file.js'
-import { YargsCommand } from '#@/src/shared/yargs-command.js'
-import { chunkArray } from '#@/src/shared/chunkArray.js'
-import { runWorker } from '#@/src/shared/runWorker.js'
-
-const command = 'img:minify'
 const tasks: Promise<void>[] = []
-export class ImageMinify extends YargsCommand {
-  readonly command = command
 
-  readonly builder = this.options({
-    source: {
-      alias: 'src',
-      describe: 'Source path without optimization.',
-      type: 'string',
-      default: 'src/assets/img/src',
-    },
-    distribution: {
-      alias: 'dist',
-      describe: 'Distribution path for optimized images.',
-      type: 'string',
-      default: 'src/assets/img/dist',
-    },
-  } as const)
-
-  readonly description = 'Minify images'
-
-  async handler(args: ArgumentsCamelCase<InferredOptionTypes<typeof this.builder>>) {
-    minify(args)
-  }
-}
-
-export async function minify({ source, distribution }: { source: string; distribution: string }) {
+export async function imageMinifier(
+  {
+    source,
+    distribution,
+    command,
+  }: {
+    source: string
+    distribution: string
+    command: string
+  },
+  jobFile: URL,
+) {
   if (isMainThread) {
     const src = File.find(source)
     if (!src.isDirectory()) {
@@ -52,7 +35,6 @@ export async function minify({ source, distribution }: { source: string; distrib
     const extensions = 'png,jpeg,jpg,gif,svg'
     const files = File.sync(`**/*.{${extensions}}`, {
       cwd: src.info.absolutePath,
-      absolute: true,
     }).map((path) => {
       const file = File.find(path)
       // [input]: /dvx-demo-project/src/assets/img/src/webpack/webpack.png
@@ -67,7 +49,7 @@ export async function minify({ source, distribution }: { source: string; distrib
       return {
         source: path,
         destination,
-        ext: file.info.ext.toLocaleLowerCase(),
+        ext: file.info.ext.toLowerCase(),
       }
     })
     const cpuCount = cpus().length - 1
@@ -80,7 +62,7 @@ export async function minify({ source, distribution }: { source: string; distrib
             files: chunk,
             command,
           },
-          new URL('./minify.job.js', import.meta.url),
+          jobFile,
         ),
       )
     }
