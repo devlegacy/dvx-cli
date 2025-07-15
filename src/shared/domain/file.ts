@@ -1,8 +1,16 @@
-import { statSync, existsSync, writeFileSync, readFileSync, lstatSync } from 'node:fs'
+import {
+  existsSync,
+  writeFileSync,
+  readFileSync,
+  lstatSync,
+  globSync,
+  type GlobOptionsWithFileTypes,
+  type GlobOptions,
+  Stats,
+} from 'node:fs'
 import { EOL } from 'node:os'
 import { resolve, relative, parse } from 'node:path'
 import { cwd } from 'node:process'
-import { globSync } from 'node:fs'
 
 export interface FileParsed {
   isDir: boolean
@@ -22,6 +30,9 @@ export interface FileParsed {
 export class File {
   #absolutePath: string
   #filePath: string
+  // Cache the result of `lstatSync` or `statSync` for performance
+  #stats?: Stats
+
   readonly info: FileParsed
 
   /**
@@ -32,6 +43,7 @@ export class File {
   constructor(filePath: string, context: string = cwd()) {
     this.#absolutePath = resolve(context, filePath)
     this.#filePath = this.relativePath()
+    this.#stats = lstatSync(this.#absolutePath, { throwIfNoEntry: false })
     this.info = this.parse()
   }
 
@@ -46,10 +58,14 @@ export class File {
     return new File(path, context)
   }
 
-  static sync(pattern: string, opts?: { cwd?: string; absolute?: boolean; ignore?: string[] }) {
+  // absolute?: boolean; ignore?: string[]
+  static sync(pattern: string, opts?: GlobOptions) {
     const files = globSync(pattern, {
+      withFileTypes: true,
       ...opts,
-    }).map((file) => resolve(opts?.cwd!, file))
+    } as GlobOptionsWithFileTypes).map((dirent) => {
+      return resolve(dirent.parentPath, dirent.name)
+    })
 
     return files
   }
@@ -67,22 +83,24 @@ export class File {
    * Determine if the file is a directory.
    */
   isDirectory() {
-    try {
-      return lstatSync(this.#absolutePath).isDirectory()
-    } catch (err) {
-      return false
-    }
+    // try {
+    //   return lstatSync(this.#absolutePath).isDirectory()
+    // } catch (err) {
+    //   return false
+    // }
+    return this.#stats ? this.#stats.isDirectory() : false
   }
 
   /**
    * Determine if the path is a file, and not a directory.
    */
   isFile() {
-    try {
-      return statSync(this.#absolutePath).isFile()
-    } catch (err) {
-      return false
-    }
+    // try {
+    //   return statSync(this.#absolutePath).isFile()
+    // } catch (err) {
+    //   return false
+    // }
+    return this.#stats ? this.#stats.isFile() : false
   }
 
   /**
@@ -104,6 +122,7 @@ export class File {
     const isFile = this.isFile()
     const path = this.#filePath
     const absolutePath = this.#absolutePath
+
     const info = {
       isDir,
       isFile,

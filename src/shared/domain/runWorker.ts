@@ -8,7 +8,7 @@ export const runWorker = (workerData: any, filename: URL) =>
     })
     worker
       .on('message', (message) => {
-        console.log(message)
+        // console.log(message)
         resolve()
       })
       .on('error', (err) => {
