@@ -11,9 +11,11 @@
     "#@/*": "./*"
   },
   "type": "module",
+  "packageManager": "pnpm@10.18.3+sha512.bbd16e6d7286fd7e01f6b3c0b3c932cda2965c06a908328f74663f10a9aea51f1129eea615134bf992831b009eabe167ecb7008b597f40ff9bc75946aadfb08d",
   "scripts": {
+    "rebuild": "node -e \"const{execSync}=require('child_process');const bins=['pngquant-bin','jpegtran-bin','zopflipng-bin','cwebp-bin'];bins.forEach(b=>{const dir=execSync('find node_modules/.pnpm -name '+b+' -type d',{encoding:'utf8'}).trim().split('\\n')[0];if(dir){try{execSync('cd '+dir+' && npm run postinstall',{stdio:'inherit'})}catch(e){}}})\"",
     "prebuild": "node --run build:clean",
-    "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#@/src//g\" \"#@/bin/\" \"./bin/**/*.js\" --isRegex",
+    "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#@/src//g\" \"#@/bin/\" \"./bin/**/*.js\" --isRegex && chmod +x ./bin/*",
     "build:clean": "rm -Rf ./bin",
     "test": "pnpm run test:unit && pnpm run test:features",
     "test:features": "true",
@@ -32,27 +34,28 @@
     "assets/icons",
     "README.md"
   ],
-  "author": "Samuel R. <samuel@devexteam.com>",
+  "author": "Samuel R. <contact@jstsamuel.dev>",
   "private": false,
   "devDependencies": {
-    "@swc-node/register": "1.10.10",
-    "@swc/cli": "0.7.3",
-    "@swc/core": "1.11.22",
+    "@swc-node/register": "1.11.1",
+    "@swc/cli": "0.7.8",
+    "@swc/core": "1.13.20",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "9.0.1",
     "@types/imagemin-jpegtran": "5.0.4",
     "@types/imagemin-mozjpeg": "8.0.4",
-    "@types/imagemin-svgo": "10.0.5",
+    "@types/imagemin-svgo": "11.0.0",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "22.14.1",
+    "@types/node": "24.8.1",
     "@types/node-notifier": "8.0.5",
     "@types/yargs": "17.0.33",
+    "prettier": "3.6.2",
     "replace-in-file": "8.3.0",
-    "type-fest": "4.40.0",
-    "typescript": "5.8.3"
+    "type-fest": "5.1.0",
+    "typescript": "5.9.3"
   },
   "dependencies": {
-    "htmlhint": "1.1.4",
+    "htmlhint": "1.7.1",
     "htmlhint-stylish": "1.0.3",
     "imagemin": "9.0.1",
     "imagemin-giflossy": "5.1.10",
@@ -62,10 +65,9 @@
     "imagemin-svgo": "11.0.1",
     "imagemin-webp": "8.0.0",
     "imagemin-zopfli": "7.0.0",
-    "is-svg": "5.1.0",
-    "sharp": "0.34.1",
-    "svgo": "3.3.2",
-    "yargs": "17.7.2"
+    "sharp": "0.34.4",
+    "svgo": "4.0.0",
+    "yargs": "18.0.0"
   },
   "engines": {
     "node": ">=v22",
@@ -80,32 +82,5 @@
   "bugs": {
     "url": "https://github.com/devlegacy/dvx-cli/issues"
   },
-  "homepage": "https://github.com/devlegacy/dvx-cli#readme",
-  "packageManager": "pnpm@10.9.0+sha512.0486e394640d3c1fb3c9d43d49cf92879ff74f8516959c235308f5a8f62e2e19528a65cdc2a3058f587cde71eba3d5b56327c8c33a97e4c4051ca48a10ca2d5f",
-  "trustedDependencies": [
-    "@swc/core",
-    "cwebp-bin",
-    "giflossy",
-    "jpegtran-bin",
-    "mozjpeg",
-    "pngquant-bin",
-    "sharp",
-    "zopflipng-bin"
-  ],
-  "pnpm": {
-    "overrides": {
-      "braces@<2.3.1": ">=2.3.1",
-      "tunnel-agent@<0.6.0": ">=0.6.0",
-      "got@<11.8.5": ">=11.8.5",
-      "decompress@<4.2.1": ">=4.2.1",
-      "semver-regex@<3.1.3": ">=3.1.3",
-      "semver-regex@<3.1.4": ">=3.1.4",
-      "trim-newlines@<3.0.1": ">=3.0.1",
-      "braces@<3.0.3": ">=3.0.3",
-      "micromatch@<4.0.8": ">=4.0.8",
-      "cross-spawn@<6.0.6": ">=6.0.6",
-      "semver@<5.7.2": ">=5.7.2",
-      "http-cache-semantics@<4.1.1": ">=4.1.1"
-    }
-  }
+  "homepage": "https://github.com/devlegacy/dvx-cli#readme"
 }
