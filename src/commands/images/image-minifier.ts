@@ -3,10 +3,10 @@ import { cpus } from 'node:os'
 import { isMainThread } from 'node:worker_threads'
 import { type URL } from 'node:url'
 
-import { warn } from '#@/src/shared/domain/console.js'
-import { File } from '#@/src/shared/domain/file.js'
-import { chunkArray } from '#@/src/shared/domain/chunkArray.js'
-import { runWorker } from '#@/src/shared/domain/runWorker.js'
+import { warn, log } from '#/src/shared/domain/console.js'
+import { File } from '#/src/shared/domain/file.js'
+import { chunkArray } from '#/src/shared/domain/chunkArray.js'
+import { runWorker } from '#/src/shared/domain/runWorker.js'
 
 const tasks: Promise<void>[] = []
 
@@ -29,8 +29,9 @@ export async function imageMinifier(
     }
     const dist = File.find(distribution)
 
-    warn(`[${command}]:`, 'source:', src.info.absolutePath)
-    warn(`[${command}]:`, 'distribution:', dist.info.absolutePath)
+    log(`[${command}]: Processing images
+      Source:       ${src.info.absolutePath}
+      Distribution: ${dist.info.absolutePath}`)
 
     const extensions = 'png,jpeg,jpg,gif,svg'
     const files = File.sync(`**/*.{${extensions}}`, {
