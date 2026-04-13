@@ -7,7 +7,7 @@ import sharp from 'sharp'
 import {
   //  error,
   log,
-} from '#@/src/shared/domain/console.js'
+} from '#/src/shared/domain/console.js'
 
 const promises = []
 if (!isMainThread) {
