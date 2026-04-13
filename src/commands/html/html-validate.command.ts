@@ -1,12 +1,12 @@
 import { cwd, uptime, exit } from 'node:process'
 
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
-import { HTMLHint } from 'htmlhint'
+import htmlhint, { type HTMLHint } from 'htmlhint'
 import htmlhintStylish from 'htmlhint-stylish'
 
-import { File } from '#@/src/shared/domain/file.js'
-import { log, warn } from '#@/src/shared/domain/console.js'
-import config from '#@/src/shared/infrastructure/config.js'
+import { File } from '#/src/shared/domain/file.js'
+import { log, warn } from '#/src/shared/domain/console.js'
+import config from '#/src/shared/infrastructure/config.js'
 
 type Ruleset = (typeof HTMLHint)['defaultRuleset']
 type Hint = ReturnType<(typeof HTMLHint)['verify']>[number]
@@ -48,7 +48,7 @@ export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof buil
       file,
     }))
     .map(({ fileContent, file }) =>
-      HTMLHint.verify(fileContent, ruleSet).map((lintResult: Hint) => ({
+      htmlhint?.HTMLHint?.verify?.(fileContent, ruleSet).map((lintResult: Hint) => ({
         file,
         error: lintResult,
       })),

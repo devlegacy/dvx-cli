@@ -5,7 +5,7 @@ import { argv } from 'node:process'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 
-import { version, epilogue, usage, scriptName } from '#@/src/shared/domain/cli-metadata.js'
+import { version, epilogue, usage, scriptName } from '#/src/shared/domain/cli-metadata.js'
 
 const cli = yargs(hideBin(argv))
 

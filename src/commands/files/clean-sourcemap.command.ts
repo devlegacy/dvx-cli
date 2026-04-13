@@ -2,9 +2,9 @@ import { cwd, uptime } from 'node:process'
 
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
-import { error, log } from '#@/src/shared/domain/console.js'
-import { File } from '#@/src/shared/domain/file.js'
-import config from '#@/src/shared/infrastructure/config.js'
+import { error, log } from '#/src/shared/domain/console.js'
+import { File } from '#/src/shared/domain/file.js'
+import config from '#/src/shared/infrastructure/config.js'
 
 export const command = 'files:clean-sourcemaps'
 export const description = 'Clean sourcemaps'

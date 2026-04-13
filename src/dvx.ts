@@ -1,15 +1,15 @@
 import { exit } from 'node:process'
 import { URL } from 'node:url'
 
-import type { Argv } from 'yargs'
+import { type Argv } from 'yargs'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
 
-import type { YargsCommand } from '#@/src/shared/infrastructure/yargs-command.js'
-import { version, epilogue, usage, scriptName } from '#@/src/shared/domain/cli-metadata.js'
-import { readModulesRecursively } from '#@/src/shared/domain/readModulesRecursively.js'
-import { isConstructor } from '#@/src/shared/domain/isConstructor.js'
-import { error } from '#@/src/shared/domain/console.js'
+import { type YargsCommand } from '#/src/shared/infrastructure/yargs-command.js'
+import { version, epilogue, usage, scriptName } from '#/src/shared/domain/cli-metadata.js'
+import { readModulesRecursively } from '#/src/shared/domain/readModulesRecursively.js'
+import { isConstructor } from '#/src/shared/domain/isConstructor.js'
+import { error } from '#/src/shared/domain/console.js'
 
 export class DvxCLI {
   #yargs: Argv
