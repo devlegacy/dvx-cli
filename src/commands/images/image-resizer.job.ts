@@ -5,9 +5,9 @@ import { execSync } from 'node:child_process'
 
 import sharp from 'sharp'
 
-import { error, log } from '#@/src/shared/domain/console.js'
+import { error, log } from '#/src/shared/domain/console.js'
 import { exit } from 'node:process'
-import { Shell } from '#@/src/shared/domain/shell.js'
+import { Shell } from '#/src/shared/domain/shell.js'
 
 const useMogrify = async (file: any, width: any = 1024, height: any, command: string) => {
   const mogrify = 'mogrify'
