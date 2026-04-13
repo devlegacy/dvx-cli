@@ -1,9 +1,9 @@
 import { cpus } from 'node:os'
 import { type URL } from 'node:url'
 
-import { File } from '#@/src/shared/domain/file.js'
-import { chunkArray } from '#@/src/shared/domain/chunkArray.js'
-import { runWorker } from '#@/src/shared/domain/runWorker.js'
+import { File } from '#/src/shared/domain/file.js'
+import { chunkArray } from '#/src/shared/domain/chunkArray.js'
+import { runWorker } from '#/src/shared/domain/runWorker.js'
 import { isMainThread } from 'node:worker_threads'
 const tasks: Promise<void>[] = []
 
