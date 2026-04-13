@@ -2,11 +2,11 @@ import { isMainThread } from 'node:worker_threads'
 import { join, resolve } from 'node:path'
 import { mkdirSync } from 'node:fs'
 import { cpus } from 'node:os'
-import { warn } from '#@/src/shared/domain/console.js'
-import { File } from '#@/src/shared/domain/file.js'
+import { warn } from '#/src/shared/domain/console.js'
+import { File } from '#/src/shared/domain/file.js'
 
-import { chunkArray } from '#@/src/shared/domain/chunkArray.js'
-import { runWorker } from '#@/src/shared/domain/runWorker.js'
+import { chunkArray } from '#/src/shared/domain/chunkArray.js'
+import { runWorker } from '#/src/shared/domain/runWorker.js'
 const tasks: Promise<void>[] = []
 
 export async function webPConverter(
