@@ -44,7 +44,8 @@ export const builder = {
   },
 } as const
 
-export const description = 'Comprehensive image optimization: minify, resize, and convert to WebP format'
+export const description =
+  'Comprehensive image optimization: minify, resize, and convert to WebP format'
 
 export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
   const dist = args.distribution
@@ -73,6 +74,6 @@ export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeo
       ...args,
       command,
     },
-    new URL('./image-webp-converter.job.js', import.meta.url),
+    new URL('./sharp-webp-converter.job.js', import.meta.url),
   )
 }
