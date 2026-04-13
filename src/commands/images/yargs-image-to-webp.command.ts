@@ -1,6 +1,6 @@
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
-// import { Notify } from '#@/src/shared/lib/notify.js'
+// import { Notify } from '#/src/shared/lib/notify.js'
 import { webPConverter } from './image-webp-converter.js'
 
 export const command = 'img:towebp'
@@ -18,7 +18,8 @@ export const builder = {
     default: 'src/assets/img/dist/webp',
   },
 } as const
-export const description = 'Convert images to WebP format for better web performance and smaller file sizes'
+export const description =
+  'Convert images to WebP format for better web performance and smaller file sizes'
 export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
   // console.time(this.command)
   webPConverter(
@@ -26,7 +27,7 @@ export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeo
       ...args,
       command,
     },
-    new URL('./image-webp-converter.job.js', import.meta.url),
+    new URL('./sharp-webp-converter.job.js', import.meta.url),
   )
   // console.timeEnd(this.command)
   // Notify.info('To webp', 'End images to webp task')
