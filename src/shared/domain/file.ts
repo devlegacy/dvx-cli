@@ -1,11 +1,11 @@
 import {
+  type GlobOptionsWithFileTypes,
+  type GlobOptions,
   existsSync,
   writeFileSync,
   readFileSync,
   lstatSync,
   globSync,
-  type GlobOptionsWithFileTypes,
-  type GlobOptions,
   Stats,
 } from 'node:fs'
 import { EOL } from 'node:os'
@@ -77,6 +77,27 @@ export class File {
    */
   static exists(file: string) {
     return existsSync(file)
+  }
+
+  /**
+   * Format a size value into a human-readable string with appropriate suffix (T, B, M, k)
+   *
+   * @param {number | null | undefined} size - The size value to format (e.g., file size in bytes)
+   * @return {string} Human-readable size string with suffix or 'N/A' for null/undefined
+   * @example
+   * File.compact(1500000) // Returns "1.5M"
+   * File.compact(2500)    // Returns "2.5k"
+   * File.compact(null)    // Returns "N/A"
+   */
+  static sizeCompact(size: number | null | undefined): string {
+    if (size === null || size === undefined) return 'N/A'
+
+    if (size >= 1e12) return `${(size / 1e12).toFixed(2).replace(/\.00$/, '')}T`
+    if (size >= 1e9) return `${(size / 1e9).toFixed(2).replace(/\.00$/, '')}B`
+    if (size >= 1e6) return `${(size / 1e6).toFixed(2).replace(/\.00$/, '')}M`
+    if (size >= 1e3) return `${(size / 1e3).toFixed(2).replace(/\.00$/, '')}k`
+
+    return size.toString()
   }
 
   /**
