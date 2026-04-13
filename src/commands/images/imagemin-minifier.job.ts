@@ -6,10 +6,11 @@ import imageminJpegtran from 'imagemin-jpegtran'
 import imageminZopfli from 'imagemin-zopfli'
 import imagemin, { type Plugin } from 'imagemin'
 import imageminMozjpeg from 'imagemin-mozjpeg'
+import imageminGifsicle from 'imagemin-gifsicle'
 import imageminGiflossy from 'imagemin-giflossy'
 import imageminSvgo from 'imagemin-svgo'
 
-import { log } from '#@/src/shared/domain/console.js'
+import { log } from '#/src/shared/domain/console.js'
 
 const QUALITY_PRESETS = {
   high: {
@@ -72,10 +73,14 @@ const imageminPlugins = {
           name: 'preset-default',
           params: {
             overrides: {
-              removeViewBox: false, // Keep viewBox for responsive SVGs
+              // removeViewBox: false, // Not part of preset-default in current SVGO version — configured below
               cleanupIds: false, // Keep IDs for external references
             },
           },
+        },
+        {
+          name: 'removeViewBox',
+          active: false, // Keep viewBox for responsive SVGs
         },
         // {
         //   name: 'removeViewBox',
