@@ -2,7 +2,7 @@ import { URL } from 'node:url'
 
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
-// import { Notify } from '#@/src/shared/lib/notify.js'
+// import { Notify } from '#/src/shared/lib/notify.js'
 import { imageResizer } from './image-resizer.js'
 
 export const command = 'img:resize'
