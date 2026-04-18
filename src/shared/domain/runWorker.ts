@@ -3,14 +3,19 @@ import { Worker } from 'node:worker_threads'
 
 import { error } from '#/src/shared/infrastructure/logger.js'
 
+export interface WorkerResult {
+  processed: number
+  endTime: number
+}
+
 export const runWorker = <T = unknown>(workerData: T, filename: URL) =>
-  new Promise<void>((resolve, reject) => {
+  new Promise<WorkerResult>((resolve, reject) => {
     const worker = new Worker(filename, {
       workerData,
     })
     worker
-      .on('message', () => {
-        resolve()
+      .on('message', (data: WorkerResult) => {
+        resolve(data)
       })
       .on('error', (err) => {
         error(err)
