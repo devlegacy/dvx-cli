@@ -14,9 +14,8 @@
     /* Modules */
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "baseUrl": "./",
     "paths": {
-      "#@/*": ["./*"]
+      "#/*": ["./*"]
     },
     "typeRoots": ["./node_modules/@types"],
     "types": ["node"],
