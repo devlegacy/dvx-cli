@@ -1,15 +1,15 @@
-import { isMainThread, parentPort, workerData } from 'node:worker_threads'
+import { execSync } from 'node:child_process'
 import { extname } from 'node:path'
 import { performance } from 'node:perf_hooks'
-import { execSync } from 'node:child_process'
+import { exit } from 'node:process'
+import { isMainThread, parentPort, workerData } from 'node:worker_threads'
 
 import sharp from 'sharp'
 
 import { error, log } from '#/src/shared/domain/console.js'
-import { exit } from 'node:process'
 import { Shell } from '#/src/shared/domain/shell.js'
 
-const useMogrify = async (file: any, width: any = 1024, height: any, command: string) => {
+const useMogrify = async (file: string, width: number = 1024, height: number | undefined, command: string) => {
   const mogrify = 'mogrify'
   try {
     if (!Shell.exists(mogrify)) {
@@ -18,19 +18,13 @@ const useMogrify = async (file: any, width: any = 1024, height: any, command: st
 
     const ext = extname(file).toLowerCase()
     let stdOut = ''
-    const resize = height
-      ? `-resize \"${width}x${height}\" -extent \"${width}x${height}\" `
-      : `-resize \"${width}>\"`
-    // console.log(resize); -path processed
+    const resize = height ? `-resize "${width}x${height}" -extent "${width}x${height}" ` : `-resize "${width}>"`
     if (ext.includes('.jpg')) {
-      const cmd = `${mogrify} -verbose -format jpg -layers Dispose ${resize} ${file}`
-      stdOut = execSync(cmd).toString()
+      stdOut = execSync(`${mogrify} -verbose -format jpg -layers Dispose ${resize} ${file}`).toString()
     } else if (ext.includes('.jpeg')) {
-      const cmd = `${mogrify} -verbose -format jpeg -layers Dispose ${resize} ${file}`
-      stdOut = execSync(cmd).toString()
+      stdOut = execSync(`${mogrify} -verbose -format jpeg -layers Dispose ${resize} ${file}`).toString()
     } else if (ext.includes('.png')) {
-      const cmd = `${mogrify} -verbose -format png ${resize} ${file}`
-      stdOut = execSync(cmd).toString()
+      stdOut = execSync(`${mogrify} -verbose -format png ${resize} ${file}`).toString()
     }
     log(`[${command}]:`, stdOut)
   } catch (e) {
@@ -45,6 +39,11 @@ const useSharp = async (
   height: number | undefined,
   command: string,
 ) => {
+  const { width: w, height: h } = await sharp(file).metadata()
+  const fitsWidth = (w ?? 0) <= (width ?? Infinity)
+  const fitsHeight = !height || (h ?? 0) <= height
+  if (fitsWidth && fitsHeight) return
+
   return sharp(file)
     .resize({
       width,
@@ -57,6 +56,7 @@ const useSharp = async (
     .then((data) => sharp(data).toFile(file))
     .then(() => log(`[${command}]:`, file))
 }
+
 const promises: Promise<void>[] = []
 
 if (!isMainThread) {
@@ -72,5 +72,4 @@ if (!isMainThread) {
       endTime: (performance.now() - startsAt) / 1000,
     })
   })
-  // .catch((e) => error(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`))
 }
