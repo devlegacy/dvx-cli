@@ -1,15 +1,14 @@
 import { exit } from 'node:process'
 import { URL } from 'node:url'
 
-import { type Argv } from 'yargs'
-import yargs from 'yargs/yargs'
+import type { Argv } from 'yargs'
 import { hideBin } from 'yargs/helpers'
-
-import { type YargsCommand } from '#/src/shared/infrastructure/yargs-command.js'
-import { version, epilogue, usage, scriptName } from '#/src/shared/domain/cli-metadata.js'
-import { readModulesRecursively } from '#/src/shared/domain/readModulesRecursively.js'
+import yargs from 'yargs/yargs'
+import { epilogue, scriptName, usage, version } from '#/src/shared/domain/cli-metadata.js'
 import { isConstructor } from '#/src/shared/domain/isConstructor.js'
-import { error } from '#/src/shared/domain/console.js'
+import { readModulesRecursively } from '#/src/shared/domain/readModulesRecursively.js'
+import { error } from '#/src/shared/infrastructure/logger.js'
+import type { YargsCommand } from '#/src/shared/infrastructure/yargs-command.js'
 
 export class DvxCLI {
   #yargs: Argv
@@ -67,9 +66,9 @@ export class DvxCLI {
       if (!argsCount) this.#yargs.showHelp()
     } catch (err) {
       const help = await this.#yargs.getHelp()
-      if (err instanceof Error) return console.error('[error]:', `${err.message}\n${help}`)
+      if (err instanceof Error) return error('[error]: %s\n%s', err.message, help)
 
-      console.error('[error]:', `unknown error\n${help}`)
+      error('[error]: unknown error\n%s', help)
     }
   }
 }
