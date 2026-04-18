@@ -1,5 +1,6 @@
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
+import { log } from '#/src/shared/domain/console.js'
 import { imageMinifier } from './image-minifier.js'
 import { imageResizer } from './image-resizer.js'
 import { webPConverter } from './image-webp-converter.js'
@@ -34,44 +35,54 @@ export const builder = {
     describe: 'Image processing tool to use for resizing operations',
     type: 'string',
     default: 'sharp',
-    choices: ['sharp', 'mogrify'],
+    choices: [
+      'sharp',
+      'mogrify',
+    ],
   },
   exclude: {
     alias: 'e',
     describe: 'File patterns to exclude from processing (space-separated)',
     type: 'array',
-    default: ['opengraph'],
+    default: [
+      'opengraph',
+    ],
   },
 } as const
 
-export const description =
-  'Comprehensive image optimization: minify, resize, and convert to WebP format'
+export const description = 'Comprehensive image optimization: minify, resize, and convert to WebP format'
 
 export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
-  const dist = args.distribution
+  const { source, distribution } = args
+
+  log(`[${command}]: Step 1/3 — minify: ${source} → ${distribution}`)
   await imageMinifier(
     {
-      ...args,
+      source,
+      distribution,
       command,
     },
     new URL('./imagemin-minifier.job.js', import.meta.url),
   )
-  // @ts-ignore
-  args.distribution = 'src/assets/img/dist/webp'
+
+  log(`[${command}]: Step 2/3 — resize: ${distribution} (in-place, max ${args.width}px)`)
   await imageResizer(
     {
-      ...args,
+      source: distribution,
+      width: args.width,
+      height: args.height,
+      tool: args.tool,
+      exclude: args.exclude,
       command,
     },
     new URL('./image-resizer.job.js', import.meta.url),
   )
 
-  // @ts-ignore
-  args.source = dist
-  // @ts-ignore
+  log(`[${command}]: Step 3/3 — webp: ${distribution} → ${distribution} (alongside originals)`)
   await webPConverter(
     {
-      ...args,
+      source: distribution,
+      distribution,
       command,
     },
     new URL('./sharp-webp-converter.job.js', import.meta.url),
