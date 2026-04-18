@@ -1,24 +1,25 @@
-import { type URL } from 'node:url'
+import type { URL } from 'node:url'
 import { Worker } from 'node:worker_threads'
 
-export const runWorker = (workerData: any, filename: URL) =>
-  new Promise((resolve: (value?: void) => void, reject) => {
+import { error } from '#/src/shared/infrastructure/logger.js'
+
+export const runWorker = <T = unknown>(workerData: T, filename: URL) =>
+  new Promise<void>((resolve, reject) => {
     const worker = new Worker(filename, {
       workerData,
     })
     worker
-      .on('message', (message) => {
-        // console.log(message)
+      .on('message', () => {
         resolve()
       })
       .on('error', (err) => {
-        console.error('error', err)
+        error(err)
         reject(err)
       })
       .on('exit', (code) => {
         if (code !== 0) {
           const message = `Worker stopped with exit code ${code}`
-          console.error(message)
+          error(message)
           reject(new Error(message))
         }
       })
