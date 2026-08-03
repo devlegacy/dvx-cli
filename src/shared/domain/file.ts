@@ -1,5 +1,4 @@
 import {
-  type GlobOptionsWithFileTypes,
   type GlobOptions,
   existsSync,
   writeFileSync,
@@ -60,12 +59,12 @@ export class File {
 
   // absolute?: boolean; ignore?: string[]
   static sync(pattern: string, opts?: GlobOptions) {
-    const files = globSync(pattern, {
-      withFileTypes: true,
-      ...opts,
-    } as GlobOptionsWithFileTypes).map((dirent) => {
-      return resolve(dirent.parentPath, dirent.name)
-    })
+    const context = typeof opts?.cwd === 'string' ? opts.cwd : cwd()
+    // Glob plain paths and resolve them against the search cwd: Bun's fs.glob
+    // does not support the withFileTypes option
+    const files = (globSync(pattern, { ...opts, withFileTypes: false }) as string[]).map((path) =>
+      resolve(context, path),
+    )
 
     return files
   }
