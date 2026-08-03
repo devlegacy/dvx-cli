@@ -1,31 +1,42 @@
-import { isMainThread, parentPort, workerData } from 'node:worker_threads'
 import { performance } from 'node:perf_hooks'
-
-import imageminPngquant from 'imagemin-pngquant'
-import imageminJpegtran from 'imagemin-jpegtran'
-import imageminZopfli from 'imagemin-zopfli'
+import { isMainThread, parentPort, workerData } from 'node:worker_threads'
 import imagemin, { type Plugin } from 'imagemin'
-import imageminMozjpeg from 'imagemin-mozjpeg'
-import imageminGifsicle from 'imagemin-gifsicle'
 import imageminGiflossy from 'imagemin-giflossy'
+import imageminGifsicle from 'imagemin-gifsicle'
+import imageminJpegtran from 'imagemin-jpegtran'
+import imageminMozjpeg from 'imagemin-mozjpeg'
+import imageminPngquant from 'imagemin-pngquant'
 import imageminSvgo from 'imagemin-svgo'
+import imageminZopfli from 'imagemin-zopfli'
 
 import { log } from '#/src/shared/domain/console.js'
 
 const QUALITY_PRESETS = {
   high: {
     jpeg: 90,
-    png: [0.7, 0.9],
+    png: [
+      0.7,
+      0.9,
+    ],
     webp: 85,
   },
   medium: {
     jpeg: 80,
-    png: [0.65, 0.85] as [number, number], // [0.6, 0.8]
+    png: [
+      0.65,
+      0.85,
+    ] as [
+      number,
+      number,
+    ], // [0.6, 0.8]
     webp: 80,
   },
   low: {
     jpeg: 70,
-    png: [0.5, 0.7],
+    png: [
+      0.5,
+      0.7,
+    ],
     webp: 75,
   },
 }
@@ -88,7 +99,7 @@ const imageminPlugins = {
         // },
         // {
         //   name: 'cleanupIds',
-        //   // @ts-ignore
+        //   // @ts-expect-error
         //   active: false,
         // },
         {
@@ -127,21 +138,20 @@ if (!isMainThread) {
     const plugins = imageminPlugins[ext as ImageMinPlugins] as readonly Plugin[]
 
     promises.push(
-      imagemin([source], {
-        destination,
-        plugins,
-      })
+      imagemin(
+        [
+          source,
+        ],
+        {
+          destination,
+          plugins,
+        },
+      )
         .then((images) => {
           // NOTE: Extra process, evaluate
           // File.find(images[0].sourcePath).info.path
           // File.find(images[0].destinationPath).info.path
-          log(
-            `[${command}]:`,
-            '\n[source]\t:',
-            images[0]!.sourcePath,
-            '\n[destination]\t:',
-            images[0]!.destinationPath,
-          )
+          log(`[${command}]:`, '\n[source]\t:', images[0]!.sourcePath, '\n[destination]\t:', images[0]!.destinationPath)
           //=> [{data: <Buffer 89 50 4e …>, path: 'build/images/foo.jpg'}, …]
         })
         .catch((e) => {
