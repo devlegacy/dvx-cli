@@ -1,7 +1,6 @@
 import { performance } from 'node:perf_hooks'
 import { isMainThread, parentPort, workerData } from 'node:worker_threads'
 import imagemin, { type Plugin } from 'imagemin'
-import imageminGiflossy from 'imagemin-giflossy'
 import imageminGifsicle from 'imagemin-gifsicle'
 import imageminJpegtran from 'imagemin-jpegtran'
 import imageminMozjpeg from 'imagemin-mozjpeg'
@@ -68,13 +67,13 @@ const imageminPlugins = {
     }),
   ],
   '.gif': [
-    imageminGiflossy({
+    // imagemin-giflossy: abandoned wrapper of the giflossy fork; its lossy flag was merged
+    // upstream into gifsicle 1.92+, so the maintained imagemin-gifsicle is preferred
+    imageminGifsicle({
       optimizationLevel: 3,
-      optimize: 3, //keep-empty: Preserve empty transparent frames
-      lossy: 2,
       colors: 256, // Limit color palette
       interlaced: false, // Usually better for web
-    }) as Plugin,
+    }),
   ],
   '.svg': [
     // @ts-expect-error plugins is not well typed
