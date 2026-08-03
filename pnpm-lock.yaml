@@ -77,7 +77,7 @@ importers:
     devDependencies:
       '@swc-node/register':
         specifier: 1.12.1
-        version: 1.12.1(@swc/core@1.15.46)(@swc/types@0.1.27)(supports-color@7.2.0)(typescript@7.0.2)
+        version: 1.12.1(@swc/core@1.15.46)(@swc/types@0.1.27)(@typescript/typescript6@6.0.2)(supports-color@7.2.0)
       '@swc/cli':
         specifier: 0.8.1
         version: 0.8.1(@swc/core@1.15.46)(supports-color@7.2.0)
@@ -114,6 +114,9 @@ importers:
       '@types/yargs':
         specifier: 17.0.35
         version: 17.0.35
+      '@typescript/native':
+        specifier: npm:typescript@7.0.2
+        version: typescript@7.0.2
       prettier:
         specifier: 3.9.6
         version: 3.9.6
@@ -124,8 +127,8 @@ importers:
         specifier: 5.8.0
         version: 5.8.0
       typescript:
-        specifier: 7.0.2
-        version: 7.0.2
+        specifier: npm:@typescript/typescript6@6.0.2
+        version: '@typescript/typescript6@6.0.2'
 
 packages:
 
@@ -956,6 +959,10 @@ packages:
     engines: {node: '>=16.20.0'}
     cpu: [x64]
     os: [win32]
+
+  '@typescript/typescript6@6.0.2':
+    resolution: {integrity: sha512-mbCddXd+jm7hfx7w2YU64/Av4/NqqeG3GoRZgxPcgoTxYjhrcfJRw9ULch71SS4G+Q3bOXFhRvPqjguN0Hyp5w==}
+    hasBin: true
 
   '@xhmikosr/archive-type@8.1.0':
     resolution: {integrity: sha512-EXOjEbnZFE5c/nFMf4FOrEURVanzHpnkPYmnmr78u02/8hAhE0FMq8p9TK1IM0/bFr5VcyBUY0gfLm8f7dKy+Q==}
@@ -3082,6 +3089,11 @@ packages:
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
+  typescript@6.0.3:
+    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   typescript@7.0.2:
     resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
     engines: {node: '>=16.20.0'}
@@ -3581,7 +3593,7 @@ snapshots:
       '@swc/core': 1.15.46
       '@swc/types': 0.1.27
 
-  '@swc-node/register@1.12.1(@swc/core@1.15.46)(@swc/types@0.1.27)(supports-color@7.2.0)(typescript@7.0.2)':
+  '@swc-node/register@1.12.1(@swc/core@1.15.46)(@swc/types@0.1.27)(@typescript/typescript6@6.0.2)(supports-color@7.2.0)':
     dependencies:
       '@node-rs/xxhash': 1.7.6
       '@swc-node/core': 1.15.0(@swc/core@1.15.46)(@swc/types@0.1.27)
@@ -3593,7 +3605,7 @@ snapshots:
       oxc-resolver: 11.24.2
       pirates: 4.0.7
       tslib: 2.8.1
-      typescript: 7.0.2
+      typescript: '@typescript/typescript6@6.0.2'
     transitivePeerDependencies:
       - '@swc/types'
       - supports-color
@@ -3806,6 +3818,10 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
+
+  '@typescript/typescript6@6.0.2':
+    dependencies:
+      '@typescript/old': typescript@6.0.3
 
   '@xhmikosr/archive-type@8.1.0(supports-color@7.2.0)':
     dependencies:
@@ -6133,6 +6149,8 @@ snapshots:
       is-typed-array: 1.1.15
 
   typedarray@0.0.6: {}
+
+  typescript@6.0.3: {}
 
   typescript@7.0.2:
     optionalDependencies:
