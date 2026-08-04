@@ -3,14 +3,16 @@ run-name: Node.js ⬢ CI
 
 on:
   push:
-    branches: [develop]
+    branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [24.x]
 
     name: Node.js ${{ matrix.node-version }} 🚀
     steps:
@@ -44,6 +46,10 @@ jobs:
       - name: Install dependencies 📦
         run: |
           pnpm install --frozen-lockfile
+
+      - name: Typecheck 🔎
+        run: |
+          pnpm run typecheck
 
       - name: Run tests 🧪
         run: |

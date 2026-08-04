@@ -2,6 +2,15 @@
 
 <h2 align="center">📦 Install</h2>
 
+### macOS prerequisites
+
+Some optimizers build native binaries from source and need these libraries:
+
+```sh
+brew install libpng libimagequant
+brew link libpng
+```
+
 ### Global installation
 
 To install the CLI tool globally, run the following command:

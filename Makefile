@@ -1,3 +1,4 @@
+SHELL:=$(shell which bash)
 MAKEFLAGS += -s
 
 current_work_directory := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -23,11 +24,31 @@ help: ## 📋 Display help message with descriptions of all available commands.
 .PHONY: deps/update
 .SILENT: deps/update
 deps/update: ## ⬆️ Update all project dependencies to their latest versions.
-	$(print_message) "updating dependencies"
-	ncu -u && ncu --target minor -u && ncu --target patch -u
-	corepack up
-	NODE_ENV= pnpm install
-	NODE_ENV= pnpm audit --fix
+	set -eo pipefail
+	$(print_message) "bump dependencies"
+	PNPM_QUIET_FLAGS="--config.loglevel=error"
+	NODE_ENV= pnpm audit || true
+	find . -type d -name node_modules -not -path '*/.git/*' -prune -exec rm -rf '{}' +
+	rm -f pnpm-lock.yaml
+	CI=true corepack use pnpm@latest-11
+	if command -v ncu &>/dev/null; then
+		NCU_CMD=ncu
+	elif [ -f ./node_modules/.bin/ncu ]; then
+		NCU_CMD=./node_modules/.bin/ncu
+	else
+		echo "ncu (npm-check-updates) not found. Install with one of:"
+		echo "  npm i -g npm-check-updates"
+		echo "  pnpm add -g npm-check-updates"
+		echo "  pnpm add -O npm-check-updates   # optional/local"
+		exit 1
+	fi
+	$$NCU_CMD --target patch -u && $$NCU_CMD --target minor -u && $$NCU_CMD -u
+	NODE_ENV= pnpm install --no-frozen-lockfile $$PNPM_QUIET_FLAGS
+	NODE_ENV= pnpm up --recursive $$PNPM_QUIET_FLAGS
+	NODE_ENV= pnpm audit --fix=update $$PNPM_QUIET_FLAGS
+	NODE_ENV= pnpm dedupe $$PNPM_QUIET_FLAGS
+	NODE_ENV= pnpm rebuild @swc-node/register @swc/cli @swc/core sharp
+	NODE_ENV= pnpm audit --ignore-unfixable
 
 .PHONY: test
 .SILENT: test
