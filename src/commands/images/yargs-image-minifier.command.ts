@@ -1,7 +1,6 @@
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
-
-import { imageMinifier } from './image-minifier.js'
 import { URL } from 'node:url'
+import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { imageMinifier } from './image-minifier.js'
 
 export const command = 'img:minify'
 export const builder = {
@@ -17,12 +16,22 @@ export const builder = {
     type: 'string',
     default: 'src/assets/img/dist',
   },
+  quality: {
+    alias: 'q',
+    describe: 'Compression quality preset',
+    type: 'string',
+    default: 'medium',
+    choices: [
+      'high',
+      'medium',
+      'low',
+    ],
+  },
 } as const
-export const description =
-  'Minify and optimize images for better web performance and smaller file sizes'
+export const description = 'Minify and optimize images for better web performance and smaller file sizes'
 
 export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
-  imageMinifier(
+  return imageMinifier(
     {
       ...args,
       command,

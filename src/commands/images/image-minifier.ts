@@ -5,17 +5,21 @@ import { isMainThread } from 'node:worker_threads'
 import { chunkArray } from '#/src/shared/domain/chunkArray.js'
 import { log } from '#/src/shared/domain/console.js'
 import { File } from '#/src/shared/domain/file.js'
-import { runWorker, type WorkerResult } from '#/src/shared/domain/runWorker.js'
+import { formatSizeDelta } from '#/src/shared/domain/formatBytes.js'
+import type { Quality } from '#/src/shared/domain/quality-presets.js'
+import { runWorker, summarizeWorkerResults, type WorkerResult } from '#/src/shared/domain/runWorker.js'
 
 export async function imageMinifier(
   {
     source,
     distribution,
     command,
+    quality,
   }: {
     source: string
     distribution: string
     command: string
+    quality?: Quality
   },
   jobFile: URL,
 ) {
@@ -60,15 +64,15 @@ export async function imageMinifier(
           {
             files: chunk,
             command,
+            quality,
           },
           jobFile,
         ),
       )
     }
     const results = await Promise.allSettled(tasks)
-    const fulfilled = results.filter((r): r is PromiseFulfilledResult<WorkerResult> => r.status === 'fulfilled')
-    const processed = fulfilled.reduce((sum, r) => sum + r.value.processed, 0)
-    const time = fulfilled.reduce((max, r) => Math.max(max, r.value.endTime), 0)
-    log(`[${command}]: minify done — ${processed} files in ${time.toFixed(2)}s`)
+    const { processed, time, bytesIn, bytesOut } = summarizeWorkerResults(results)
+    const sizes = bytesIn > 0 ? `, ${formatSizeDelta(bytesIn, bytesOut)}` : ''
+    log(`[${command}]: minify done — ${processed} files${sizes} in ${time.toFixed(2)}s`)
   }
 }

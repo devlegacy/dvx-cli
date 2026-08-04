@@ -48,6 +48,17 @@ export const builder = {
       'opengraph',
     ],
   },
+  quality: {
+    alias: 'q',
+    describe: 'Compression quality preset',
+    type: 'string',
+    default: 'medium',
+    choices: [
+      'high',
+      'medium',
+      'low',
+    ],
+  },
 } as const
 
 export const description = 'Comprehensive image optimization: minify, resize, and convert to WebP format'
@@ -61,6 +72,7 @@ export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeo
       source,
       distribution,
       command,
+      quality: args.quality,
     },
     new URL('./imagemin-minifier.job.js', import.meta.url),
   )
@@ -84,6 +96,7 @@ export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeo
       source: distribution,
       distribution,
       command,
+      quality: args.quality,
     },
     new URL('./sharp-webp-converter.job.js', import.meta.url),
   )

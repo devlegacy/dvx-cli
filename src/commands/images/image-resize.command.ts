@@ -22,21 +22,25 @@ export const builder = {
   height: {
     alias: 'h',
     type: 'number',
-    describe:
-      'Target height in pixels for resized images (optional, maintains aspect ratio if not set)',
+    describe: 'Target height in pixels for resized images (optional, maintains aspect ratio if not set)',
   },
   tool: {
     alias: 't',
     describe: 'Image processing tool to use for resizing',
     type: 'string',
     default: 'sharp',
-    choices: ['sharp', 'mogrify'],
+    choices: [
+      'sharp',
+      'mogrify',
+    ],
   },
   exclude: {
     alias: 'e',
     describe: 'File patterns to exclude from resizing (space-separated)',
     type: 'array',
-    default: ['opengraph'],
+    default: [
+      'opengraph',
+    ],
   },
 } as const
 export const description = 'Resize images to specified dimensions while maintaining aspect ratio'

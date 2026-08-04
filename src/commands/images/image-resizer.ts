@@ -4,7 +4,7 @@ import { isMainThread } from 'node:worker_threads'
 import { chunkArray } from '#/src/shared/domain/chunkArray.js'
 import { log } from '#/src/shared/domain/console.js'
 import { File } from '#/src/shared/domain/file.js'
-import { runWorker, type WorkerResult } from '#/src/shared/domain/runWorker.js'
+import { runWorker, summarizeWorkerResults, type WorkerResult } from '#/src/shared/domain/runWorker.js'
 
 export async function imageResizer(
   {
@@ -55,9 +55,7 @@ export async function imageResizer(
       )
     }
     const results = await Promise.allSettled(tasks)
-    const fulfilled = results.filter((r): r is PromiseFulfilledResult<WorkerResult> => r.status === 'fulfilled')
-    const processed = fulfilled.reduce((sum, r) => sum + r.value.processed, 0)
-    const time = fulfilled.reduce((max, r) => Math.max(max, r.value.endTime), 0)
+    const { processed, time } = summarizeWorkerResults(results)
     log(`[${command}]: resize done — ${processed} files in ${time.toFixed(2)}s`)
   }
 }

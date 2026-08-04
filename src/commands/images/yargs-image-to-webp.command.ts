@@ -17,18 +17,25 @@ export const builder = {
     type: 'string',
     default: 'src/assets/img/dist/webp',
   },
+  quality: {
+    alias: 'q',
+    describe: 'Compression quality preset',
+    type: 'string',
+    default: 'medium',
+    choices: [
+      'high',
+      'medium',
+      'low',
+    ],
+  },
 } as const
-export const description =
-  'Convert images to WebP format for better web performance and smaller file sizes'
+export const description = 'Convert images to WebP format for better web performance and smaller file sizes'
 export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
-  // console.time(this.command)
-  webPConverter(
+  await webPConverter(
     {
       ...args,
       command,
     },
     new URL('./sharp-webp-converter.job.js', import.meta.url),
   )
-  // console.timeEnd(this.command)
-  // Notify.info('To webp', 'End images to webp task')
 }

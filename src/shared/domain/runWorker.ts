@@ -6,6 +6,18 @@ import { error } from '#/src/shared/infrastructure/logger.js'
 export interface WorkerResult {
   processed: number
   endTime: number
+  bytesIn?: number
+  bytesOut?: number
+}
+
+export const summarizeWorkerResults = (results: PromiseSettledResult<WorkerResult>[]) => {
+  const fulfilled = results.filter((r): r is PromiseFulfilledResult<WorkerResult> => r.status === 'fulfilled')
+  return {
+    processed: fulfilled.reduce((sum, r) => sum + r.value.processed, 0),
+    time: fulfilled.reduce((max, r) => Math.max(max, r.value.endTime), 0),
+    bytesIn: fulfilled.reduce((sum, r) => sum + (r.value.bytesIn ?? 0), 0),
+    bytesOut: fulfilled.reduce((sum, r) => sum + (r.value.bytesOut ?? 0), 0),
+  }
 }
 
 export const runWorker = <T = unknown>(workerData: T, filename: URL) =>
