@@ -1,5 +1,5 @@
-import { join } from 'node:path'
 import { existsSync, lstatSync, readdirSync, rmdirSync, unlinkSync } from 'node:fs'
+import { join } from 'node:path'
 
 export function emptyDirSync(path: string) {
   if (!existsSync(path)) return

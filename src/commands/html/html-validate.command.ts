@@ -1,11 +1,9 @@
-import { cwd, uptime, exit } from 'node:process'
-
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { cwd, exit, uptime } from 'node:process'
 import htmlhint, { type HTMLHint } from 'htmlhint'
 import htmlhintStylish from 'htmlhint-stylish'
-
-import { File } from '#/src/shared/domain/file.js'
+import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 import { log, warn } from '#/src/shared/domain/console.js'
+import { File } from '#/src/shared/domain/file.js'
 import config from '#/src/shared/infrastructure/config.js'
 
 type Ruleset = (typeof HTMLHint)['defaultRuleset']
@@ -38,9 +36,7 @@ export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof buil
    * DEBT: Can it be a factory of configs?
    */
   const htmlhintrc = File.find('.htmlhintrc')
-  const ruleSet: Ruleset = htmlhintrc.isFile()
-    ? JSON.parse(htmlhintrc.read())
-    : config.HTML_RULE_SET
+  const ruleSet: Ruleset = htmlhintrc.isFile() ? JSON.parse(htmlhintrc.read()) : config.HTML_RULE_SET
 
   const lintResults = files
     .map((file) => ({

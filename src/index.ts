@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
 import { argv } from 'node:process'
-
-import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
+import yargs from 'yargs/yargs'
 
-import { version, epilogue, usage, scriptName } from '#/src/shared/domain/cli-metadata.js'
+import { epilogue, scriptName, usage, version } from '#/src/shared/domain/cli-metadata.js'
 
 const cli = yargs(hideBin(argv))
 
@@ -14,7 +13,9 @@ cli
   .epilogue(epilogue)
   .commandDir('./commands', {
     include: /.command\.js$/,
-    extensions: ['js'],
+    extensions: [
+      'js',
+    ],
     recurse: true,
   })
   .help('help', 'Show help', false)

@@ -19,7 +19,10 @@ export const builder = {
     alias: 'pkg',
     describe: 'List of npm packages with CSS files to clean.',
     type: 'array',
-    default: ['bootstrap-datepicker', 'tinymce'],
+    default: [
+      'bootstrap-datepicker',
+      'tinymce',
+    ],
   },
 } as const
 export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
@@ -40,12 +43,14 @@ export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof buil
     return
   }
 
-  const directories = packages
-    .map((pkg) => getDirectory(source, pkg))
-    .filter((file) => file.isDirectory())
+  const directories = packages.map((pkg) => getDirectory(source, pkg)).filter((file) => file.isDirectory())
   const files = directories.reduce(
     (files: File[], { info: { absolutePath } }) =>
-      files.concat(...File.sync('**/*.css', { cwd: absolutePath }).map((file) => File.find(file))),
+      files.concat(
+        ...File.sync('**/*.css', {
+          cwd: absolutePath,
+        }).map((file) => File.find(file)),
+      ),
     [],
   )
 
@@ -78,9 +83,7 @@ const getPackageJson = (): {
     const json = JSON.parse(file.read())
     return json
   } catch (error) {
-    throw new Error(
-      `Error parsing the file <${filename}> in the root directory of the project located at <${cwd()}>`,
-    )
+    throw new Error(`Error parsing the file <${filename}> in the root directory of the project located at <${cwd()}>`)
   }
 }
 

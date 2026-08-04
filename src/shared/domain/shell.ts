@@ -1,4 +1,4 @@
-import { spawnSync, type SpawnSyncReturns } from 'node:child_process'
+import { type SpawnSyncReturns, spawnSync } from 'node:child_process'
 
 const validateCommand = (command: SpawnSyncReturns<Buffer>, errorMessage: string) => {
   if (command.error || command.status !== 0) {
@@ -23,7 +23,9 @@ const messages = {
 class Shell {
   static exists(command: string, args: readonly string[] = []) {
     try {
-      const result = spawnSync(command, args, { timeout: 5000 })
+      const result = spawnSync(command, args, {
+        timeout: 5000,
+      })
       return !result.error
     } catch {
       return false
@@ -33,7 +35,15 @@ class Shell {
   static get imageMagick() {
     const command = 'magick'
     try {
-      const result = spawnSync(command, ['-version'], { timeout: 5000 })
+      const result = spawnSync(
+        command,
+        [
+          '-version',
+        ],
+        {
+          timeout: 5000,
+        },
+      )
       return validateCommand(result, messages[command])
     } catch {
       return messages[command]
@@ -43,7 +53,15 @@ class Shell {
   static get graphicMagick() {
     const command = 'gm'
     try {
-      const result = spawnSync(command, ['-version'], { timeout: 5000 })
+      const result = spawnSync(
+        command,
+        [
+          '-version',
+        ],
+        {
+          timeout: 5000,
+        },
+      )
       return validateCommand(result, messages[command])
     } catch {
       return messages[command]

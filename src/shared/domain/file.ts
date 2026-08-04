@@ -1,14 +1,6 @@
-import {
-  type GlobOptions,
-  existsSync,
-  writeFileSync,
-  readFileSync,
-  lstatSync,
-  globSync,
-  Stats,
-} from 'node:fs'
+import { existsSync, type GlobOptions, globSync, lstatSync, readFileSync, type Stats, writeFileSync } from 'node:fs'
 import { EOL } from 'node:os'
-import { resolve, relative, parse } from 'node:path'
+import { parse, relative, resolve } from 'node:path'
 import { cwd } from 'node:process'
 
 export interface FileParsed {
@@ -42,7 +34,9 @@ export class File {
   constructor(filePath: string, context: string = cwd()) {
     this.#absolutePath = resolve(context, filePath)
     this.#filePath = this.relativePath()
-    this.#stats = lstatSync(this.#absolutePath, { throwIfNoEntry: false })
+    this.#stats = lstatSync(this.#absolutePath, {
+      throwIfNoEntry: false,
+    })
     this.info = this.parse()
   }
 
@@ -62,9 +56,12 @@ export class File {
     const context = typeof opts?.cwd === 'string' ? opts.cwd : cwd()
     // Glob plain paths and resolve them against the search cwd: Bun's fs.glob
     // does not support the withFileTypes option
-    const files = (globSync(pattern, { ...opts, withFileTypes: false }) as string[]).map((path) =>
-      resolve(context, path),
-    )
+    const files = (
+      globSync(pattern, {
+        ...opts,
+        withFileTypes: false,
+      }) as string[]
+    ).map((path) => resolve(context, path))
 
     return files
   }
