@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/devlegacy/dvx-cli/compare/dvx-cli@v3.0.2...dvx-cli@v4.0.0) (2026-09-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* requires Node >=24; per-file log format changed.
+
+### Features
+
+* improve code base ([#36](https://github.com/devlegacy/dvx-cli/issues/36)) ([1d61756](https://github.com/devlegacy/dvx-cli/commit/1d61756177527431991562d2018083d43be5191d))
+
 ## [3.0.2](https://github.com/devlegacy/dvx-cli/compare/dvx-cli@v3.0.1...dvx-cli@v3.0.2) (2024-08-04)
 
 
