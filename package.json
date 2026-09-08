@@ -11,7 +11,7 @@
     "#/*": "./*"
   },
   "type": "module",
-  "packageManager": "pnpm@11.20.0+sha512.9a6f330a95b66446ea088faf1521405a8a01f07fde7124cc9958dfed52d4bb436737e65b08f85f37b46fcba375092558ac51262b816844b22f63406ed166bfee",
+  "packageManager": "pnpm@12.2.1",
   "scripts": {
     "prebuild": "node --run build:clean",
     "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#/src//g\" \"#/bin/\" \"./bin/**/*.js\" --isRegex && chmod +x ./bin/*",
@@ -39,7 +39,7 @@
   "devDependencies": {
     "@swc-node/register": "1.12.1",
     "@swc/cli": "0.8.1",
-    "@swc/core": "1.15.46",
+    "@swc/core": "1.16.1",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "9.0.1",
     "@types/imagemin-gifsicle": "7.0.4",
@@ -47,10 +47,10 @@
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "11.0.0",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "26.1.2",
+    "@types/node": "26.4.0",
     "@types/yargs": "17.0.35",
-    "replace-in-file": "8.4.0",
-    "type-fest": "5.8.0",
+    "replace-in-file": "9.0.0",
+    "type-fest": "5.9.0",
     "@typescript/native": "npm:typescript@7.0.2",
     "typescript": "npm:@typescript/typescript6@6.0.2"
   },
@@ -66,7 +66,7 @@
     "imagemin-zopfli": "7.0.0",
     "pino": "10.3.1",
     "pino-pretty": "13.1.3",
-    "sharp": "0.35.3",
+    "sharp": "0.35.4",
     "yargs": "18.1.0"
   },
   "engines": {
