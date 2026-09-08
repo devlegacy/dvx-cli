@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/devlegacy/dvx-cli/compare/dvx-cli@v3.0.1...dvx-cli@v3.0.2) (2024-08-04)
+
+
+### Bug Fixes
+
+* **release:** update package.json files section ([#33](https://github.com/devlegacy/dvx-cli/issues/33)) ([1578cca](https://github.com/devlegacy/dvx-cli/commit/1578cca24fd7311b8935e03392f9fad7bd391e7b))
+
 ## [3.0.1](https://github.com/devlegacy/dvx-cli/compare/dvx-cli@v3.0.0...dvx-cli@v3.0.1) (2024-08-04)
 
 
