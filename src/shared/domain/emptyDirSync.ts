@@ -1,9 +1,10 @@
-import { join } from 'node:path'
 import { existsSync, lstatSync, readdirSync, rmdirSync, unlinkSync } from 'node:fs'
+import { join } from 'node:path'
 
 export function emptyDirSync(path: string) {
   if (!existsSync(path)) return
-  readdirSync(path).forEach((file) => {
+  const files = readdirSync(path)
+  for (const file of files) {
     const curPath = join(path, file)
     if (lstatSync(curPath).isDirectory()) {
       emptyDirSync(curPath)
@@ -11,5 +12,5 @@ export function emptyDirSync(path: string) {
     } else {
       unlinkSync(curPath)
     }
-  })
+  }
 }

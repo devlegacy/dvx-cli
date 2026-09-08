@@ -1,8 +1,7 @@
-import { statSync, existsSync, writeFileSync, readFileSync, lstatSync } from 'node:fs'
+import { existsSync, type GlobOptions, globSync, lstatSync, readFileSync, type Stats, writeFileSync } from 'node:fs'
 import { EOL } from 'node:os'
-import { resolve, relative, parse } from 'node:path'
+import { parse, relative, resolve } from 'node:path'
 import { cwd } from 'node:process'
-import { globSync } from 'node:fs'
 
 export interface FileParsed {
   isDir: boolean
@@ -22,6 +21,9 @@ export interface FileParsed {
 export class File {
   #absolutePath: string
   #filePath: string
+  // Cache the result of `lstatSync` or `statSync` for performance
+  #stats?: Stats
+
   readonly info: FileParsed
 
   /**
@@ -32,6 +34,9 @@ export class File {
   constructor(filePath: string, context: string = cwd()) {
     this.#absolutePath = resolve(context, filePath)
     this.#filePath = this.relativePath()
+    this.#stats = lstatSync(this.#absolutePath, {
+      throwIfNoEntry: false,
+    })
     this.info = this.parse()
   }
 
@@ -46,10 +51,17 @@ export class File {
     return new File(path, context)
   }
 
-  static sync(pattern: string, opts?: { cwd?: string; absolute?: boolean; ignore?: string[] }) {
-    const files = globSync(pattern, {
-      ...opts,
-    }).map((file) => resolve(opts?.cwd!, file))
+  // absolute?: boolean; ignore?: string[]
+  static sync(pattern: string, opts?: GlobOptions) {
+    const context = typeof opts?.cwd === 'string' ? opts.cwd : cwd()
+    // Glob plain paths and resolve them against the search cwd: Bun's fs.glob
+    // does not support the withFileTypes option
+    const files = (
+      globSync(pattern, {
+        ...opts,
+        withFileTypes: false,
+      }) as string[]
+    ).map((path) => resolve(context, path))
 
     return files
   }
@@ -64,25 +76,48 @@ export class File {
   }
 
   /**
+   * Format a size value into a human-readable string with appropriate suffix (T, B, M, k)
+   *
+   * @param {number | null | undefined} size - The size value to format (e.g., file size in bytes)
+   * @return {string} Human-readable size string with suffix or 'N/A' for null/undefined
+   * @example
+   * File.compact(1500000) // Returns "1.5M"
+   * File.compact(2500)    // Returns "2.5k"
+   * File.compact(null)    // Returns "N/A"
+   */
+  static sizeCompact(size: number | null | undefined): string {
+    if (size === null || size === undefined) return 'N/A'
+
+    if (size >= 1e12) return `${(size / 1e12).toFixed(2).replace(/\.00$/, '')}T`
+    if (size >= 1e9) return `${(size / 1e9).toFixed(2).replace(/\.00$/, '')}B`
+    if (size >= 1e6) return `${(size / 1e6).toFixed(2).replace(/\.00$/, '')}M`
+    if (size >= 1e3) return `${(size / 1e3).toFixed(2).replace(/\.00$/, '')}k`
+
+    return size.toString()
+  }
+
+  /**
    * Determine if the file is a directory.
    */
   isDirectory() {
-    try {
-      return lstatSync(this.#absolutePath).isDirectory()
-    } catch (err) {
-      return false
-    }
+    // try {
+    //   return lstatSync(this.#absolutePath).isDirectory()
+    // } catch (err) {
+    //   return false
+    // }
+    return this.#stats ? this.#stats.isDirectory() : false
   }
 
   /**
    * Determine if the path is a file, and not a directory.
    */
   isFile() {
-    try {
-      return statSync(this.#absolutePath).isFile()
-    } catch (err) {
-      return false
-    }
+    // try {
+    //   return statSync(this.#absolutePath).isFile()
+    // } catch (err) {
+    //   return false
+    // }
+    return this.#stats ? this.#stats.isFile() : false
   }
 
   /**
@@ -104,6 +139,7 @@ export class File {
     const isFile = this.isFile()
     const path = this.#filePath
     const absolutePath = this.#absolutePath
+
     const info = {
       isDir,
       isFile,

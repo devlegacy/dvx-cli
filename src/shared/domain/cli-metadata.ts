@@ -1,16 +1,15 @@
-import { styleText } from 'node:util'
-import process from 'node:process'
 import { arch } from 'node:os'
-
-import Shell from '#@/src/shared/lib/shell.js'
-import pkg from '#@/package.json' with { type: 'json' }
+import process from 'node:process'
+import { styleText } from 'node:util'
+import pkg from '#/package.json' with { type: 'json' }
+import { Shell } from '#/src/shared/domain/shell.js'
 
 const brand = `
   ____                      _                          ____ _     ___
- |  _ \\  _____   _______  _| |_ ___  __ _ _ __ ___    \/ ___| |   |_ _|
- | | | |\/ _ \\ \\ \/ \/ _ \\ \\\/ \/ __\/ _ \\\/ _\` | '_ \` _ \\  | |   | |    | |
- | |_| |  __\/\\ V \/  __\/>  <| ||  __\/ (_| | | | | | | | |___| |___ | |
- |____\/ \\___| \\_\/ \\___\/_\/\\_\\\\__\\___|\\__,_|_| |_| |_|  \\____|_____|___|\n`
+ |  _ \\  _____   _______  _| |_ ___  __ _ _ __ ___    / ___| |   |_ _|
+ | | | |/ _ \\ \\ / / _ \\ \\/ / __/ _ \\/ _\` | '_ \` _ \\  | |   | |    | |
+ | |_| |  __/\\ V /  __/>  <| ||  __/ (_| | | | | | | | |___| |___ | |
+ |____/ \\___| \\_/ \\___/_/\\_\\\\__\\___|\\__,_|_| |_| |_|  \\____|_____|___|\n`
 
 export const version = `${styleText('yellowBright', brand)}
 Devexteam CLI\t: ${styleText('yellowBright', `v${pkg.version || ''}`)}

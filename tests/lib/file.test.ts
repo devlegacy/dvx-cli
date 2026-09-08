@@ -1,55 +1,56 @@
 import assert from 'node:assert/strict'
-import { afterEach, before, describe, it } from 'node:test'
-import { resolve, normalize } from 'node:path'
-import { cwd } from 'node:process'
 import { mkdirSync } from 'node:fs'
-
-import { File } from '#@/src/shared/lib/file.js'
-import { emptyDirSync } from '#@/src/shared/emptyDirSync.js'
+import { normalize, resolve } from 'node:path'
+import { cwd } from 'node:process'
+import { afterEach, before, describe, it } from 'node:test'
+import { emptyDirSync } from '#/src/shared/domain/emptyDirSync.js'
+import { File } from '#/src/shared/domain/file.js'
 
 const stubsDir = resolve(`${cwd()}/tests`, 'stubs')
 
 describe('File', () => {
   before(() => {
-    mkdirSync(stubsDir, { recursive: true })
+    mkdirSync(stubsDir, {
+      recursive: true,
+    })
   })
   afterEach(() => {
     emptyDirSync(stubsDir)
   })
   describe('Related to validations', () => {
-    it('should returns if a file does not exists', () => {
+    it('should return if a file does not exist', () => {
       const file = resolve(stubsDir, 'file.js')
       assert.strictEqual(File.exists(file), false)
     })
-    it('should returns if a file exists', () => {
+    it('should return if a file exists', () => {
       const file = resolve(stubsDir, 'file.js')
       new File(file).write('foobar')
       assert.strictEqual(File.exists(file), true)
     })
-    it('should returns if the current file path is a directory', () => {
+    it('should return if the current file path is a directory', () => {
       const result = new File(resolve(stubsDir)).isDirectory()
       assert.strictEqual(result, true)
     })
-    it('should returns if the current file path is not a directory', () => {
+    it('should return if the current file path is not a directory', () => {
       const result = new File('path/to/file.js').isDirectory()
       assert.strictEqual(result, false)
     })
-    it('should returns if a the curren file path is a file', () => {
+    it('should return if the current file path is a file', () => {
       const file = resolve(stubsDir, 'file.js')
       new File(file).write('foobar')
       const result: boolean = new File(file).isFile()
       assert.strictEqual(result, true)
     })
-    it('should returns if a the curren file path is not a file', () => {
+    it('should return if the current file path is not a file', () => {
       assert.strictEqual(new File('path/to').isFile(), false)
     })
   })
   describe('Related to path', () => {
-    it('should returns the absolute path of the file', () => {
+    it('should return the absolute path of the file', () => {
       const file = resolve(stubsDir, 'file.js')
       assert.strictEqual(file, new File(file).path())
     })
-    it('should returns the relative path to the file', () => {
+    it('should return the relative path to the file', () => {
       const filePath = 'path/to/file.js'
       const newFilePath = '../path/to/file.js'
       const file = new File(filePath)
@@ -57,7 +58,7 @@ describe('File', () => {
       assert.strictEqual(normalize(filePath), file.relativePath())
       assert.strictEqual(normalize(newFilePath), newFile.relativePath())
     })
-    it('should knows the base directory path for the file', () => {
+    it('should know the base directory path for the file', () => {
       const file = new File('path/to/file.js')
       const result = file.base()
       assert.strictEqual(result, resolve('path/to'))

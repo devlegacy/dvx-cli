@@ -10,7 +10,9 @@ export const CONSOLE_COLOR = {
   info: `${Color.BG_BLUE}${Color.FG_BLACK}`,
 }
 
-const CONSOLE_EMOJI: { [key: string]: string } = {
+const CONSOLE_EMOJI: {
+  [key: string]: string
+} = {
   info: ' ℹ ', //`${Color.FG_BLUE} ℹ ${Color.RESET}`, \u2139
   log: ' ✔ ', //`${Color.FG_GREEN} ✔ ${Color.RESET}`, \u2714
   warn: ' ⚠ ', //`${Color.FG_YELLOW} ⚠ ${Color.RESET}`, \u26A0

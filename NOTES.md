@@ -270,3 +270,15 @@ https://nodejs.org/api/process.html#processargv0
 node ~/src/github.com/devlegacy/dvx-cli html:validate
 @squoosh/lib
 imagemin-svgo
+
+bun pm untrusted
+bun pm trust
+
+pnpm approve-builds
+
+img:minify open TODOs:
+
+- Skip unchanged files — no mtime/hash check; reruns on already-optimized images
+- Progress indicator — large batches (24+ files) have no ETA or count
+- Results table — before/after per-file KB would help identify worst offenders
+- exclude only filters the resizer — minifier still processes excluded patterns (inconsistent with docs)

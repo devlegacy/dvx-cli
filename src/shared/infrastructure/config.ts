@@ -29,5 +29,5 @@ export default class config {
     'title-require': true,
   }
 
-  static readonly CSS_SOURCEMAP_REGEX = /\/[\*]\#\s+(sourceMappingURL\=.*\.(css)\.map)\s+[\*]\//g
+  static readonly CSS_SOURCEMAP_REGEX = /\/[*]#\s+(sourceMappingURL=.*\.(css)\.map)\s+[*]\//g
 }

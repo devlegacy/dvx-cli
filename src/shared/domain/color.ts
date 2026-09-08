@@ -14,16 +14,11 @@ abstract class Text {
 
 abstract class Background {
   static yellow(text: string, bright = true) {
-    return `${Color.RESET}${Color.BG_YELLOW}${Color.bright(bright)}${text.replace(
-      Color.RESET,
-      '',
-    )}${Color.RESET}`
+    return `${Color.RESET}${Color.BG_YELLOW}${Color.bright(bright)}${text.replace(Color.RESET, '')}${Color.RESET}`
   }
 
   static green(text: string, bright = true) {
-    return `${Color.RESET}${Color.BG_GREEN}${Color.bright(bright)}${text.replace(Color.RESET, '')}${
-      Color.RESET
-    }`
+    return `${Color.RESET}${Color.BG_GREEN}${Color.bright(bright)}${text.replace(Color.RESET, '')}${Color.RESET}`
   }
 }
 
