@@ -1,3 +1,5 @@
+import { Console } from 'node:console'
+
 import Color from './color.js'
 
 export const CONSOLE_COLOR = {
@@ -45,7 +47,7 @@ function danger(...args: any) {
   template('error', args)
 }
 
-const Log = new console.Console({
+const Log = new Console({
   stdout: process.stdout,
   stderr: process.stderr,
 })
