@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [24.x, 26.x]
 
     name: Node.js ${{ matrix.node-version }} 🚀
     steps:
       - name: Checkout 📖
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install infra build dependencies 🛠️
         run: sh .etc/bin/ci_install
@@ -29,14 +29,14 @@ jobs:
           pnpm config set store-dir ~/.pnpm-store
 
       - name: Use Node.js ⚙️ ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Cache dependencies 🔒
         id: cache-pnpm-store
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('package.json') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }}
