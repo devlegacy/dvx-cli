@@ -7,39 +7,69 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       matrix:
         node-version: [24.x, 26.x]
 
     name: Node.js ${{ matrix.node-version }} 🚀
     steps:
-      - name: Checkout 📖
+      - name: Checkout 📖 ## clone out source code in the action
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install infra build dependencies 🛠️
         run: sh .etc/bin/ci_install
 
-      - name: Enable corepack and pnpm ⚙️
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-          pnpm config set store-dir ~/.pnpm-store
+      # Not needed: corepack is no longer bundled with Node.js 25+, so this step
+      # depended on the runner's default Node instead of the matrix version.
+      # - name: Enable corepack and pnpm ⚙️
+      #   run: |
+      #     corepack enable
+      #     # `corepack prepare pnpm@latest` overrode the pinned `packageManager`
+      #     # in package.json (pnpm@12.15.0), so CI used a different pnpm than local.
+      #     pnpm config set store-dir ~/.pnpm-store
 
-      - name: Use Node.js ⚙️ ${{ matrix.node-version }}
+      - name: Install pnpm ⚙️ # version read from packageManager in package.json
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      # Not needed: the store path now comes from `pnpm store path` below, so
+      # pinning it with `pnpm config set store-dir` duplicates that value.
+      # - name: Set pnpm store dir ⚙️
+      #   run: pnpm config set store-dir ~/.pnpm-store
+
+      - name: Setup Node.js ⚙️ ${{ matrix.node-version }} # setup node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          # node-version-file: ".nvmrc"
+          # Not needed: the "Cache dependencies" step below caches the same
+          # ~/.pnpm-store path. Keeping both doubles restore/save work.
+          # cache: "pnpm"
+
+      # Needed, not just print: the step writes `path` to $GITHUB_OUTPUT, and the
+      # cache step reads it from `steps.pnpm-store.outputs.path`.
+      - name: Resolve pnpm store path ⚙️
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
       - name: Cache dependencies 🔒
         id: cache-pnpm-store
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('package.json') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }}
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ matrix.node-version }}-${{ hashFiles('package.json', 'pnpm-workspace.yaml') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }} #dynamic cache
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
@@ -47,10 +77,16 @@ jobs:
         run: |
           pnpm install --frozen-lockfile
 
-      - name: Typecheck 🔎
+      # - name: Build
+      #   run: |
+      #     pnpm run build && find ./bin/index.js # build and ensure file exists
+
+      # Typecheck does not depend on the Node version, so it runs once (26.x).
+      - name: Typecheck code 🔎
+        if: matrix.node-version == '26.x'
         run: |
-          pnpm run typecheck
+          node --run typecheck
 
       - name: Run tests 🧪
         run: |
-          make test
+          node --run test

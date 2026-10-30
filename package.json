@@ -18,7 +18,7 @@
     "build:clean": "rm -Rf ./bin",
     "test": "pnpm run test:unit && pnpm run test:features",
     "test:features": "true",
-    "test:unit": "node --import @swc-node/register/esm-register --test ./tests/**/*.test.ts",
+    "test:unit": "node --import @swc-node/register/esm-register --test \"./tests/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
     "package:update": "ncu -u && pnpm i && pnpm audit --fix"
   },
@@ -39,7 +39,7 @@
   "devDependencies": {
     "@swc-node/register": "1.12.1",
     "@swc/cli": "0.8.1",
-    "@swc/core": "1.16.18",
+    "@swc/core": "1.16.20",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "9.0.1",
     "@types/imagemin-gifsicle": "7.0.4",
@@ -49,9 +49,9 @@
     "@types/imagemin-zopfli": "7.0.4",
     "@types/node": "26.6.5",
     "@types/yargs": "17.0.35",
+    "@typescript/native": "npm:typescript@7.0.2",
     "replace-in-file": "9.0.0",
     "type-fest": "5.10.0",
-    "@typescript/native": "npm:typescript@7.0.2",
     "typescript": "npm:@typescript/typescript6@6.0.2"
   },
   "dependencies": {
