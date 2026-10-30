@@ -1,5 +1,5 @@
 export function chunkArray<T>(array: T[], workerCount: number): T[][] {
-  const length = array.length
+  const { length } = array
   const chunkSize = Math.floor(length / workerCount)
   const remainder = length % workerCount
   const chunks = []
