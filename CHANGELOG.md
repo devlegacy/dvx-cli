@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/devlegacy/dvx-cli/compare/v4.0.0...v4.1.0) (2026-10-30)
+
+
+### Features
+
+* assign release PR to repo owner automatically ([8826924](https://github.com/devlegacy/dvx-cli/commit/8826924dad66881ba9f732a4d0de34861e4368d2))
+
 ## [4.0.0](https://github.com/devlegacy/dvx-cli/compare/v3.0.2...v4.0.0) (2026-10-30)
 
 
