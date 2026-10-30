@@ -1,6 +1,6 @@
 import { cwd, uptime } from 'node:process'
 
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { type ArgumentsCamelCase, type InferredOptionTypes } from 'yargs'
 import { File } from '#/src/shared/domain/file.js'
 import config from '#/src/shared/infrastructure/config.js'
 import { error, log } from '#/src/shared/infrastructure/logger.js'
@@ -29,7 +29,7 @@ export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof buil
   const packageJson = getPackageJson()
 
   // https://github.com/npm/validate-npm-package-name
-  const packages = args.packages.map((_) => _.toString().trim()) // sanitize
+  const packages = args.packages.map((pkg) => pkg.toString().trim()) // sanitize
   const { source } = args
 
   const ensurePackages = [
@@ -81,7 +81,7 @@ const getPackageJson = (): {
   try {
     const json = JSON.parse(file.read())
     return json
-  } catch (error) {
+  } catch {
     throw new Error(`Error parsing the file <${filename}> in the root directory of the project located at <${cwd()}>`)
   }
 }

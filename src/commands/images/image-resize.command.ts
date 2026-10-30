@@ -1,6 +1,6 @@
 import { URL } from 'node:url'
 
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { type ArgumentsCamelCase, type InferredOptionTypes } from 'yargs'
 
 // import { Notify } from '#/src/shared/lib/notify.js'
 import { imageResizer } from './image-resizer.js'
@@ -44,9 +44,9 @@ export const builder = {
   },
 } as const
 export const description = 'Resize images to specified dimensions while maintaining aspect ratio'
-export const handler = async (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
+export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
   // console.time(this.command)
-  imageResizer(
+  return imageResizer(
     {
       ...args,
       command,

@@ -8,7 +8,7 @@ import { Shell } from '#/src/shared/domain/shell.js'
 import { serveQueue } from '#/src/shared/domain/workerQueue.js'
 import { error, log } from '#/src/shared/infrastructure/logger.js'
 
-const useMogrify = async (file: string, width: number = 1024, height: number | undefined, command: string) => {
+const useMogrify = (file: string, width: number = 1024, height: number | undefined, command: string) => {
   const mogrify = 'mogrify'
   try {
     if (!Shell.exists(mogrify)) {
@@ -66,5 +66,5 @@ if (!isMainThread) {
   }
   sharp.concurrency(sharpThreads)
   const resizer = tool === 'mogrify' ? useMogrify : useSharp
-  serveQueue<string>((file) => resizer(file, width, height, command), command)
+  serveQueue<string>((file) => resizer(file, width, height, command))
 }

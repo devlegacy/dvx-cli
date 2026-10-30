@@ -14,13 +14,14 @@
   "packageManager": "pnpm@12.15.0+sha512.b3951d6d6ff4a9f13dc7cf56cd28d2b8eb37dbcc9c68e52e1e1191873ea9f82a017287ab50baadc5ccc494f036c67c0e47eb13608c2fa36f47711b61ea128e61",
   "scripts": {
     "prebuild": "node --run build:clean",
-    "build": "swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#/src//g\" \"#/bin/\" \"./bin/**/*.js\" --isRegex && chmod +x ./bin/*",
+    "build": "node --run prebuild && swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#/src//g\" \"#/bin/\" \"./bin/**/*.js\" --isRegex && chmod +x ./bin/*",
     "build:clean": "rm -Rf ./bin",
-    "test": "pnpm run test:unit && pnpm run test:features",
+    "lint": "biome check ./src ./tests",
+    "lint:fix": "node --run lint -- --fix",
+    "test": "node --run test:unit && node --run test:features",
     "test:features": "true",
     "test:unit": "node --import @swc-node/register/esm-register --test \"./tests/**/*.test.ts\"",
-    "typecheck": "tsc --noEmit",
-    "package:update": "ncu -u && pnpm i && pnpm audit --fix"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "Devexteam",
@@ -37,6 +38,7 @@
   "author": "Samuel R. <contact@jstsamuel.dev>",
   "private": false,
   "devDependencies": {
+    "@biomejs/biome": "2.6.2",
     "@swc-node/register": "1.12.1",
     "@swc/cli": "0.8.1",
     "@swc/core": "1.16.20",

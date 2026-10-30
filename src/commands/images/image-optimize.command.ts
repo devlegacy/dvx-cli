@@ -1,4 +1,4 @@
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { type ArgumentsCamelCase, type InferredOptionTypes } from 'yargs'
 
 import { log } from '#/src/shared/infrastructure/logger.js'
 import { imageMinifier } from './image-minifier.js'

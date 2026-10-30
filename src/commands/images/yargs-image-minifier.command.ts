@@ -1,5 +1,5 @@
 import { URL } from 'node:url'
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { type ArgumentsCamelCase, type InferredOptionTypes } from 'yargs'
 import { imageMinifier } from './image-minifier.js'
 
 export const command = 'img:minify'

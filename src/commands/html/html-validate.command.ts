@@ -1,7 +1,7 @@
 import { cwd, exit, uptime } from 'node:process'
 import htmlhint, { type HTMLHint } from 'htmlhint'
 import htmlhintStylish from 'htmlhint-stylish'
-import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
+import { type ArgumentsCamelCase, type InferredOptionTypes } from 'yargs'
 import { File } from '#/src/shared/domain/file.js'
 import config from '#/src/shared/infrastructure/config.js'
 import { log, warn } from '#/src/shared/infrastructure/logger.js'

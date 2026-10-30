@@ -1,14 +1,14 @@
 import { statSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
-import type { URL } from 'node:url'
+import { type URL } from 'node:url'
 import { isMainThread } from 'node:worker_threads'
 import { File } from '#/src/shared/domain/file.js'
 import { formatSizeDelta } from '#/src/shared/domain/formatBytes.js'
-import type { Quality } from '#/src/shared/domain/quality-presets.js'
+import { type Quality } from '#/src/shared/domain/quality-presets.js'
 import { workerCountFor } from '#/src/shared/domain/workerCount.js'
 import { runQueue } from '#/src/shared/domain/workerQueue.js'
 import { error, log } from '#/src/shared/infrastructure/logger.js'
-import type { MinifyFile } from './imagemin-minifier.job.js'
+import { type MinifyFile } from './imagemin-minifier.job.js'
 
 export async function imageMinifier(
   {
@@ -78,6 +78,10 @@ export async function imageMinifier(
     try {
       const { processed, bytesIn, bytesOut, failed, lost } = await runQueue<MinifyFile>(pending, {
         label: command,
+        logger: {
+          log,
+          error,
+        },
         workerCount: workerCountFor(pending.length),
         jobFile,
         workerData: {

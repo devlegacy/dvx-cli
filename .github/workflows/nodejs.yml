@@ -74,12 +74,21 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies 📦
+        # Keep: the cache restores only the pnpm store, not node_modules, so install must always run.
+        # if: steps.cache-pnpm-store.outputs.cache-hit != 'true'
         run: |
           pnpm install --frozen-lockfile
 
-      # - name: Build
-      #   run: |
-      #     pnpm run build && find ./bin/index.js # build and ensure file exists
+      # Lint does not depend on the Node version, so it runs once (26.x), like typecheck.
+      - name: Lint code 🧹
+        if: matrix.node-version == '26.x'
+        run: |
+          node --run lint
+
+      # build and ensure file exists
+      - name: Build
+        run: |
+          node --run build && find ./bin/index.js
 
       # Typecheck does not depend on the Node version, so it runs once (26.x).
       - name: Typecheck code 🔎

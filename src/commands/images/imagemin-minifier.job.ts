@@ -147,7 +147,5 @@ if (!isMainThread) {
       bytesIn: sourceSize,
       bytesOut: destinationSize,
     }
-  }, command)
+  })
 }
-
-// LDFLAGS="-L/usr/local/lib" CPPFLAGS="-I/usr/local/include" pnpm rebuild mozjpeg // is not working

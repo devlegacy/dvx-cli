@@ -14,7 +14,7 @@ interface StubItem {
 }
 
 if (!isMainThread) {
-  serveQueue<StubItem>(async (item) => {
+  serveQueue<StubItem>((item) => {
     if (item.log) appendFileSync(item.log, `${item.name}\n`)
     if (item.behavior === 'throw') throw new Error(`boom ${item.name}`)
     if (item.behavior === 'exit') process.exit(1)
@@ -22,6 +22,9 @@ if (!isMainThread) {
       writeFileSync(item.marker, '')
       process.exit(1)
     }
-    return { bytesIn: item.bytes, bytesOut: Math.floor(item.bytes / 2) }
-  }, 'stub')
+    return {
+      bytesIn: item.bytes,
+      bytesOut: Math.floor(item.bytes / 2),
+    }
+  })
 }

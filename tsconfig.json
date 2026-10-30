@@ -3,13 +3,9 @@
   "compilerOptions": {
     /* Projects */
     "incremental": true,
-    "composite": true,
+    "tsBuildInfoFile": "./.local/tscache/tsconfig.tsbuildinfo",
     /* Language and Environment */
     "target": "ESNext",
-    "lib": ["ESNext"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "useDefineForClassFields": true,
     "moduleDetection": "force",
     /* Modules */
     "module": "NodeNext",
@@ -17,39 +13,23 @@
     "paths": {
       "#/*": ["./*"]
     },
-    "typeRoots": ["./node_modules/@types"],
     "types": ["node"],
     "resolveJsonModule": true,
-    /* JavaScript Support */
-    "allowJs": true,
     /* Emit */
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
     "noEmit": true,
-    "importHelpers": true,
-    "inlineSources": true,
-    "newLine": "lf",
-    "noEmitHelpers": true,
     /* Interop Constraints */
     "verbatimModuleSyntax": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     /* Type Checking */
     "strict": true,
-    "useUnknownInCatchVariables": true,
     "noUnusedLocals": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     /* Completeness */
-    "skipLibCheck": true,
-    "noErrorTruncation": true
+    "skipLibCheck": true
   },
-  "ts-node": {
-    "swc": true,
-    "esm": true,
-    "transpileOnly": true
-  }
+  "include": ["src", "tests", "types"],
+  "exclude": ["bin", "node_modules"]
 }

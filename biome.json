@@ -10,7 +10,126 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "preset": "recommended",
+      "complexity": {
+        "noArguments": "warn",
+        "noUselessCatch": "error",
+        "noUselessTernary": "error"
+      },
+      "correctness": {
+        "noConstructorReturn": "error",
+        "noInvalidUseBeforeDeclaration": "error",
+        "noUndeclaredDependencies": "error",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "useParseIntRadix": "error"
+      },
+      "nursery": {
+        "noExtendNative": "error",
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error",
+        "noPromiseExecutorReturn": "error",
+        "noUnmodifiedLoopCondition": "error"
+      },
+      "performance": {
+        "noAwaitInLoops": "error"
+      },
+      "security": {
+        "recommended": true
+      },
+      "style": {
+        "noParameterAssign": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["**/dist/**"],
+                "message": "Do not import from dist/. Import the source through the #/ alias."
+              }
+            ]
+          }
+        },
+        "noRestrictedTypes": {
+          "level": "warn",
+          "options": {
+            "types": {
+              "object": "Use unknown, Record<string, unknown> or a concrete type. `object` hides the shape of the data."
+            }
+          }
+        },
+        "noUselessElse": "error",
+        "noYodaExpression": "error",
+        "useCollapsedIf": "error",
+        "useConsistentArrayType": {
+          "level": "warn",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "useConst": "error",
+        "useDestructuring": "warn",
+        "useImportType": {
+          "level": "error",
+          "options": {
+            "style": "inlineType"
+          }
+        },
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "variable"
+                },
+                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+              },
+              {
+                "selector": {
+                  "kind": "function"
+                },
+                "formats": ["camelCase", "PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "functionParameter"
+                },
+                "formats": ["camelCase"]
+              },
+              {
+                "selector": {
+                  "kind": "classProperty"
+                },
+                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+              },
+              {
+                "selector": {
+                  "kind": "objectLiteralProperty"
+                },
+                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+              }
+            ]
+          }
+        },
+        "useNodejsImportProtocol": "error",
+        "useTemplate": "error",
+        "useThrowOnlyError": "error"
+      },
+      "suspicious": {
+        "noConsole": "error",
+        "noDoubleEquals": "error",
+        "noExplicitAny": "warn",
+        "noFocusedTests": "error",
+        "noMisplacedAssertion": "error",
+        "noSelfCompare": "error",
+        "noSkippedTests": "warn",
+        "noTemplateCurlyInString": "error",
+        "noVar": "error",
+        "useAwait": "error",
+        "useIterableCallbackReturn": "error"
+      }
     }
   },
   "assist": {
@@ -32,9 +151,57 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
+      "quoteProperties": "asNeeded",
       "semicolons": "asNeeded",
       "trailingCommas": "all",
+      "arrowParentheses": "always",
       "expand": "always"
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/shared/domain/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**/infrastructure/**"],
+                    "message": "domain must not import infrastructure. Dependencies point inward."
+                  },
+                  {
+                    "group": ["**/dist/**"],
+                    "message": "Do not import from dist/. Import the source through the #/ alias."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["tests/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["tests/**/*.node.test.ts", "tests/**/*.node.infra.test.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noFloatingPromises": "off"
+          }
+        }
+      }
+    }
+  ]
 }

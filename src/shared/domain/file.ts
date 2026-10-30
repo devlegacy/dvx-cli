@@ -195,13 +195,9 @@ export class File {
    * @param {string} body
    */
   write(body: object | string) {
-    if (typeof body === 'object') {
-      body = JSON.stringify(body, null, 4)
-    }
+    const serialized = typeof body === 'object' ? JSON.stringify(body, null, 4) : body
 
-    body = `${body}${EOL}`
-
-    writeFileSync(this.#absolutePath, body)
+    writeFileSync(this.#absolutePath, `${serialized}${EOL}`)
 
     return this
   }

@@ -49,5 +49,5 @@ if (!isMainThread) {
       bytesIn: sourceSize,
       bytesOut: info.size,
     }
-  }, command)
+  })
 }

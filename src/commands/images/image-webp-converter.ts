@@ -3,11 +3,11 @@ import { join, resolve } from 'node:path'
 import { isMainThread } from 'node:worker_threads'
 import { File } from '#/src/shared/domain/file.js'
 import { formatSizeDelta } from '#/src/shared/domain/formatBytes.js'
-import type { Quality } from '#/src/shared/domain/quality-presets.js'
+import { type Quality } from '#/src/shared/domain/quality-presets.js'
 import { sharpThreadsFor, workerCountFor } from '#/src/shared/domain/workerCount.js'
 import { runQueue } from '#/src/shared/domain/workerQueue.js'
 import { error, log, warn } from '#/src/shared/infrastructure/logger.js'
-import type { WebpFile } from './sharp-webp-converter.job.js'
+import { type WebpFile } from './sharp-webp-converter.job.js'
 
 export async function webPConverter(
   {
@@ -56,6 +56,10 @@ export async function webPConverter(
       const workerCount = workerCountFor(files.length)
       const { processed, bytesIn, bytesOut, failed, lost } = await runQueue<WebpFile>(files, {
         label: command,
+        logger: {
+          log,
+          error,
+        },
         workerCount,
         jobFile,
         workerData: {

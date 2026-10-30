@@ -17,8 +17,14 @@ const options: pino.LoggerOptions = {
 // environment (workers inherit it); NO_COLOR turns it off
 if (process.stdout.isTTY && !process.env.NO_COLOR) process.env.FORCE_COLOR ??= '1'
 const color = !process.env.NO_COLOR && Boolean(process.stdout.isTTY || process.env.FORCE_COLOR)
-const LABELS: Record<number, string> = { 40: 'WARN', 50: 'ERROR' }
-const PAINT: Record<number, string> = { 40: '\x1b[33m', 50: '\x1b[31m' }
+const LABELS: Record<number, string> = {
+  40: 'WARN',
+  50: 'ERROR',
+}
+const PAINT: Record<number, string> = {
+  40: '\x1b[33m',
+  50: '\x1b[31m',
+}
 // Three segments, three colors: the [command] tag, the file path, and the size change (green when it shrinks)
 const paint = (code: string, text: string) => (color ? `\x1b[${code}m${text}\x1b[0m` : text)
 const highlight = (msg: string) =>
@@ -29,7 +35,10 @@ const highlight = (msg: string) =>
 
 const textStream = new Writable({
   write(chunk, _encoding, done) {
-    const entry = JSON.parse(chunk.toString()) as { level: number; msg: string }
+    const entry = JSON.parse(chunk.toString()) as {
+      level: number
+      msg: string
+    }
     const label = LABELS[entry.level]
     const prefix = label ? `${color ? PAINT[entry.level] : ''}${label}${color ? '\x1b[0m' : ''} ` : ''
     process.stdout.write(`${prefix}${highlight(entry.msg)}\n`)

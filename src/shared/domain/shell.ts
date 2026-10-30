@@ -20,8 +20,8 @@ const messages = {
   gm: '🔽 Download here 🔗 http://www.graphicsmagick.org/download.html',
 }
 
-class Shell {
-  static exists(command: string, args: readonly string[] = []) {
+const Shell = {
+  exists(command: string, args: readonly string[] = []) {
     try {
       const result = spawnSync(command, args, {
         timeout: 5000,
@@ -30,9 +30,9 @@ class Shell {
     } catch {
       return false
     }
-  }
+  },
 
-  static get imageMagick() {
+  get imageMagick() {
     const command = 'magick'
     try {
       const result = spawnSync(
@@ -48,9 +48,9 @@ class Shell {
     } catch {
       return messages[command]
     }
-  }
+  },
 
-  static get graphicMagick() {
+  get graphicMagick() {
     const command = 'gm'
     try {
       const result = spawnSync(
@@ -66,7 +66,7 @@ class Shell {
     } catch {
       return messages[command]
     }
-  }
+  },
 }
 
 export { Shell }

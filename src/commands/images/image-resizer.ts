@@ -1,6 +1,6 @@
 import { statSync } from 'node:fs'
 import { resolve } from 'node:path'
-import type { URL } from 'node:url'
+import { type URL } from 'node:url'
 import { isMainThread } from 'node:worker_threads'
 import { File } from '#/src/shared/domain/file.js'
 import { sharpThreadsFor, workerCountFor } from '#/src/shared/domain/workerCount.js'
@@ -32,7 +32,7 @@ export async function imageResizer(
     }
 
     const extensions = 'png,jpeg,jpg'
-    const ignore = exclude.map((_) => `**/*${_}*.{${extensions}}`)
+    const ignore = exclude.map((pattern) => `**/*${pattern}*.{${extensions}}`)
     const files = File.sync(`**/*.{${extensions}}`, {
       cwd: src.info.absolutePath,
       exclude: ignore,
@@ -47,6 +47,10 @@ export async function imageResizer(
       const workerCount = workerCountFor(files.length)
       const { processed, failed, lost } = await runQueue<string>(files, {
         label: command,
+        logger: {
+          log,
+          error,
+        },
         workerCount,
         jobFile,
         workerData: {

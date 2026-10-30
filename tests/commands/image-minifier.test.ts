@@ -27,7 +27,7 @@ const images = [
 const svgStub =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8" fill="#f00"/></svg>'
 
-async function createImage(path: string) {
+function createImage(path: string) {
   const image = sharp({
     create: {
       width: 8,
@@ -51,17 +51,16 @@ describe('imageMinifier', () => {
   const distribution = join(root, 'dist')
 
   before(async () => {
-    for (const image of images) {
-      const path = join(source, image)
-      mkdirSync(dirname(path), {
-        recursive: true,
-      })
-      if (image.endsWith('.svg')) {
-        writeFileSync(path, svgStub)
-        continue
-      }
-      await createImage(path)
-    }
+    await Promise.all(
+      images.map((image) => {
+        const path = join(source, image)
+        mkdirSync(dirname(path), {
+          recursive: true,
+        })
+        if (image.endsWith('.svg')) return writeFileSync(path, svgStub)
+        return createImage(path)
+      }),
+    )
   })
   after(() => {
     rmSync(root, {
