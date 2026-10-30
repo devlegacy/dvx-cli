@@ -1,11 +1,18 @@
 allowBuilds:
   "@swc/core": true
   gifsicle: true
-  jpegtran-bin: true
   mozjpeg: true
   pngquant-bin: true
   sharp: true
   zopflipng-bin: true
+# The 4.1 roadmap item (docs/roadmap.md) removes this chain (imagemin binary wrappers -> bin-build -> download).
+auditConfig:
+  ignoreGhsas:
+  - GHSA-mp2f-45pm-3cg9 # decompress (critical): only reachable at postinstall via bin-build/bin-wrapper when a vendored binary fails its test; nothing runs at CLI runtime; no patched version exists [review:2026-12-31]
+  - GHSA-hrh2-vp3x-79xf # decompress (critical): only reachable at postinstall via bin-build/bin-wrapper when a vendored binary fails its test; nothing runs at CLI runtime; no patched version exists [review:2026-12-31]
+  - GHSA-h39j-r5qq-r9mm # decompress (moderate): only reachable at postinstall via bin-build/bin-wrapper when a vendored binary fails its test; nothing runs at CLI runtime; no patched version exists [review:2026-12-31]
+  - GHSA-jwp9-9v96-94mx # decompress (moderate): only reachable at postinstall via bin-build/bin-wrapper when a vendored binary fails its test; nothing runs at CLI runtime; no patched version exists [review:2026-12-31]
+  - GHSA-pfrx-2q88-qq97 # got (moderate): only reachable at postinstall via bin-build/bin-wrapper when a vendored binary fails its test; nothing runs at CLI runtime; got 7.1.0 is pinned by the download>got override because download@7 cannot use got>=11 [review:2026-12-31]
 engineStrict: true
 minimumReleaseAge: 10080
 minimumReleaseAgeIgnoreMissingTime: false

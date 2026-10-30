@@ -69,7 +69,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ steps.pnpm-store.outputs.path }}
-          key: ${{ runner.os }}-pnpm-store-${{ matrix.node-version }}-${{ hashFiles('package.json', 'pnpm-workspace.yaml') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }} #dynamic cache
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('package.json', 'pnpm-workspace.yaml') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }} #dynamic cache
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 

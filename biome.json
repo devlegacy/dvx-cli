@@ -192,16 +192,6 @@
           }
         }
       }
-    },
-    {
-      "includes": ["tests/**/*.node.test.ts", "tests/**/*.node.infra.test.ts"],
-      "linter": {
-        "rules": {
-          "nursery": {
-            "noFloatingPromises": "off"
-          }
-        }
-      }
     }
   ]
 }

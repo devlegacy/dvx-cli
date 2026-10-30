@@ -20,59 +20,49 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Tag major, minor, and patch versions 🏷️
+      - name: Install pnpm ⚙️ # version read from packageManager in package.json
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         if: ${{ steps.release.outputs.release_created }}
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
 
-          # Extract version components
-          VERSION=${{ steps.release.outputs.version }}
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-
-          # Add and push tags for major, minor, and patch versions
-          git tag -a "v$MAJOR" -m "Release v$MAJOR"
-          git tag -a "v$MAJOR.$MINOR" -m "Release v$MAJOR.$MINOR"
-          git tag -a "v$MAJOR.$MINOR.$PATCH" -m "Release v$MAJOR.$MINOR.$PATCH"
-          git push origin "v$MAJOR"
-          git push origin "v$MAJOR.$MINOR"
-          git push origin "v$MAJOR.$MINOR.$PATCH"
-
-          # Cleanup old tags if needed (optional)
-          git tag -d "v$MAJOR" || true
-          git tag -d "v$MAJOR.$MINOR" || true
-          git push origin :refs/tags/v$MAJOR || true
-          git push origin :refs/tags/v$MAJOR.$MINOR || true
-
-      - name: Enable corepack and pnpm ⚙️
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-          pnpm config set store-dir ~/.pnpm-store
-
-      - name: Use Node.js ⚙️ 22
+      - name: Use Node.js ⚙️ 24
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
-          cache: 'pnpm'
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
 
+      # Same approach as nodejs.yml: the store path comes from `pnpm store path`,
+      # so no `pnpm config set store-dir` or setup-node `cache: pnpm` is needed.
+      - name: Resolve pnpm store path ⚙️
+        if: ${{ steps.release.outputs.release_created }}
+        id: pnpm-store
+        run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
       - name: Cache dependencies 🔒
-        id: cache-pnpm-store
+        if: ${{ steps.release.outputs.release_created }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('package.json') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/nodejs.yml') }}
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('package.json', 'pnpm-workspace.yaml') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('.github/workflows/release-please.yml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies 📦
+        if: ${{ steps.release.outputs.release_created }}
         run: |
           pnpm install --frozen-lockfile
 
       - name: Build 🏗️
+        if: ${{ steps.release.outputs.release_created }}
         run: |
-          node --run build
+          node --run build && find ./bin/index.js
+
+      - name: Verify before publishing ✅
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          node --run lint
+          node --run typecheck
+          node --run test
 
       - name: Publish to npm 🚀
         if: ${{ steps.release.outputs.release_created }}

@@ -4,8 +4,13 @@ import pino from 'pino'
 
 // Human-readable single line by default; DVX_LOG_FORMAT=json emits one JSON object per line
 // (for pipes, CI or log shippers). DVX_LOG_LEVEL sets the threshold (default: info).
+// An unknown level falls back to info, because pino throws on it at import time.
 const json = process.env.DVX_LOG_FORMAT === 'json'
-const level = process.env.DVX_LOG_LEVEL ?? 'info'
+const requested = process.env.DVX_LOG_LEVEL
+const level: pino.LevelWithSilent =
+  requested && (requested === 'silent' || Object.hasOwn(pino.levels.values, requested))
+    ? (requested as pino.LevelWithSilent)
+    : 'info'
 
 const options: pino.LoggerOptions = {
   level,
@@ -16,7 +21,9 @@ const options: pino.LoggerOptions = {
 // Worker threads have no TTY of their own, so the main thread passes its color decision down through the
 // environment (workers inherit it); NO_COLOR turns it off
 if (process.stdout.isTTY && !process.env.NO_COLOR) process.env.FORCE_COLOR ??= '1'
-const color = !process.env.NO_COLOR && Boolean(process.stdout.isTTY || process.env.FORCE_COLOR)
+// FORCE_COLOR=0 means off (any other non-empty value means on)
+const forced = process.env.FORCE_COLOR
+const color = !process.env.NO_COLOR && forced !== '0' && Boolean(process.stdout.isTTY || forced)
 const LABELS: Record<number, string> = {
   40: 'WARN',
   50: 'ERROR',
@@ -41,7 +48,9 @@ const textStream = new Writable({
     }
     const label = LABELS[entry.level]
     const prefix = label ? `${color ? PAINT[entry.level] : ''}${label}${color ? '\x1b[0m' : ''} ` : ''
-    process.stdout.write(`${prefix}${highlight(entry.msg)}\n`)
+    // Warnings and errors go to stderr so stdout stays clean for pipes
+    const target = entry.level >= 40 ? process.stderr : process.stdout
+    target.write(`${prefix}${highlight(entry.msg)}\n`)
     done()
   },
 })
@@ -57,6 +66,5 @@ const text = (args: unknown[]) =>
     .replace(/\s*\n\s*/g, ' · ')
 
 export const log = (...args: unknown[]) => logger.info(text(args))
-export const success = log
 export const warn = (...args: unknown[]) => logger.warn(text(args))
 export const error = (...args: unknown[]) => logger.error(text(args))

@@ -33,15 +33,16 @@ SWC does not typecheck during build — run this before committing. CI runs it t
 ### Running tests
 
 ```bash
-pnpm run test        # Run all tests (unit + features)
+pnpm run test        # Unit tests, then feature smoke tests over the built CLI (bin/)
 pnpm run test:unit   # Run only unit tests
+pnpm run test:features  # CLI smoke tests over bin/ - run pnpm run build first
 make test            # Alternative using Makefile
 ```
 
 ### Running a single test file
 
 ```bash
-node --import @swc-node/register/esm-register --test tests/lib/file.test.ts
+node --import @swc-node/register/esm-register --test <file>
 ```
 
 ### Code formatting
@@ -84,15 +85,16 @@ Available command categories:
 ### Key Directories
 
 - `src/commands/` - Command implementations organized by category
-- `src/shared/domain/` - Pure utilities (file ops, worker runner, quality presets, formatting)
-- `src/shared/infrastructure/` - Side-effectful services (logger, notifications, config)
+- `src/shared/domain/` - Pure utilities (file ops, worker queue, quality presets, formatting)
+- `src/shared/infrastructure/` - Side-effectful services (logger)
 - `tests/` - Test files using Node.js native test runner
+- `docs/` - Troubleshooting (`troubleshooting-install.md`) and roadmap (`roadmap.md`)
 - `bin/` - Compiled output directory
 
 ### Architecture Patterns
 
 - Module-style yargs commands loaded with `.commandDir()`
-- Worker-based processing for image operations: helper (`image-minifier.ts`) chunks files per CPU and spawns a `*.job.ts` worker per chunk via `runWorker`; workers post `WorkerResult` (`processed`, `endTime`, optional `bytesIn`/`bytesOut`)
+- Worker-based processing for image operations: each helper (`image-minifier.ts`, `image-resizer.ts`, `image-webp-converter.ts`) calls `runQueue` from `src/shared/domain/workerQueue.ts`, which spawns one worker per core (minus one, never more than items) running a `*.job.ts` file that calls `serveQueue`. Items are handed out one at a time, largest first, and retried once if a worker dies. The result carries `processed`, `failed`, `lost`, `bytesIn` and `bytesOut`; image commands set exit code 1 when `failed + lost > 0`
 - Quality presets shared across jobs in `src/shared/domain/quality-presets.ts`
 
 ### Testing Structure
@@ -100,7 +102,8 @@ Available command categories:
 - Uses Node.js native test runner (`node:test`)
 - Test files follow `*.test.ts` pattern
 - Tests use `node:assert/strict` for assertions
-- Test stubs in `tests/stubs/` directory
+- `tests/fixtures/` - queue job stubs used by the worker queue tests
+- `tests/features/` - CLI smoke tests over the built `bin/`
 
 ## Key Dependencies
 
@@ -108,7 +111,8 @@ Available command categories:
 
 - `yargs` - CLI argument parsing
 - `imagemin` ecosystem - Image optimization
-- `sharp` - Image processing fallback
+- `sharp` - Image processing (default resize tool)
+- `pino` - Logging
 - `htmlhint` - HTML validation
 
 ### Build
@@ -118,13 +122,18 @@ Available command categories:
 - `@swc-node/register` - SWC Node.js loader for tests
 - `replace-in-file` - Post-build path replacement
 
+### CI
+
+Lint, typecheck, test and build run in CI on Node 24 and 26.
+
 ## Development Notes
 
 - Uses ES modules (`"type": "module"` in package.json)
 - Import paths use `#/` prefix that gets replaced during build
 - Node.js >=24 required (`engineStrict: true`)
-- Package manager: pnpm >=11
+- Package manager: pnpm >=12
 - Build target: ESNext with SWC compiler
 - Code formatting with Biome (configuration in biome.json)
 - Native dependencies require periodic rebuilding (`pnpm run rebuild`)
+- Logging goes through `src/shared/infrastructure/logger.ts` (never `console`; Biome forbids it in `src`). Env vars: `DVX_LOG_FORMAT=json`, `DVX_LOG_LEVEL`, `NO_COLOR`
 - Make targets available for common tasks (test, dependency updates)

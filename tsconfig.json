@@ -10,9 +10,6 @@
     /* Modules */
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "paths": {
-      "#/*": ["./*"]
-    },
     "types": ["node"],
     "resolveJsonModule": true,
     /* Emit */
@@ -24,6 +21,8 @@
     /* Type Checking */
     "strict": true,
     "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedSideEffectImports": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,

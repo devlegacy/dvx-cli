@@ -30,7 +30,6 @@ deps/update: ## ⬆️ Update all project dependencies to their latest versions.
 	NODE_ENV= pnpm audit || true
 	find . -type d -name node_modules -not -path '*/.git/*' -prune -exec rm -rf '{}' +
 	rm -f pnpm-lock.yaml
-	CI=true corepack use pnpm@latest-11
 	if command -v ncu &>/dev/null; then
 		NCU_CMD=ncu
 	elif [ -f ./node_modules/.bin/ncu ]; then
@@ -55,7 +54,4 @@ deps/update: ## ⬆️ Update all project dependencies to their latest versions.
 test: ## 🧪 Run project tests.
 	$(print_message) "running tests"
 	NODE_ENV=test
-# DEBT: this prints the error message to the console, but it doesn't stop the execution of the script, we'll wait node 23.x
-	if ! node --run test ; then
-		pnpm run test
-	fi
+	node --run test

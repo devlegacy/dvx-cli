@@ -2,7 +2,6 @@ import { URL } from 'node:url'
 
 import { type ArgumentsCamelCase, type InferredOptionTypes } from 'yargs'
 
-// import { Notify } from '#/src/shared/lib/notify.js'
 import { imageResizer } from './image-resizer.js'
 
 export const command = 'img:resize'
@@ -45,7 +44,6 @@ export const builder = {
 } as const
 export const description = 'Resize images to specified dimensions while maintaining aspect ratio'
 export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof builder>>) => {
-  // console.time(this.command)
   return imageResizer(
     {
       ...args,
@@ -53,6 +51,4 @@ export const handler = (args: ArgumentsCamelCase<InferredOptionTypes<typeof buil
     },
     new URL('./image-resizer.job.js', import.meta.url),
   )
-  // console.timeEnd(this.command)
-  // Notify.info('Resize', 'End resize images task')
 }

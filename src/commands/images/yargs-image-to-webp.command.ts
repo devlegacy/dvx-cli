@@ -1,6 +1,5 @@
 import { type ArgumentsCamelCase, type InferredOptionTypes } from 'yargs'
 
-// import { Notify } from '#/src/shared/lib/notify.js'
 import { webPConverter } from './image-webp-converter.js'
 
 export const command = 'img:towebp'
