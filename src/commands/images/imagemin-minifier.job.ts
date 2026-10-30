@@ -1,16 +1,45 @@
-import { statSync } from 'node:fs'
-import { performance } from 'node:perf_hooks'
-import { isMainThread, parentPort, workerData } from 'node:worker_threads'
+import { closeSync, openSync, readSync, statSync } from 'node:fs'
+import { isMainThread, workerData } from 'node:worker_threads'
 import imagemin, { type Plugin } from 'imagemin'
 import imageminGifsicle from 'imagemin-gifsicle'
 import imageminMozjpeg from 'imagemin-mozjpeg'
 import imageminPngquant from 'imagemin-pngquant'
 import imageminSvgo from 'imagemin-svgo'
 import imageminZopfli from 'imagemin-zopfli'
-
-import { log } from '#/src/shared/domain/console.js'
 import { formatSizeDelta } from '#/src/shared/domain/formatBytes.js'
 import { QUALITY_PRESETS, type Quality, type QualityPreset } from '#/src/shared/domain/quality-presets.js'
+import { serveQueue } from '#/src/shared/domain/workerQueue.js'
+import { log } from '#/src/shared/infrastructure/logger.js'
+
+// imagemin's plugins can hand back the input unchanged when it is not a valid image, so check the
+// file's signature first and report a corrupt input as a failure instead of a successful no-op
+const hasValidSignature = (path: string, ext: string) => {
+  const buffer = Buffer.alloc(4096)
+  const fd = openSync(path, 'r')
+  let head: Buffer
+  try {
+    head = buffer.subarray(0, readSync(fd, buffer, 0, buffer.length, 0))
+  } finally {
+    closeSync(fd)
+  }
+  if (ext === '.png')
+    return head.subarray(0, 8).equals(
+      Buffer.from([
+        0x89,
+        0x50,
+        0x4e,
+        0x47,
+        0x0d,
+        0x0a,
+        0x1a,
+        0x0a,
+      ]),
+    )
+  if (ext === '.jpg' || ext === '.jpeg') return head[0] === 0xff && head[1] === 0xd8
+  if (ext === '.gif') return head.subarray(0, 4).toString('latin1') === 'GIF8'
+  if (ext === '.svg') return head.toString('utf8').includes('<svg')
+  return true
+}
 
 const buildPlugins = (preset: QualityPreset) => {
   const jpgPlugins = [
@@ -84,61 +113,41 @@ const buildPlugins = (preset: QualityPreset) => {
   }
 }
 
+export interface MinifyFile {
+  source: string
+  destination: string
+  ext: string
+}
+
 if (!isMainThread) {
-  const startsAt = performance.now()
-  const {
-    files,
-    command,
-    quality = 'medium',
-  } = workerData as {
-    files: {
-      source: string
-      destination: string
-      ext: string
-    }[]
+  const { command, quality = 'medium' } = workerData as {
     command: string
     quality?: Quality
   }
   const imageminPlugins = buildPlugins(QUALITY_PRESETS[quality])
-  const promises: Promise<void>[] = []
-  let bytesIn = 0
-  let bytesOut = 0
-  for (const file of files) {
-    const { source, destination, ext } = file
-    const plugins = imageminPlugins[ext as keyof typeof imageminPlugins] as readonly Plugin[]
 
-    promises.push(
-      imagemin(
-        [
-          source,
-        ],
-        {
-          destination,
-          plugins,
-        },
-      )
-        .then((images) => {
-          const image = images[0]
-          if (!image) return
-          const sourceSize = statSync(source).size
-          const destinationSize = image.data.length
-          bytesIn += sourceSize
-          bytesOut += destinationSize
-          log(`[${command}]:`, image.destinationPath, formatSizeDelta(sourceSize, destinationSize))
-        })
-        .catch((e) => {
-          log(`[${command}]:`, `${e instanceof Error ? e.message : 'unknown error'}`)
-        }),
+  serveQueue<MinifyFile>(async ({ source, destination, ext }) => {
+    if (!hasValidSignature(source, ext)) throw new Error(`not a valid ${ext} file: ${source}`)
+    const plugins = imageminPlugins[ext as keyof typeof imageminPlugins] as readonly Plugin[]
+    const [image] = await imagemin(
+      [
+        source,
+      ],
+      {
+        destination,
+        plugins,
+      },
     )
-  }
-  Promise.allSettled(promises).then(() => {
-    parentPort?.postMessage({
-      processed: files.length,
-      endTime: (performance.now() - startsAt) / 1000,
-      bytesIn,
-      bytesOut,
-    })
-  })
+    // imagemin resolves with no output instead of throwing for some inputs: that is still a failure
+    if (!image) throw new Error(`no output for ${source}`)
+    const sourceSize = statSync(source).size
+    const destinationSize = image.data.length
+    log(`[${command}]:`, image.destinationPath, formatSizeDelta(sourceSize, destinationSize))
+    return {
+      bytesIn: sourceSize,
+      bytesOut: destinationSize,
+    }
+  }, command)
 }
 
 // LDFLAGS="-L/usr/local/lib" CPPFLAGS="-I/usr/local/include" pnpm rebuild mozjpeg // is not working

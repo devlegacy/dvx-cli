@@ -1,10 +1,11 @@
-import { cpus } from 'node:os'
+import { statSync } from 'node:fs'
+import { resolve } from 'node:path'
 import type { URL } from 'node:url'
 import { isMainThread } from 'node:worker_threads'
-import { chunkArray } from '#/src/shared/domain/chunkArray.js'
-import { log } from '#/src/shared/domain/console.js'
 import { File } from '#/src/shared/domain/file.js'
-import { runWorker, summarizeWorkerResults, type WorkerResult } from '#/src/shared/domain/runWorker.js'
+import { sharpThreadsFor, workerCountFor } from '#/src/shared/domain/workerCount.js'
+import { runQueue } from '#/src/shared/domain/workerQueue.js'
+import { error, log } from '#/src/shared/infrastructure/logger.js'
 
 export async function imageResizer(
   {
@@ -36,26 +37,34 @@ export async function imageResizer(
       cwd: src.info.absolutePath,
       exclude: ignore,
     })
-    const cpuCount = cpus().length - 1
-    const tasks: Promise<WorkerResult>[] = []
-
-    const chunkedTasks = chunkArray(files, cpuCount)
-    for (const chunk of chunkedTasks) {
-      tasks.push(
-        runWorker(
-          {
-            files: chunk,
-            width,
-            height,
-            tool,
-            command,
-          },
-          jobFile,
-        ),
-      )
+    if (files.length === 0) {
+      log(`[${command}]: resize done — nothing to do`)
+      return
     }
-    const results = await Promise.allSettled(tasks)
-    const { processed, time } = summarizeWorkerResults(results)
-    log(`[${command}]: resize done — ${processed} files in ${time.toFixed(2)}s`)
+
+    const startedAt = performance.now()
+    try {
+      const workerCount = workerCountFor(files.length)
+      const { processed, failed, lost } = await runQueue<string>(files, {
+        label: command,
+        workerCount,
+        jobFile,
+        workerData: {
+          width,
+          height,
+          tool,
+          command,
+          sharpThreads: sharpThreadsFor(workerCount),
+        },
+        sizeOf: (file) => statSync(resolve(src.info.absolutePath, file)).size,
+      })
+      const time = (performance.now() - startedAt) / 1000
+      log(
+        `[${command}]: resize done — ${processed} files${failed + lost > 0 ? `, ${failed + lost} failed` : ''} in ${time.toFixed(2)}s`,
+      )
+      if (failed + lost > 0) process.exitCode = 1
+    } catch (e) {
+      error(`[${command}]: resize failed — ${e instanceof Error ? e.message : 'unknown error'}`)
+    }
   }
 }

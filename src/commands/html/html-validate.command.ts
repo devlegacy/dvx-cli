@@ -2,9 +2,9 @@ import { cwd, exit, uptime } from 'node:process'
 import htmlhint, { type HTMLHint } from 'htmlhint'
 import htmlhintStylish from 'htmlhint-stylish'
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
-import { log, warn } from '#/src/shared/domain/console.js'
 import { File } from '#/src/shared/domain/file.js'
 import config from '#/src/shared/infrastructure/config.js'
+import { log, warn } from '#/src/shared/infrastructure/logger.js'
 
 type Ruleset = (typeof HTMLHint)['defaultRuleset']
 type Hint = ReturnType<(typeof HTMLHint)['verify']>[number]

@@ -1,6 +1,6 @@
 import type { ArgumentsCamelCase, InferredOptionTypes } from 'yargs'
 
-import { log } from '#/src/shared/domain/console.js'
+import { log } from '#/src/shared/infrastructure/logger.js'
 import { imageMinifier } from './image-minifier.js'
 import { imageResizer } from './image-resizer.js'
 import { webPConverter } from './image-webp-converter.js'

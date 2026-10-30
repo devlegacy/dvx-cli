@@ -1,14 +1,13 @@
-import { mkdirSync } from 'node:fs'
-import { cpus } from 'node:os'
+import { mkdirSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { isMainThread } from 'node:worker_threads'
-
-import { chunkArray } from '#/src/shared/domain/chunkArray.js'
-import { log, warn } from '#/src/shared/domain/console.js'
 import { File } from '#/src/shared/domain/file.js'
 import { formatSizeDelta } from '#/src/shared/domain/formatBytes.js'
 import type { Quality } from '#/src/shared/domain/quality-presets.js'
-import { runWorker, summarizeWorkerResults, type WorkerResult } from '#/src/shared/domain/runWorker.js'
+import { sharpThreadsFor, workerCountFor } from '#/src/shared/domain/workerCount.js'
+import { runQueue } from '#/src/shared/domain/workerQueue.js'
+import { error, log, warn } from '#/src/shared/infrastructure/logger.js'
+import type { WebpFile } from './sharp-webp-converter.job.js'
 
 export async function webPConverter(
   {
@@ -49,27 +48,31 @@ export async function webPConverter(
       return {
         file: file.info,
         destination: destination.info.absolutePath,
-      }
+      } satisfies WebpFile
     })
-    const cpuCount = cpus().length - 1
-    const tasks: Promise<WorkerResult>[] = []
 
-    const chunkedTasks = chunkArray(files, cpuCount)
-    for (const chunk of chunkedTasks) {
-      tasks.push(
-        runWorker(
-          {
-            files: chunk,
-            command,
-            quality,
-          },
-          jobFile,
-        ),
+    const startedAt = performance.now()
+    try {
+      const workerCount = workerCountFor(files.length)
+      const { processed, bytesIn, bytesOut, failed, lost } = await runQueue<WebpFile>(files, {
+        label: command,
+        workerCount,
+        jobFile,
+        workerData: {
+          command,
+          quality,
+          sharpThreads: sharpThreadsFor(workerCount),
+        },
+        sizeOf: ({ file }) => statSync(file.absolutePath).size,
+      })
+      const time = (performance.now() - startedAt) / 1000
+      const sizes = bytesIn > 0 ? `, ${formatSizeDelta(bytesIn, bytesOut)}` : ''
+      log(
+        `[${command}]: webp done — ${processed} files${failed + lost > 0 ? `, ${failed + lost} failed` : ''}${sizes} in ${time.toFixed(2)}s`,
       )
+      if (failed + lost > 0) process.exitCode = 1
+    } catch (e) {
+      error(`[${command}]: webp failed — ${e instanceof Error ? e.message : 'unknown error'}`)
     }
-    const results = await Promise.allSettled(tasks)
-    const { processed, time, bytesIn, bytesOut } = summarizeWorkerResults(results)
-    const sizes = bytesIn > 0 ? `, ${formatSizeDelta(bytesIn, bytesOut)}` : ''
-    log(`[${command}]: webp done — ${processed} files${sizes} in ${time.toFixed(2)}s`)
   }
 }

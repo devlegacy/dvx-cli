@@ -18,7 +18,7 @@ export const QUALITY_PRESETS: Record<Quality, QualityPreset> = {
       0.9,
     ],
     webp: 85,
-    zopfliIterations: 15,
+    zopfliIterations: 8,
   },
   medium: {
     jpeg: 80,
@@ -27,7 +27,7 @@ export const QUALITY_PRESETS: Record<Quality, QualityPreset> = {
       0.85,
     ],
     webp: 80,
-    zopfliIterations: 8,
+    zopfliIterations: 3,
   },
   low: {
     jpeg: 70,

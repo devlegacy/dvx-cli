@@ -1,13 +1,14 @@
-import { cpus } from 'node:os'
-import { join, resolve } from 'node:path'
+import { statSync } from 'node:fs'
+import { basename, join, resolve } from 'node:path'
 import type { URL } from 'node:url'
 import { isMainThread } from 'node:worker_threads'
-import { chunkArray } from '#/src/shared/domain/chunkArray.js'
-import { log } from '#/src/shared/domain/console.js'
 import { File } from '#/src/shared/domain/file.js'
 import { formatSizeDelta } from '#/src/shared/domain/formatBytes.js'
 import type { Quality } from '#/src/shared/domain/quality-presets.js'
-import { runWorker, summarizeWorkerResults, type WorkerResult } from '#/src/shared/domain/runWorker.js'
+import { workerCountFor } from '#/src/shared/domain/workerCount.js'
+import { runQueue } from '#/src/shared/domain/workerQueue.js'
+import { error, log } from '#/src/shared/infrastructure/logger.js'
+import type { MinifyFile } from './imagemin-minifier.job.js'
 
 export async function imageMinifier(
   {
@@ -54,25 +55,46 @@ export async function imageMinifier(
         ext: file.info.ext.toLowerCase(),
       }
     })
-    const cpuCount = cpus().length - 1
-    const tasks: Promise<WorkerResult>[] = []
-
-    const chunkedTasks = chunkArray(files, cpuCount)
-    for (const chunk of chunkedTasks) {
-      tasks.push(
-        runWorker(
-          {
-            files: chunk,
-            command,
-            quality,
-          },
-          jobFile,
-        ),
-      )
+    // Skip sources whose optimized copy is already newer, so re-runs only touch changed images
+    const isUpToDate = (source: string, destination: string) => {
+      try {
+        return statSync(destination).mtimeMs >= statSync(source).mtimeMs
+      } catch {
+        return false
+      }
     }
-    const results = await Promise.allSettled(tasks)
-    const { processed, time, bytesIn, bytesOut } = summarizeWorkerResults(results)
-    const sizes = bytesIn > 0 ? `, ${formatSizeDelta(bytesIn, bytesOut)}` : ''
-    log(`[${command}]: minify done — ${processed} files${sizes} in ${time.toFixed(2)}s`)
+    const pending = files.filter(
+      ({ source, destination }) =>
+        !isUpToDate(resolve(src.info.absolutePath, source), resolve(destination, basename(source))),
+    )
+    const skipped = files.length - pending.length
+    if (skipped > 0) log(`[${command}]: ${skipped} up to date, skipped`)
+    if (pending.length === 0) {
+      log(`[${command}]: minify done — nothing to do`)
+      return
+    }
+
+    const startedAt = performance.now()
+    try {
+      const { processed, bytesIn, bytesOut, failed, lost } = await runQueue<MinifyFile>(pending, {
+        label: command,
+        workerCount: workerCountFor(pending.length),
+        jobFile,
+        workerData: {
+          command,
+          quality,
+        },
+        // Largest files first: they are the slowest, so starting them early keeps the last worker from straggling
+        sizeOf: (file) => statSync(resolve(src.info.absolutePath, file.source)).size,
+      })
+      const time = (performance.now() - startedAt) / 1000
+      const sizes = bytesIn > 0 ? `, ${formatSizeDelta(bytesIn, bytesOut)}` : ''
+      log(
+        `[${command}]: minify done — ${processed} files${failed + lost > 0 ? `, ${failed + lost} failed` : ''}${sizes} in ${time.toFixed(2)}s`,
+      )
+      if (failed + lost > 0) process.exitCode = 1
+    } catch (e) {
+      error(`[${command}]: minify failed — ${e instanceof Error ? e.message : 'unknown error'}`)
+    }
   }
 }

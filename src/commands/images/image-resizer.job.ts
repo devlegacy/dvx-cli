@@ -1,13 +1,12 @@
 import { execSync } from 'node:child_process'
 import { extname } from 'node:path'
-import { performance } from 'node:perf_hooks'
 import { exit } from 'node:process'
-import { isMainThread, parentPort, workerData } from 'node:worker_threads'
+import { isMainThread, workerData } from 'node:worker_threads'
 
 import sharp from 'sharp'
-
-import { error, log } from '#/src/shared/domain/console.js'
 import { Shell } from '#/src/shared/domain/shell.js'
+import { serveQueue } from '#/src/shared/domain/workerQueue.js'
+import { error, log } from '#/src/shared/infrastructure/logger.js'
 
 const useMogrify = async (file: string, width: number = 1024, height: number | undefined, command: string) => {
   const mogrify = 'mogrify'
@@ -57,19 +56,15 @@ const useSharp = async (
     .then(() => log(`[${command}]:`, file))
 }
 
-const promises: Promise<void>[] = []
-
 if (!isMainThread) {
-  const startsAt = performance.now()
-  const { files, width, height, tool, command } = workerData
-  const resizer = tool === 'mogrify' ? useMogrify : useSharp
-  for (const file of files) {
-    promises.push(resizer(file, width, height, command))
+  const { width, height, tool, command, sharpThreads } = workerData as {
+    width: number
+    height?: number
+    tool: string
+    command: string
+    sharpThreads: number
   }
-  Promise.allSettled(promises).then(() => {
-    parentPort?.postMessage({
-      processed: files.length,
-      endTime: (performance.now() - startsAt) / 1000,
-    })
-  })
+  sharp.concurrency(sharpThreads)
+  const resizer = tool === 'mogrify' ? useMogrify : useSharp
+  serveQueue<string>((file) => resizer(file, width, height, command), command)
 }
