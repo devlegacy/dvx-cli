@@ -1,6 +1,6 @@
 {
   "name": "@devexteam/dvx-cli",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Image optimization CLI for frontend builds: minify PNG, JPEG, GIF and SVG, convert to WebP, resize with sharp, and validate HTML with HTMLHint.",
   "license": "MIT",
   "main": "bin/index.js",
