@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Install problems on macOS
+    url: https://github.com/devlegacy/dvx-cli/blob/master/docs/troubleshooting-install.md
+    about: Check the troubleshooting guide for mozjpeg and libpng build errors first.

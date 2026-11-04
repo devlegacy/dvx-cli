@@ -1,7 +1,7 @@
 {
   "name": "@devexteam/dvx-cli",
   "version": "4.0.0",
-  "description": "CLI that encapsulates utilities for image processing and assets in frontend development.",
+  "description": "Image optimization CLI for frontend builds: minify PNG, JPEG, GIF and SVG, convert to WebP, resize with sharp, and validate HTML with HTMLHint.",
   "license": "MIT",
   "main": "bin/index.js",
   "bin": {
@@ -11,7 +11,7 @@
     "#/*": "./*"
   },
   "type": "module",
-  "packageManager": "pnpm@12.15.0+sha512.b3951d6d6ff4a9f13dc7cf56cd28d2b8eb37dbcc9c68e52e1e1191873ea9f82a017287ab50baadc5ccc494f036c67c0e47eb13608c2fa36f47711b61ea128e61",
+  "packageManager": "pnpm@12.16.1+sha512.091d1dee7927575661b25dab3c2ae31cafc1c54d6b71ed6a6600cf0c1cb10434a447eae14015f1b23e2e6bedeed79df94a932e2164d2832280dce3fb32f656d1",
   "scripts": {
     "prebuild": "node --run build:clean",
     "build": "node --run prebuild && swc ./src/ --out-dir ./bin/ --strip-leading-paths && replace-in-file \"/#/src//g\" \"#/bin/\" \"./bin/**/*.js\" --isRegex && chmod +x ./bin/*",
@@ -24,10 +24,29 @@
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "Devexteam",
+    "dvx",
+    "devexteam",
     "cli",
+    "image-optimization",
+    "image-compression",
+    "minify-images",
     "minify",
-    "tools",
+    "webp",
+    "resize-images",
+    "sharp",
+    "imagemin",
+    "mozjpeg",
+    "pngquant",
+    "png",
+    "jpeg",
+    "gif",
+    "svg",
+    "html-validator",
+    "htmlhint",
+    "sourcemaps",
+    "web-performance",
+    "build-tools",
+    "assets",
     "frontend"
   ],
   "files": [
@@ -37,9 +56,9 @@
   "author": "Samuel R. <contact@jstsamuel.dev>",
   "private": false,
   "devDependencies": {
-    "@biomejs/biome": "2.6.2",
+    "@biomejs/biome": "2.6.3",
     "@swc-node/register": "1.12.1",
-    "@swc/cli": "0.8.1",
+    "@swc/cli": "0.8.2",
     "@swc/core": "1.16.20",
     "@types/htmlhint": "1.1.5",
     "@types/imagemin": "9.0.1",
@@ -47,7 +66,7 @@
     "@types/imagemin-mozjpeg": "8.0.4",
     "@types/imagemin-svgo": "11.0.0",
     "@types/imagemin-zopfli": "7.0.4",
-    "@types/node": "26.6.5",
+    "@types/node": "26.6.6",
     "@types/yargs": "17.0.35",
     "@typescript/native": "npm:typescript@7.0.2",
     "replace-in-file": "9.0.0",
