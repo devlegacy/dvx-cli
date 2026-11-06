@@ -78,7 +78,10 @@ jobs:
           node --run typecheck
           node --run test
 
-      - name: Publish to npm 🚀
+      # Staged publishing: CI uploads the version through OIDC without 2FA and it stays hidden
+      # until a maintainer approves it (`npm stage list`, then `npm stage approve <id>`).
+      # `npx npm@11` because the npm bundled with Node 24 may predate `npm stage`.
+      - name: Stage package on npm 📦
         if: ${{ steps.release.outputs.release_created }}
         run: |
-          pnpm publish --access public
+          npx --yes npm@11 stage publish --access public
